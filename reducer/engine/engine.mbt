@@ -38,16 +38,25 @@ pub struct Session {
   mut queue_index : Int
   sizes : Array[Int]
   stats : Array[PassStats]
+  budget : @model.Budget
+  cache : Map[String, Bool]
+  mut hits : Int
 }
 
 ///|
 /// Construct a baseline-first session. No command is executed by this package.
-pub fn Session::new(original : String) -> Session {
+pub fn Session::new(
+  original : String,
+  budget? : @model.Budget = @model.default_budget(),
+) -> Session {
   let names = ["ddmin"]
   names.append(@text.names())
   names.append(@token.names())
   {
     original,
+    budget,
+    cache: Map([]),
+    hits: 0,
     best: original,
     phase: 0,
     pending: None,
@@ -104,6 +113,14 @@ pub fn Session::next(self : Session) -> String? {
   if self.phase == 3 {
     return None
   }
+  if self.evaluations >= self.budget.max_tests {
+    self.stop(@model.BudgetExhausted)
+    return None
+  }
+  if self.phase == 1 && self.evaluations >= self.budget.max_tests - 3 {
+    self.status = @model.BudgetExhausted
+    self.phase = 2
+  }
   if self.phase == 0 || self.phase == 2 {
     self.pending = Some(self.best)
     return self.pending
@@ -116,6 +133,10 @@ pub fn Session::next(self : Session) -> String? {
       let candidate = self.queue[self.queue_index]
       self.queue_index += 1
       if @source.encode(candidate).length() < @source.encode(self.best).length() {
+        if self.cache.contains(candidate) {
+          self.hits += 1
+          continue
+        }
         self.pending = Some(candidate)
         return self.pending
       }
@@ -156,6 +177,7 @@ pub fn Session::record(self : Session, matched : Bool) -> Unit {
         self.phase = 3
       }
     1 => {
+      self.cache[candidate] = matched
       let stat = self.stats[self.pass_index]
       let removed = if matched {
         @source.encode(self.best).length() - @source.encode(candidate).length()
@@ -199,7 +221,7 @@ pub fn Session::result(self : Session) -> ReductionResult {
     original: self.original,
     best: self.best,
     evaluations: self.evaluations,
-    cache_hits: 0,
+    cache_hits: self.hits,
     baseline_passed: self.baseline,
     final_passed: self.finals,
     accepted_sizes: self.sizes.copy(),
