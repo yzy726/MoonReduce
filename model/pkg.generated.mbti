@@ -1,0 +1,68 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/model"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn default_budget() -> Budget
+
+pub fn default_predicate(Array[String]) -> PredicateSpec
+
+// Errors
+
+// Types and methods
+pub(all) struct Budget {
+  max_tests : Int
+  max_time_ms : Int64
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Evaluation {
+  exit_code : Int
+  timed_out : Bool
+  stdout : String
+  stderr : String
+  stdout_truncated : Bool
+  stderr_truncated : Bool
+  duration_ms : Int64
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) enum FailureKind {
+  ExitCode(Int)
+  NonZero
+  Timeout
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct OutputRule {
+  text : String
+  negate : Bool
+  ignore_case : Bool
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct PredicateSpec {
+  command : Array[String]
+  cwd : String
+  failure : FailureKind
+  stdout_rules : Array[OutputRule]
+  stderr_rules : Array[OutputRule]
+  timeout_ms : Int
+  output_limit : Int
+  strip_locations : Bool
+  environment : Map[String, String]
+} derive(ToJson, @debug.Debug)
+
+pub(all) enum RunStatus {
+  Completed
+  BaselineFailed
+  BaselineUnstable
+  BudgetExhausted
+  Cancelled
+  ExecutionFailed
+  FinalFailed
+} derive(Eq, ToJson, @debug.Debug)
+pub fn RunStatus::exit_code(Self) -> Int
+
+// Type aliases
+
+// Traits
