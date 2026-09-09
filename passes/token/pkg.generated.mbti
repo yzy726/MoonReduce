@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/passes/token"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn scan(String) -> Array[Token]
+
+// Errors
+
+// Types and methods
+pub(all) struct Token {
+  start : Int
+  end : Int
+  kind : String
+  text : String
+} derive(Eq, ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits
