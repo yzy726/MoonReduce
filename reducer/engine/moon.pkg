@@ -1,0 +1,7 @@
+import {
+  "Ag108/MoonReduce/model",
+  "Ag108/MoonReduce/source",
+  "Ag108/MoonReduce/passes/text",
+  "Ag108/MoonReduce/passes/token",
+  "Ag108/MoonReduce/reducer/ddmin",
+}
