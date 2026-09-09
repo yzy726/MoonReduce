@@ -45,12 +45,18 @@ pub struct Session {
   mut queue_index : Int
   sizes : Array[Int]
   stats : Array[PassStats]
+  budget : @model.Budget
+  cache : Map[String, Bool]
+  mut hits : Int
 }
-pub fn Session::new(String) -> Self
+pub fn Session::cancel(Self) -> Unit
+pub fn Session::elapsed(Self, Int64) -> Unit
+pub fn Session::new(String, budget? : @model.Budget) -> Self
 pub fn Session::next(Self) -> String?
 pub fn Session::phase_name(Self) -> String
 pub fn Session::record(Self, Bool) -> Unit
 pub fn Session::result(Self) -> ReductionResult
+pub fn Session::stop(Self, @model.RunStatus) -> Unit
 
 // Type aliases
 
