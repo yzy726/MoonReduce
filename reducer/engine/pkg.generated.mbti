@@ -1,0 +1,57 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/reducer/engine"
+
+import {
+  "Ag108/MoonReduce/model",
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct PassStats {
+  name : String
+  attempts : Int
+  accepted : Int
+  removed_bytes : Int
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct ReductionResult {
+  status : @model.RunStatus
+  original : String
+  best : String
+  evaluations : Int
+  cache_hits : Int
+  baseline_passed : Int
+  final_passed : Int
+  accepted_sizes : Array[Int]
+  passes : Array[PassStats]
+} derive(ToJson, @debug.Debug)
+
+pub struct Session {
+  original : String
+  mut best : String
+  mut phase : Int
+  mut pending : String?
+  mut evaluations : Int
+  mut baseline : Int
+  mut finals : Int
+  mut status : @model.RunStatus
+  mut pass_index : Int
+  mut groups : Int
+  mut queue : Array[String]
+  mut queue_index : Int
+  sizes : Array[Int]
+  stats : Array[PassStats]
+}
+pub fn Session::new(String) -> Self
+pub fn Session::next(Self) -> String?
+pub fn Session::phase_name(Self) -> String
+pub fn Session::record(Self, Bool) -> Unit
+pub fn Session::result(Self) -> ReductionResult
+
+// Type aliases
+
+// Traits
