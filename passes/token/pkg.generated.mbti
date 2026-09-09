@@ -6,7 +6,13 @@ import {
 }
 
 // Values
+pub fn names() -> Array[String]
+
+pub fn propose(String, String) -> Array[String]
+
 pub fn scan(String) -> Array[Token]
+
+pub fn significant(String) -> Array[Token]
 
 // Errors
 
