@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/source"
+
+// Values
+pub fn apply_edit(Bytes, Int, Int, Bytes) -> Result[Bytes, String]
+
+pub fn decode(Bytes) -> Result[String, String]
+
+pub fn digest(Bytes) -> String
+
+pub fn encode(String) -> Bytes
+
+pub fn validate_path(String) -> Result[String, String]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
