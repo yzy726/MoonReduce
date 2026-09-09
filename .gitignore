@@ -1,0 +1,10 @@
+.DS_Store
+_build/
+target/
+target
+.mooncakes/
+.moonagent/
+goal.md
+项目申报书.md
+.agent-workplace/
+.moonreduce/
