@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/predicate/matcher"
+
+import {
+  "Ag108/MoonReduce/model",
+}
+
+// Values
+pub fn matches(@model.PredicateSpec, @model.Evaluation, String) -> Bool
+
+pub fn normalize(String, String, Bool) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
