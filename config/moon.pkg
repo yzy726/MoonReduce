@@ -1,0 +1,5 @@
+import {
+  "Ag108/MoonReduce/model",
+  "Ag108/MoonReduce/source",
+  "moonbitlang/core/string",
+}
