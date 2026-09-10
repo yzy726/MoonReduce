@@ -1,6 +1,21 @@
 ///|
 /// Portable, traversal-free relative path. Windows aliases are rejected everywhere.
 pub fn validate_path(path : String) -> Result[String, String] {
+  for i in 0..<path.length() {
+    let c = path[i]
+    if c < 32 ||
+      c == 127 ||
+      c == 34 ||
+      c == 42 ||
+      c == 60 ||
+      c == 62 ||
+      c == 63 ||
+      c == 124 {
+      return Err(
+        "MR_INPUT_PATH: control character or reserved filename character",
+      )
+    }
+  }
   let p = path.replace_all(old="\\", new="/")
   if p == "" || p.has_prefix("/") || p.contains(":") || p.contains("\u0000") {
     return Err("MR_INPUT_PATH: expected a relative path")
