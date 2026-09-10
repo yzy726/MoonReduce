@@ -1,0 +1,11 @@
+import {
+  "moonbitlang/async/fs",
+  "moonbitlang/async/io",
+  "Ag108/MoonReduce/source",
+}
+
+supported_targets = "-all+native"
+
+import {
+  "moonbitlang/async",
+} for "test"
