@@ -1,0 +1,15 @@
+// Original MoonReduce fixture; Apache-2.0.
+// Deliberately irrelevant leading material.
+
+// Original MoonReduce fixture; Apache-2.0.
+// Deliberately irrelevant leading material.
+
+// Original MoonReduce fixture; Apache-2.0.
+// Deliberately irrelevant leading material.
+
+///|
+fn unused_helper() -> Int { 12345 }
+///|
+fn reproduce() -> Int { mr_missing_symbol }
+
+// Additional irrelevant trailing comment with plenty of removable noise.
