@@ -1,0 +1,17 @@
+{
+  "target": "repro.mbt",
+  "command": [
+    "moon",
+    "test",
+    "--target",
+    "native"
+  ],
+  "expect": "nonzero",
+  "stdout_contains": [
+    "MR_TARGET_FAILURE",
+    "failed"
+  ],
+  "max_tests": 150,
+  "timeout": "10s",
+  "max_time": "120s"
+}

@@ -1,0 +1,16 @@
+{
+  "target": "repro.mbt",
+  "command": [
+    "moon",
+    "check",
+    "--target",
+    "native"
+  ],
+  "expect": "nonzero",
+  "stderr_contains": [
+    "The value identifier mr_missing_symbol is unbound"
+  ],
+  "max_tests": 150,
+  "timeout": "10s",
+  "max_time": "120s"
+}
