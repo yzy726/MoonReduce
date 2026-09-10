@@ -1,0 +1,8 @@
+import {
+  "moonbitlang/async",
+  "moonbitlang/async/process" @child,
+  "moonbitlang/core/encoding/utf8",
+  "Ag108/MoonReduce/model",
+}
+
+supported_targets = "-all+native"
