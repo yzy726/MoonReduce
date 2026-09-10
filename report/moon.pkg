@@ -1,0 +1,8 @@
+import {
+  "Ag108/MoonReduce/reducer/engine",
+  "Ag108/MoonReduce/model",
+  "Ag108/MoonReduce/config",
+  "Ag108/MoonReduce/source",
+  "Ag108/MoonReduce/passes/token",
+  "Ag108/MoonReduce/passes/text",
+}
