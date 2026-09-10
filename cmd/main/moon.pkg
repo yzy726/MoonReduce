@@ -1,5 +1,10 @@
-// import {
-//   "Ag108/MoonReduce" @lib,
-// }
+import {
+  "Ag108/MoonReduce/app",
+  "moonbitlang/core/env",
+  "moonbitlang/async",
+  "moonbitlang/async/stdio",
+}
 
 pkgtype(kind: "executable")
+
+supported_targets = "-all+native"
