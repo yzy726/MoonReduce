@@ -1,0 +1,18 @@
+import {
+  "moonbitlang/async",
+  "moonbitlang/async/fs",
+  "moonbitlang/async/stdio",
+  "moonbitlang/core/json",
+  "Ag108/MoonReduce/config",
+  "Ag108/MoonReduce/model",
+  "Ag108/MoonReduce/source",
+  "Ag108/MoonReduce/workspace/native" @workspace,
+  "Ag108/MoonReduce/evaluator/process",
+  "Ag108/MoonReduce/predicate/matcher",
+  "Ag108/MoonReduce/reducer/engine",
+  "Ag108/MoonReduce/report",
+  "Ag108/MoonReduce/passes/text",
+  "Ag108/MoonReduce/passes/token",
+}
+
+supported_targets = "-all+native"

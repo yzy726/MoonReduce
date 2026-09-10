@@ -1,0 +1,27 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/app"
+
+import {
+  "Ag108/MoonReduce/config",
+  "Ag108/MoonReduce/reducer/engine",
+}
+
+// Values
+pub async fn execute(@config.Config) -> Run
+
+pub fn help() -> String
+
+pub async fn run(Array[String]) -> Int
+
+// Errors
+
+// Types and methods
+pub(all) struct Run {
+  result : @engine.ReductionResult
+  output : String
+  error : String?
+}
+
+// Type aliases
+
+// Traits

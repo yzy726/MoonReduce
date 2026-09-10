@@ -1,7 +1,15 @@
 ///|
-/// Entry point for the CLI or runnable program in this template.
-/// Keep main focused; move logic into the library package.
-/// Run with `moon run cmd/main` from the project root.
-fn main {
-  println("Hello")
+extern "C" fn exit_process(code : Int) -> Unit = "exit"
+
+///|
+async fn main {
+  let code = @app.run(@env.args()[1:].to_owned()) catch {
+    e => {
+      @stdio.stderr.write("MR_EXEC_FAILURE: " + e.to_string() + "\n")
+      6
+    }
+  }
+  if code != 0 {
+    exit_process(code)
+  }
 }
