@@ -1,0 +1,28 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/report"
+
+import {
+  "Ag108/MoonReduce/config",
+  "Ag108/MoonReduce/reducer/engine",
+}
+
+// Values
+pub fn config_summary(@config.Config) -> Json
+
+pub fn markdown(@config.Config, @engine.ReductionResult, Int64, Bool) -> String
+
+pub fn metrics(String) -> Json
+
+pub fn render_json(@config.Config, @engine.ReductionResult, Int64, Bool, evidence? : Array[Json]) -> Json
+
+pub fn reproduce(@config.Config) -> String
+
+pub fn unified_diff(String, String, String) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
