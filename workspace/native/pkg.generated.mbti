@@ -1,0 +1,33 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/workspace/native"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub async fn prepare(String, String, String, Array[String]) -> Workspace
+
+// Errors
+pub suberror WorkspaceError {
+  WorkspaceError(String)
+} derive(@debug.Debug)
+
+// Types and methods
+pub struct Workspace {
+  root : String
+  output : String
+  target : String
+  original : String
+  ignored : Array[String]
+  mut sequence : Int
+  // private fields
+}
+pub async fn Workspace::export_best(Self, String) -> Unit
+pub async fn Workspace::materialize(Self, String) -> String
+pub async fn Workspace::original_unchanged(Self) -> Bool
+pub async fn Workspace::working_directory(Self, String, String) -> String
+
+// Type aliases
+
+// Traits
