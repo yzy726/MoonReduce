@@ -18,10 +18,10 @@ native workspace/evaluator, reports and CLI are implemented.
 | I08 determinism | 10 pure engine runs agree | 10 runs of each real fixture |
 | I09 cache | Run-scoped exact-content cache tested | None for current sequential scope |
 | I10 reports | JSON/Markdown/diff/reproduce emitted | Interrupted execution counts have limitations |
-| I11 tests/coverage | Native 139/139; prior JS and wasm-gc 130/130; core lines 438/457 (95.84%) | Native timeout scenarios |
+| I11 tests/coverage | Native 139/139; JS and wasm-gc 130/130; core lines 438/457 (95.84%) | Native timeout scenarios |
 | I12 benchmarks | 3 of 5 complete with final=3 | nonzero_exit and timeout |
-| I13 Windows/Linux CI | Windows local tests pass | CI configuration and Linux run evidence |
-| I14 quality | Standard native test --deny-warn passes | Fresh full gates after documentation; optional warning 73 cleanup |
+| I13 Windows/Linux CI | Windows local tests and unified script pass; workflow saved locally | Linux/hosted run evidence |
+| I14 quality | Unified verification script passes, including warning 73; interfaces unchanged | None for current local source |
 | I15 delivery | Required documentation prepared | Public package release and human review |
 
 ## Benchmark evidence
@@ -61,4 +61,4 @@ did not reject it. This should be tracked separately from MoonBit warnings.
 Descendant process cleanup is not certified. Direct-command timeout support must
 not be presented as process-tree containment. No antivirus settings were changed.
 No Linux execution, GitHub Actions run or mooncakes publication has been performed.
-Effective-code size still requires a final measured inventory; do not pad it.
+Code inventory: 3032 nonblank, non-line-comment MoonBit lines (1701 production, 1331 tests), excluding fixtures, examples and artifacts. This approximate count includes punctuation and literals; it falls below the planned 4000-5500 range. See code-size.json. No padding was added.
