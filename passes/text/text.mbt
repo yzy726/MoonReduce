@@ -26,7 +26,7 @@ pub fn lines(s : String) -> Array[(Int, Int)] {
 
 ///|
 /// Deterministic deletion proposals. Strings/comments use the tolerant lexer.
-pub fn propose(name : String, s : String) -> Array[String] {
+pub fn propose_iter(name : String, s : String) -> Iter[String] {
   let spans : Array[(Int, Int)] = []
   let ls = lines(s)
   match name {
@@ -64,5 +64,14 @@ pub fn propose(name : String, s : String) -> Array[String] {
     }
     _ => ()
   }
-  spans.filter(p => p.1 > p.0).map(p => s[:p.0].to_owned() + s[p.1:].to_owned())
+  spans
+  .iter()
+  .filter(p => p.1 > p.0)
+  .map(p => s[:p.0].to_owned() + s[p.1:].to_owned())
+}
+
+///|
+/// Collect proposals for small inputs; the engine consumes propose_iter lazily.
+pub fn propose(name : String, s : String) -> Array[String] {
+  propose_iter(name, s).to_array()
 }

@@ -17,7 +17,7 @@ pub fn significant(s : String) -> Array[Token] {
 
 ///|
 /// Conservative deterministic proposals; every candidate still needs the predicate.
-pub fn propose(name : String, s : String) -> Array[String] {
+pub fn propose_iter(name : String, s : String) -> Iter[String] {
   let ts = significant(s)
   let edits : Array[(Int, Int, String)] = []
   match name {
@@ -84,10 +84,16 @@ pub fn propose(name : String, s : String) -> Array[String] {
         }
       }
       if malformed || !stack.is_empty() {
-        return []
+        return [].iter()
       }
     }
     _ => ()
   }
-  edits.map(e => s[:e.0].to_owned() + e.2 + s[e.1:].to_owned())
+  edits.iter().map(e => s[:e.0].to_owned() + e.2 + s[e.1:].to_owned())
+}
+
+///|
+/// Collect proposals for small inputs; the engine consumes propose_iter lazily.
+pub fn propose(name : String, s : String) -> Array[String] {
+  propose_iter(name, s).to_array()
 }

@@ -41,8 +41,8 @@ pub struct Session {
   mut status : @model.RunStatus
   mut pass_index : Int
   mut groups : Int
-  mut queue : Array[String]
-  mut queue_index : Int
+  mut queue : Iter[String]
+  mut queue_ready : Bool
   sizes : Array[Int]
   stats : Array[PassStats]
   budget : @model.Budget
