@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-09-14",
+  "platform": "Windows",
+  "command": "./scripts/verify.ps1",
+  "exit_code": 0,
+  "native_tests": 139,
+  "js_tests": 130,
+  "wasm_gc_tests": 130,
+  "format": "pass",
+  "check": "native --warn-list +73 --deny-warn pass",
+  "interfaces": "unchanged",
+  "cli_help": "pass",
+  "linux": "not run",
+  "remote_ci": "not run",
+  "publication": "not performed",
+  "process_tree_probes": "suspended"
+}
