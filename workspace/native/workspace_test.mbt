@@ -3,11 +3,11 @@ async test "e2e/workspace isolates candidates and exports original support files
   let root = @fs.tmpdir(prefix="moonreduce-workspace-test-")
   let input = root + "/输入 project"
   @fs.mkdir(input)
-  @fs.write_file(input + "/a.mbt", "original", create_mode=@fs.CreateNew)
+  @fs.write_file(input + "/a.mbt", "original", create_mode=CreateNew)
   @fs.write_file(
     input + "/moon.mod",
     "name = \"test/project\"",
-    create_mode=@fs.CreateNew,
+    create_mode=CreateNew,
   )
   let w = @native.prepare(input, "a.mbt", root + "/output", [])
   let candidate = w.materialize("smaller")
@@ -24,7 +24,7 @@ async test "e2e/workspace isolates candidates and exports original support files
 ///|
 async test "e2e/workspace rejects output over original and target traversal" {
   let root = @fs.tmpdir(prefix="moonreduce-path-test-")
-  @fs.write_file(root + "/a.mbt", "x", create_mode=@fs.CreateNew)
+  @fs.write_file(root + "/a.mbt", "x", create_mode=CreateNew)
   let bad = try {
     ignore(@native.prepare(root, "../a.mbt", root + "/out", []))
     false

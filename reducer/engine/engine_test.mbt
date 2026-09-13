@@ -7,7 +7,7 @@ test "valid/baseline reduction and three uncached final checks" {
     s.record(c.contains("KEEP"))
   }
   let r = s.result()
-  assert_eq(r.status, @model.Completed)
+  assert_eq(r.status, Completed)
   assert_eq(r.best, "KEEP\n")
   assert_eq(r.baseline_passed, 2)
   assert_eq(r.final_passed, 3)
@@ -24,13 +24,13 @@ test "invalid/baseline mismatch and unstable baseline" {
   ignore(s.next())
   s.record(false)
   assert_eq(s.next(), None)
-  assert_eq(s.result().status, @model.BaselineFailed)
+  assert_eq(s.result().status, BaselineFailed)
   let s = @engine.Session::new("b")
   ignore(s.next())
   s.record(true)
   ignore(s.next())
   s.record(false)
-  assert_eq(s.result().status, @model.BaselineUnstable)
+  assert_eq(s.result().status, BaselineUnstable)
 }
 
 ///|
@@ -41,7 +41,7 @@ test "property/accepted history strictly decreases bytes" {
       s.record(true)
     }
     let r = s.result()
-    assert_eq(r.status, @model.Completed)
+    assert_eq(r.status, Completed)
     for i in 1..<r.accepted_sizes.length() {
       assert_true(r.accepted_sizes[i] < r.accepted_sizes[i - 1])
     }
@@ -57,5 +57,5 @@ test "invalid/final mismatch is never completed" {
   s.record(true)
   ignore(s.next())
   s.record(false)
-  assert_eq(s.result().status, @model.FinalFailed)
+  assert_eq(s.result().status, FinalFailed)
 }

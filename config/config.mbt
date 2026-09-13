@@ -230,8 +230,8 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
   let expect = string_value(m, "expect", "nonzero")
   let failure = match expect {
     "nonzero" => @model.NonZero
-    "timeout" => @model.Timeout
-    _ => @model.ExitCode(@string.parse_int(expect))
+    "timeout" => Timeout
+    _ => ExitCode(@string.parse_int(expect))
   }
   let ignore_case = bool_value(m, "ignore_case")
   let out = strings(m, "stdout_contains").map(text => @model.OutputRule::{

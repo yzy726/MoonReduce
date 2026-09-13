@@ -9,7 +9,7 @@ pub fn Session::stop(self : Session, status : @model.RunStatus) -> Unit {
 ///|
 /// Cooperative cancellation, usable by an IO adapter or deterministic tests.
 pub fn Session::cancel(self : Session) -> Unit {
-  self.stop(@model.Cancelled)
+  self.stop(Cancelled)
 }
 
 ///|
@@ -17,6 +17,6 @@ pub fn Session::cancel(self : Session) -> Unit {
 /// merely to obtain final evidence; such results have final_passed less than three.
 pub fn Session::elapsed(self : Session, elapsed_ms : Int64) -> Unit {
   if self.phase != 3 && elapsed_ms >= self.budget.max_time_ms {
-    self.stop(@model.BudgetExhausted)
+    self.stop(BudgetExhausted)
   }
 }

@@ -44,7 +44,7 @@ pub fn help() -> String {
 
 ///|
 async fn save(path : String, data : String) -> Unit {
-  @fs.write_file(path, data, create_mode=@fs.CreateNew)
+  @fs.write_file(path, data, create_mode=CreateNew)
 }
 
 ///|
@@ -117,7 +117,7 @@ pub async fn execute(c : @config.Config) -> Run {
         )
       }
       if c.action == "check" && s.result().baseline_passed == 2 {
-        s.stop(@model.Completed)
+        s.stop(Completed)
         break
       }
     }
@@ -127,14 +127,14 @@ pub async fn execute(c : @config.Config) -> Run {
         s.cancel()
         error = Some("MR_BUDGET_CANCELLED")
       } else {
-        s.stop(@model.ExecutionFailed)
+        s.stop(ExecutionFailed)
         error = Some("MR_EXEC_FAILURE: " + e.to_string())
       }
   }
   @async.protect_from_cancel(resume_on_cancel=false, () => {
     let unchanged = w.original_unchanged()
     if !unchanged {
-      s.stop(@model.ExecutionFailed)
+      s.stop(ExecutionFailed)
       error = Some("MR_INPUT_CHANGED: original changed during run")
     }
     let r = s.result()

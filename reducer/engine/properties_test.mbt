@@ -7,7 +7,7 @@ test "property/ten independent runs converge to identical content" {
     while s.next() is Some(c) {
       s.record(c.contains("KEEP"))
     }
-    assert_eq(s.result().status, @model.Completed)
+    assert_eq(s.result().status, Completed)
     outputs.push(s.result().best)
   }
   for output in outputs {
@@ -31,7 +31,7 @@ test "property/exhaustive monotone subset predicates reach required one-minimal 
       s.record(matched)
     }
     let best = s.result().best
-    assert_eq(s.result().status, @model.Completed)
+    assert_eq(s.result().status, Completed)
     for i in 0..<8 {
       assert_eq(best.contains(required[i]), (mask & (1 << i)) != 0)
     }
@@ -54,7 +54,7 @@ test "property/failed final keeps previously accepted source" {
   while s.next() is Some(c) {
     s.record(s.phase_name() != "final" && c.contains("KEEP"))
   }
-  assert_eq(s.result().status, @model.FinalFailed)
+  assert_eq(s.result().status, FinalFailed)
   assert_true(s.result().best.contains("KEEP"))
   assert_eq(s.result().final_passed, 0)
 }
@@ -85,6 +85,6 @@ test "property/cancellation during pending request preserves best" {
   s.cancel()
   s.record(true)
   assert_eq(s.result().evaluations, 2)
-  assert_eq(s.result().status, @model.Cancelled)
+  assert_eq(s.result().status, Cancelled)
   assert_eq(s.result().best, "KEEP\nnoise\n")
 }

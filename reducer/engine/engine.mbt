@@ -63,7 +63,7 @@ pub fn Session::new(
     evaluations: 0,
     baseline: 0,
     finals: 0,
-    status: @model.Completed,
+    status: Completed,
     pass_index: 0,
     groups: 2,
     queue: [].iter(),
@@ -119,11 +119,11 @@ pub fn Session::next(self : Session) -> String? {
     return None
   }
   if self.evaluations >= self.budget.max_tests {
-    self.stop(@model.BudgetExhausted)
+    self.stop(BudgetExhausted)
     return None
   }
   if self.phase == 1 && self.evaluations >= self.budget.max_tests - 3 {
-    self.status = @model.BudgetExhausted
+    self.status = BudgetExhausted
     self.phase = 2
   }
   if self.phase == 0 || self.phase == 2 {
@@ -173,9 +173,9 @@ pub fn Session::record(self : Session, matched : Bool) -> Unit {
         }
       } else {
         self.status = if self.baseline == 0 {
-          @model.BaselineFailed
+          BaselineFailed
         } else {
-          @model.BaselineUnstable
+          BaselineUnstable
         }
         self.phase = 3
       }
@@ -209,7 +209,7 @@ pub fn Session::record(self : Session, matched : Bool) -> Unit {
           self.phase = 3
         }
       } else {
-        self.status = @model.FinalFailed
+        self.status = FinalFailed
         self.phase = 3
       }
     _ => ()

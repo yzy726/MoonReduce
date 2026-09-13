@@ -9,7 +9,7 @@ test "valid/default budgets reserve baseline and final" {
 test "valid/default predicate is nonzero with bounded output" {
   let p = @model.default_predicate(["moon", "check"])
   assert_eq(p.command, ["moon", "check"])
-  assert_true(p.failure is @model.NonZero)
+  assert_true(p.failure is NonZero)
   assert_true(p.output_limit > 0)
 }
 
