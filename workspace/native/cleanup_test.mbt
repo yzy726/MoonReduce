@@ -3,7 +3,7 @@ async test "e2e/cleanup only removes owned evaluation copies" {
   let root = @fs.tmpdir(prefix="moonreduce-cleanup-test-")
   let input = root + "/input"
   @fs.mkdir(input)
-  @fs.write_file(input + "/a.mbt", "original", create_mode=@fs.CreateNew)
+  @fs.write_file(input + "/a.mbt", "original", create_mode=CreateNew)
   let w = @native.prepare(input, "a.mbt", root + "/out", [])
   let dir = w.materialize("candidate")
   w.cleanup(dir)
@@ -23,13 +23,13 @@ async test "invalid/cleanup rejects altered owner marker" {
   let root = @fs.tmpdir(prefix="moonreduce-marker-test-")
   let input = root + "/input"
   @fs.mkdir(input)
-  @fs.write_file(input + "/a.mbt", "original", create_mode=@fs.CreateNew)
+  @fs.write_file(input + "/a.mbt", "original", create_mode=CreateNew)
   let w = @native.prepare(input, "a.mbt", root + "/out", [])
   let dir = w.materialize("candidate")
   @fs.write_file(
     dir + "/.moonreduce-owner",
     "not ours",
-    create_mode=@fs.TruncateExisting,
+    create_mode=TruncateExisting,
   )
   let bad = try {
     w.cleanup(dir)

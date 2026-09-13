@@ -65,7 +65,7 @@ async fn collect(
         if entries.length() >= 1000 {
           raise WorkspaceError("MR_INPUT_LIMIT: more than 1000 files")
         }
-        let file = @fs.open(path, mode=@fs.ReadOnly)
+        let file = @fs.open(path, mode=ReadOnly)
         defer file.close()
         let size = file.size()
         if size > 1048576L || size < 0L {
@@ -96,7 +96,7 @@ async fn write_entry(root : String, entry : Entry, bytes : Bytes) -> Unit {
   @fs.write_file(
     path,
     bytes,
-    create_mode=@fs.CreateNew,
+    create_mode=CreateNew,
     permission=if entry.executable { 0o755 } else { 0o644 },
   )
 }
@@ -173,7 +173,7 @@ pub async fn Workspace::materialize(
   @fs.write_file(
     dir + "/.moonreduce-owner",
     "MoonReduce-v1",
-    create_mode=@fs.CreateNew,
+    create_mode=CreateNew,
   )
   for entry in self.entries {
     let bytes = if entry.path == self.target {
@@ -191,7 +191,7 @@ pub async fn Workspace::materialize(
 async fn remove_owned_tree(dir : String) -> Unit {
   for name in @fs.readdir(dir, include_hidden=true, sort=true) {
     let path = dir + "/" + name
-    if @fs.kind(path, follow_symlink=false) == @fs.Directory {
+    if @fs.kind(path, follow_symlink=false) == Directory {
       remove_owned_tree(path)
     } else {
       @fs.remove(path)
@@ -215,7 +215,7 @@ pub async fn Workspace::cleanup(self : Workspace, dir : String) -> Unit {
     raise WorkspaceError("MR_INPUT_CLEANUP: invalid directory identity")
   }
   let marker = dir + "/.moonreduce-owner"
-  if @fs.kind(marker, follow_symlink=false) != @fs.Regular ||
+  if @fs.kind(marker, follow_symlink=false) != Regular ||
     @fs.read_file(marker).text() != "MoonReduce-v1" {
     raise WorkspaceError("MR_INPUT_CLEANUP: invalid owner marker")
   }

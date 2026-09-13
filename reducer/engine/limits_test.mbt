@@ -22,7 +22,7 @@ test "valid/test budget reserves final verification" {
   while s.next() is Some(_) {
     s.record(true)
   }
-  assert_eq(s.result().status, @model.BudgetExhausted)
+  assert_eq(s.result().status, BudgetExhausted)
   assert_eq(s.result().evaluations, 5)
   assert_eq(s.result().final_passed, 3)
 }
@@ -37,7 +37,7 @@ test "valid/cancel retains last verified candidate without claiming completion" 
   s.cancel()
   assert_eq(s.next(), None)
   assert_eq(s.result().best, "a")
-  assert_eq(s.result().status, @model.Cancelled)
+  assert_eq(s.result().status, Cancelled)
 }
 
 ///|
@@ -45,12 +45,12 @@ test "valid/time limit stops at current best" {
   let s = @engine.Session::new("a", budget={ max_tests: 100, max_time_ms: 10L })
   s.elapsed(11L)
   assert_eq(s.next(), None)
-  assert_eq(s.result().status, @model.BudgetExhausted)
+  assert_eq(s.result().status, BudgetExhausted)
 }
 
 ///|
 test "invalid/zero budget never executes" {
   let s = @engine.Session::new("a", budget={ max_tests: 0, max_time_ms: 10L })
   assert_eq(s.next(), None)
-  assert_eq(s.result().status, @model.BudgetExhausted)
+  assert_eq(s.result().status, BudgetExhausted)
 }

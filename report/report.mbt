@@ -48,9 +48,7 @@ pub fn render_json(
     "version": "0.1.0",
     "status": r.status.to_json(),
     "exit_code": r.status.exit_code(),
-    "completed": r.status == @model.Completed &&
-    r.final_passed == 3 &&
-    unchanged,
+    "completed": r.status == Completed && r.final_passed == 3 && unchanged,
     "original": metrics(r.original),
     "reduced": metrics(r.best),
     "baseline_passed": r.baseline_passed,

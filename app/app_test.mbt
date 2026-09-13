@@ -17,11 +17,11 @@ async test "e2e/real moon diagnostic reduced in isolated copies" {
   @fs.write_file(
     input + "/moon.mod",
     "name = \"test/fixture\"\n",
-    create_mode=@fs.CreateNew,
+    create_mode=CreateNew,
   )
-  @fs.write_file(input + "/moon.pkg", "", create_mode=@fs.CreateNew)
+  @fs.write_file(input + "/moon.pkg", "", create_mode=CreateNew)
   let original = "// noise one\n// noise two\n///|\nfn bad() -> Int { keep_missing_symbol }\n// trailing irrelevant\n"
-  @fs.write_file(input + "/a.mbt", original, create_mode=@fs.CreateNew)
+  @fs.write_file(input + "/a.mbt", original, create_mode=CreateNew)
   let c = @config.parse(
     [
       "reduce",

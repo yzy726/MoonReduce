@@ -27,7 +27,7 @@ test "valid/exit and timeout are distinct failure classes" {
     assert_false(@matcher.matches(p, observation(code, true, "", ""), ""))
     assert_eq(
       @matcher.matches(
-        { ..p, failure: @model.ExitCode(2) },
+        { ..p, failure: ExitCode(2) },
         observation(code, false, "", ""),
         "",
       ),
@@ -35,7 +35,7 @@ test "valid/exit and timeout are distinct failure classes" {
     )
     assert_true(
       @matcher.matches(
-        { ..p, failure: @model.Timeout },
+        { ..p, failure: Timeout },
         observation(code, true, "", ""),
         "",
       ),

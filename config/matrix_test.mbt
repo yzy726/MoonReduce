@@ -392,7 +392,7 @@ test "valid/negative-exit" {
     "expect": "-9",
   }
   let c = @config.parse(["reduce"], Some(j)).unwrap()
-  assert_eq(c.predicate.failure, @model.ExitCode(-9))
+  assert_eq(c.predicate.failure, ExitCode(-9))
 }
 
 ///|
@@ -404,7 +404,7 @@ test "valid/zero-exit" {
     "expect": "0",
   }
   let c = @config.parse(["reduce"], Some(j)).unwrap()
-  assert_eq(c.predicate.failure, @model.ExitCode(0))
+  assert_eq(c.predicate.failure, ExitCode(0))
 }
 
 ///|
@@ -416,7 +416,7 @@ test "valid/timeout-kind" {
     "expect": "timeout",
   }
   let c = @config.parse(["reduce"], Some(j)).unwrap()
-  assert_eq(c.predicate.failure, @model.Timeout)
+  assert_eq(c.predicate.failure, Timeout)
 }
 
 ///|
