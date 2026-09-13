@@ -85,6 +85,7 @@ pub async fn execute(c : @config.Config) -> Run {
       }
       let matched = @matcher.matches(c.predicate, e, dir)
       s.record(matched)
+      w.cleanup(dir)
       let event : Json = {
         "schema_version": 1,
         "phase": phase,

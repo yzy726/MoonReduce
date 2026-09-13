@@ -16,6 +16,7 @@ pub struct Workspace {
   priv entries : Array[Entry]
   ignored : Array[String]
   mut sequence : Int
+  priv owned : Map[String, Bool]
 }
 
 ///|
@@ -156,6 +157,7 @@ pub async fn prepare(
     entries,
     ignored: ignored.copy(),
     sequence: 0,
+    owned: Map([]),
   }
 }
 
@@ -181,7 +183,44 @@ pub async fn Workspace::materialize(
     }
     write_entry(dir, entry, bytes)
   }
+  self.owned[dir] = true
   dir
+}
+
+///|
+async fn remove_owned_tree(dir : String) -> Unit {
+  for name in @fs.readdir(dir, include_hidden=true, sort=true) {
+    let path = dir + "/" + name
+    if @fs.kind(path, follow_symlink=false) == @fs.Directory {
+      remove_owned_tree(path)
+    } else {
+      @fs.remove(path)
+    }
+  }
+  @fs.rmdir(dir)
+}
+
+///|
+/// Delete only a directory issued by this Workspace, after checking its real path
+/// and owner marker. Symlinks inside the copy are removed, never traversed.
+pub async fn Workspace::cleanup(self : Workspace, dir : String) -> Unit {
+  if !self.owned.contains(dir) {
+    raise WorkspaceError(
+      "MR_INPUT_CLEANUP: directory was not created by this run",
+    )
+  }
+  let expected = self.output + "/.moonreduce/work"
+  let actual = portable(@fs.realpath(dir))
+  if actual != dir || !inside(actual, expected) || actual == expected {
+    raise WorkspaceError("MR_INPUT_CLEANUP: invalid directory identity")
+  }
+  let marker = dir + "/.moonreduce-owner"
+  if @fs.kind(marker, follow_symlink=false) != @fs.Regular ||
+    @fs.read_file(marker).text() != "MoonReduce-v1" {
+    raise WorkspaceError("MR_INPUT_CLEANUP: invalid owner marker")
+  }
+  remove_owned_tree(dir)
+  self.owned.remove(dir)
 }
 
 ///|

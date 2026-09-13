@@ -23,6 +23,7 @@ pub struct Workspace {
   mut sequence : Int
   // private fields
 }
+pub async fn Workspace::cleanup(Self, String) -> Unit
 pub async fn Workspace::export_best(Self, String) -> Unit
 pub async fn Workspace::materialize(Self, String) -> String
 pub async fn Workspace::original_unchanged(Self) -> Bool
