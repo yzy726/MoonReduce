@@ -8,6 +8,8 @@ pub fn names() -> Array[String]
 
 pub fn propose(String, String) -> Array[String]
 
+pub fn propose_iter(String, String) -> Iter[String]
+
 // Errors
 
 // Types and methods

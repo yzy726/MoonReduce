@@ -34,8 +34,8 @@ pub struct Session {
   mut status : @model.RunStatus
   mut pass_index : Int
   mut groups : Int
-  mut queue : Array[String]
-  mut queue_index : Int
+  mut queue : Iter[String]
+  mut queue_ready : Bool
   sizes : Array[Int]
   stats : Array[PassStats]
   budget : @model.Budget
@@ -66,8 +66,8 @@ pub fn Session::new(
     status: @model.Completed,
     pass_index: 0,
     groups: 2,
-    queue: [],
-    queue_index: 0,
+    queue: [].iter(),
+    queue_ready: false,
     sizes: [@source.encode(original).length()],
     stats: names.map(name => {
       name,
@@ -91,16 +91,21 @@ pub fn Session::phase_name(self : Session) -> String {
 
 ///|
 fn Session::fill_queue(self : Session) -> Unit {
-  self.queue_index = 0
+  self.queue_ready = true
   if self.pass_index == 0 {
     let ls = @text.lines(self.best)
-    self.queue = @ddmin.partitions(ls.length(), self.groups).map(p => {
-      self.best[:ls[p.0].0].to_owned() + self.best[ls[p.1 - 1].1:].to_owned()
-    })
+    self.queue = @ddmin.partitions(ls.length(), self.groups)
+      .iter()
+      .map(p => {
+        self.best[:ls[p.0].0].to_owned() + self.best[ls[p.1 - 1].1:].to_owned()
+      })
   } else if self.pass_index <= @text.names().length() {
-    self.queue = @text.propose(self.stats[self.pass_index].name, self.best)
+    self.queue = @text.propose_iter(self.stats[self.pass_index].name, self.best)
   } else {
-    self.queue = @token.propose(self.stats[self.pass_index].name, self.best)
+    self.queue = @token.propose_iter(
+      self.stats[self.pass_index].name,
+      self.best,
+    )
   }
 }
 
@@ -126,12 +131,10 @@ pub fn Session::next(self : Session) -> String? {
     return self.pending
   }
   while self.pass_index < self.stats.length() {
-    if self.queue.is_empty() {
+    if !self.queue_ready {
       self.fill_queue()
     }
-    while self.queue_index < self.queue.length() {
-      let candidate = self.queue[self.queue_index]
-      self.queue_index += 1
+    while self.queue.next() is Some(candidate) {
       if @source.encode(candidate).length() < @source.encode(self.best).length() {
         if self.cache.contains(candidate) {
           self.hits += 1
@@ -147,8 +150,8 @@ pub fn Session::next(self : Session) -> String? {
     } else {
       self.pass_index += 1
     }
-    self.queue = []
-    self.queue_index = 0
+    self.queue = [].iter()
+    self.queue_ready = false
   }
   self.phase = 2
   self.pending = Some(self.best)
@@ -195,8 +198,8 @@ pub fn Session::record(self : Session, matched : Bool) -> Unit {
         self.sizes.push(@source.encode(candidate).length())
         self.groups = (self.groups - 1).max(2)
         self.pass_index = 0
-        self.queue = []
-        self.queue_index = 0
+        self.queue = [].iter()
+        self.queue_ready = false
       }
     }
     2 =>

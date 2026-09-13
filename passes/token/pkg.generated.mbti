@@ -10,6 +10,8 @@ pub fn names() -> Array[String]
 
 pub fn propose(String, String) -> Array[String]
 
+pub fn propose_iter(String, String) -> Iter[String]
+
 pub fn scan(String) -> Array[Token]
 
 pub fn significant(String) -> Array[Token]
