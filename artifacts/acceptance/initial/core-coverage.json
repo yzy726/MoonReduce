@@ -1,0 +1,62 @@
+[
+  {
+    "file": "passes/text/text.mbt",
+    "covered_lines": 32,
+    "instrumented_lines": 33
+  },
+  {
+    "file": "config/config.mbt",
+    "covered_lines": 125,
+    "instrumented_lines": 135
+  },
+  {
+    "file": "passes/token/lexer.mbt",
+    "covered_lines": 52,
+    "instrumented_lines": 52
+  },
+  {
+    "file": "passes/token/passes.mbt",
+    "covered_lines": 38,
+    "instrumented_lines": 39
+  },
+  {
+    "file": "source/source.mbt",
+    "covered_lines": 38,
+    "instrumented_lines": 40
+  },
+  {
+    "file": "MoonReduce.mbt",
+    "covered_lines": 0,
+    "instrumented_lines": 0
+  },
+  {
+    "file": "report/report.mbt",
+    "covered_lines": 52,
+    "instrumented_lines": 52
+  },
+  {
+    "file": "reducer/engine/engine.mbt",
+    "covered_lines": 60,
+    "instrumented_lines": 62
+  },
+  {
+    "file": "reducer/ddmin/ddmin.mbt",
+    "covered_lines": 5,
+    "instrumented_lines": 5
+  },
+  {
+    "file": "model/types.mbt",
+    "covered_lines": 7,
+    "instrumented_lines": 10
+  },
+  {
+    "file": "predicate/matcher/matcher.mbt",
+    "covered_lines": 25,
+    "instrumented_lines": 25
+  },
+  {
+    "file": "reducer/engine/limits.mbt",
+    "covered_lines": 4,
+    "instrumented_lines": 4
+  }
+]

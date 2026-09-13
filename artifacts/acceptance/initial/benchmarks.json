@@ -1,0 +1,42 @@
+[
+  {
+    "fixture": "compile_diagnostic",
+    "status": "Completed",
+    "original_bytes": 450,
+    "reduced_bytes": 39,
+    "reduction_percent": 91.33,
+    "baseline_passed": 2,
+    "final_passed": 3,
+    "original_unchanged": true
+  },
+  {
+    "fixture": "test_failure",
+    "status": "Completed",
+    "original_bytes": 451,
+    "reduced_bytes": 46,
+    "reduction_percent": 89.8,
+    "baseline_passed": 2,
+    "final_passed": 3,
+    "original_unchanged": true
+  },
+  {
+    "fixture": "noisy_source",
+    "status": "Completed",
+    "original_bytes": 544,
+    "reduced_bytes": 45,
+    "reduction_percent": 91.73,
+    "baseline_passed": 2,
+    "final_passed": 3,
+    "original_unchanged": true
+  },
+  {
+    "fixture": "nonzero_exit",
+    "status": "BudgetExhausted",
+    "original_bytes": 476,
+    "reduced_bytes": 100,
+    "reduction_percent": 78.99,
+    "baseline_passed": 2,
+    "final_passed": 0,
+    "original_unchanged": true
+  }
+]

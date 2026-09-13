@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "tool": "MoonReduce",
+  "version": "0.1.0",
+  "status": "BudgetExhausted",
+  "exit_code": 4,
+  "completed": false,
+  "original": {
+    "bytes": 476,
+    "tokens": 27,
+    "lines": 15,
+    "hash": "d8aa128741e5a800",
+    "hash_algorithm": "fnv1a64"
+  },
+  "reduced": {
+    "bytes": 100,
+    "tokens": 24,
+    "lines": 2,
+    "hash": "283b45bc54787894",
+    "hash_algorithm": "fnv1a64"
+  },
+  "baseline_passed": 2,
+  "final_passed": 0,
+  "evaluations": 101,
+  "cache_hits": 23,
+  "duration_ms": "120016",
+  "original_unchanged": true,
+  "accepted_sizes": [
+    476,
+    199,
+    191,
+    116,
+    110,
+    108,
+    101,
+    100
+  ],
+  "passes": [
+    {
+      "name": "ddmin",
+      "attempts": 16,
+      "accepted": 5,
+      "removed_bytes": 368
+    },
+    {
+      "name": "line-block",
+      "attempts": 0,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "line",
+      "attempts": 0,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "blank-line",
+      "attempts": 0,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "line-comment",
+      "attempts": 0,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "block-comment",
+      "attempts": 0,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "doc-comment",
+      "attempts": 0,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "trim-edge",
+      "attempts": 0,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "balanced",
+      "attempts": 10,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "token-range",
+      "attempts": 37,
+      "accepted": 1,
+      "removed_bytes": 7
+    },
+    {
+      "name": "token",
+      "attempts": 31,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "string",
+      "attempts": 3,
+      "accepted": 0,
+      "removed_bytes": 0
+    },
+    {
+      "name": "number",
+      "attempts": 2,
+      "accepted": 1,
+      "removed_bytes": 1
+    }
+  ],
+  "config": {
+    "command": [
+      "moon",
+      "run",
+      ".",
+      "--target",
+      "native"
+    ],
+    "cwd": ".",
+    "target": "repro.mbt",
+    "failure": "NonZero",
+    "stdout_rules": [
+      {
+        "text": "MR_TARGET_EXIT",
+        "negate": false,
+        "ignore_case": false
+      }
+    ],
+    "stderr_rules": [],
+    "timeout_ms": 10000,
+    "output_limit": 1048576,
+    "budget": {
+      "max_tests": 150,
+      "max_time_ms": "120000"
+    },
+    "strip_locations": false,
+    "redacted_environment": [],
+    "cache": "v1/run-scoped-full-content",
+    "ignored": [],
+    "protected": []
+  },
+  "evidence": [
+    {
+      "schema_version": 1,
+      "phase": "baseline",
+      "matched": true,
+      "candidate_hash": "d8aa128741e5a800",
+      "bytes": 476,
+      "exit_code": 23,
+      "timed_out": false,
+      "duration_ms": "1684",
+      "stdout_hash": "bb812f79af89d9f8",
+      "stderr_hash": "cbf29ce484222325",
+      "stdout_truncated": false,
+      "stderr_truncated": false
+    },
+    {
+      "schema_version": 1,
+      "phase": "baseline",
+      "matched": true,
+      "candidate_hash": "d8aa128741e5a800",
+      "bytes": 476,
+      "exit_code": 23,
+      "timed_out": false,
+      "duration_ms": "1719",
+      "stdout_hash": "bb812f79af89d9f8",
+      "stderr_hash": "cbf29ce484222325",
+      "stdout_truncated": false,
+      "stderr_truncated": false
+    }
+  ]
+}
