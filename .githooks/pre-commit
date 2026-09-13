@@ -1,3 +1,5 @@
 #!/bin/sh
-
-moon check
+set -eu
+git diff --cached --check
+moon fmt --check
+moon check --target native --warn-list +73 --deny-warn
