@@ -1,0 +1,38 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/moon_syntax"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn scan(String) -> ReductionTree
+
+// Errors
+
+// Types and methods
+pub(all) struct Group {
+  kind : String
+  start : Int
+  end : Int
+  inner_start : Int
+  inner_end : Int
+  depth : Int
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct ReductionTree {
+  tokens : Array[Token]
+  groups : Array[Group]
+  diagnostics : Array[String]
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Token {
+  kind : String
+  text : String
+  start : Int
+  end : Int
+} derive(Eq, ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits
