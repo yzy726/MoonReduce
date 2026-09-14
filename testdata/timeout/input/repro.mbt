@@ -8,6 +8,6 @@
 // Deliberately irrelevant leading material.
 
 ///|
-fn main { println("MR_TARGET_TIMEOUT"); loop { continue } }
+fn main { for _ in 0..<1000 { println("MR_TARGET_TIMEOUT") }; while true {} }
 
 // Additional irrelevant trailing comment with plenty of removable noise.
