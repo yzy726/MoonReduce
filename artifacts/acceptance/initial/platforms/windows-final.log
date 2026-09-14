@@ -1,0 +1,55 @@
+moon 0.1.20260824 (dae026a 2026-08-24) ~\.moon\bin\moon.exe
+moonc v0.10.10+f8a486b6f (2026-08-21) ~\.moon\bin\moonc.exe
+moonrun 0.1.20260824 (dae026a 2026-08-24) ~\.moon\bin\moonrun.exe
+
+Feature flags enabled: rr_moon_mod,rr_moon_pkg
+Finished. moon: ran 35 tasks, now up to date
+warning: in the working copy of 'E:\moonbit\MoonReduce\_build\wasm-gc\release\format\app\interruption_e2e_test.mbt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'E:\moonbit\MoonReduce\_build\wasm-gc\release\format\report\report.mbt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'E:\moonbit\MoonReduce\_build\wasm-gc\release\format\app\app.mbt', LF will be replaced by CRLF the next time Git touches it
+Finished. moon: ran 3 tasks, now up to date
+Finished. moon: ran 37 tasks, now up to date
+Finished. moon: no work to do
+report.internal_test.c
+app.internal_test.c
+main.internal_test.c
+report.blackbox_test.c
+process.blackbox_test.c
+main.blackbox_test.c
+app.blackbox_test.c
+MR_CFG_FILE: cannot read or parse configuration JSON
+MR_CFG_FILE: cannot read or parse configuration JSON
+Total tests: 149, passed: 149, failed: 0.
+Total tests: 130, passed: 130, failed: 0.
+Total tests: 130, passed: 130, failed: 0.
+MoonReduce 0.1.0 — trusted-project testcase reduction
+moonreduce check [options] -- executable arg ...
+moonreduce reduce [options] -- executable arg ...
+moonreduce explain report.json
+moonreduce passes
+
+--workspace DIR         input project (default .)
+--target FILE.mbt       one workspace-relative UTF8 source
+--output DIR            new output directory outside the original workspace
+--config FILE           JSON defaults; CLI overrides values
+--cwd DIR               command directory relative to workspace (default .)
+--expect nonzero|timeout|INTEGER
+--stdout-contains TEXT / --stderr-contains TEXT (repeatable)
+--stdout-not-contains TEXT / --stderr-not-contains TEXT (repeatable)
+--ignore-case           case-insensitive output rules
+--strip-locations       normalize :line:column numbers
+--timeout 10s           per-command timeout, ms or s
+--max-time 600s         total wall-time budget
+--max-tests 1500        commands including 2 baseline + 3 final
+--output-limit 1048576  retained bytes per stream; extra output drained
+--ignore PATH           exact relative file/directory to omit (repeatable)
+--protect PATH          reject protected target (repeatable)
+--quiet / --verbose     suppress progress / report every command
+--json-events          NDJSON events (also saved in output)
+--help                 this reference
+
+JSON environment is an object of explicit environment overrides.
+Limits: 1000 files, 1 MiB/file, 16 MiB/project, 64 KiB/target.
+Only run trusted commands. Copies are not a security sandbox.
+warning: in the working copy of 'report/pkg.generated.mbti', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tools/process_probe/pkg.generated.mbti', LF will be replaced by CRLF the next time Git touches it

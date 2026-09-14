@@ -1,8 +1,7 @@
 # Scope
 
 MoonReduce reduces one UTF-8 `.mbt` target in a trusted local MoonBit project.
-The native CLI supports Windows and Linux by design; only Windows native has
-local runtime evidence at this checkpoint. The pure packages are tested on
+The native CLI has runtime evidence on Windows and Ubuntu WSL. The pure packages are tested on
 JavaScript and wasm-gc as well as native.
 
 Initial scope includes two baseline runs, a deterministic deletion scheduler,

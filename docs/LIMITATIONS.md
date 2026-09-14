@@ -1,26 +1,28 @@
 # Known limitations
 
-- Initial acceptance remains incomplete until all goal.md gates have evidence.
-- Per-attempt descendant process cleanup is not guaranteed. PowerShell/process
-  tree probes were suspended after a user warning about Huorong antivirus.
-- No security sandbox: commands can access files or services outside their copy.
-- Timeout, cancellation and cleanup depend on the native runtime and OS. A
-  detached descendant can outlive its parent; avoid such predicates.
-- Only Windows native runtime evidence is currently available. Remote CI and
-  public package installation have not been performed. No GitHub push is allowed.
+- Trusted commands only. Workspace copies are not a security sandbox; commands
+  can access files and services outside the copy.
+- Process cleanup targets identifiable descendants, with a 3000 ms cleanup
+  allowance beyond the predicate timeout. It cannot promise containment against
+  reparenting, privilege changes, PID reuse or deliberate escape. See
+  PROCESS_VALIDATION.md for exact behavior and measured evidence.
+- Native Windows and Ubuntu WSL have been tested. GitHub Actions was not run and
+  no GitHub push is allowed. Hosted-platform evidence must not be inferred.
 - No persistent cache, resume, concurrent candidates, multi-file reduction,
-  full parser, regular-expression matching or flaky quorum support.
-- Score requires a strict UTF-8 byte decrease; equal-byte simplifications are
-  skipped. The scanner is tolerant and not a full language frontend.
-- Target is limited to 64 KiB; one file to 1 MiB; snapshot to 1000 files/16 MiB.
-  Output must be a new directory outside the original workspace, with an existing
-  parent. Permissions are approximated by executable/non-executable mode.
-- The unchanged-input comparison includes regular files in the captured manifest,
-  not ignored build/cache directories or symlink targets.
-- FNV-1a is a stable identifier, not a cryptographic checksum. Cache correctness
-  relies on full candidate content, not the digest.
-- Retained process output is bounded; malformed UTF-8 output is decoded lossily.
-- Reports preserve command arguments verbatim; do not pass secrets in argv.
-- Resource accounting still needs further fault tests:
-  an interrupted
-  command may not increment the recorded completed-evaluation counter.
+  full parser, regular expressions or flaky quorum support.
+- Candidates require a strict UTF-8 byte decrease. Equal-byte simplifications are
+  skipped. Token scanning is tolerant, not a language frontend.
+- Limits: 64 KiB target, 1 MiB per file, 1000 files/16 MiB snapshot. Output must be
+  new, outside the original, and have an existing parent. Permissions are
+  approximated by executable/non-executable mode.
+- Original comparison covers the captured regular-file manifest, not ignored
+  build/cache directories or symlink targets.
+- FNV-1a identifies content; it is not a cryptographic checksum. Cache correctness
+  uses full candidate contents.
+- Output capture is bounded and non-UTF8 process output is decoded lossily.
+- Reports retain argv verbatim; never put secrets in command arguments.
+- evaluations counts completed engine verdicts; attempted_commands additionally
+  counts interrupted and failed-start attempts. Old schema-1 reports may omit
+  attempted_commands and remain readable.
+- Final-content determinism was measured for the compiler fixture. Raw event
+  hashes include unnormalized process output and can vary with temporary paths.

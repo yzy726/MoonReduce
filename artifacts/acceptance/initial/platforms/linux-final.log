@@ -1,0 +1,32 @@
+Finished. moon: ran 62 tasks, now up to date
+Finished. moon: ran 62 tasks, now up to date
+Finished. moon: ran 31 tasks, now up to date
+MoonReduce 0.1.0 — trusted-project testcase reduction
+moonreduce check [options] -- executable arg ...
+moonreduce reduce [options] -- executable arg ...
+moonreduce explain report.json
+moonreduce passes
+
+--workspace DIR         input project (default .)
+--target FILE.mbt       one workspace-relative UTF8 source
+--output DIR            new output directory outside the original workspace
+--config FILE           JSON defaults; CLI overrides values
+--cwd DIR               command directory relative to workspace (default .)
+--expect nonzero|timeout|INTEGER
+--stdout-contains TEXT / --stderr-contains TEXT (repeatable)
+--stdout-not-contains TEXT / --stderr-not-contains TEXT (repeatable)
+--ignore-case           case-insensitive output rules
+--strip-locations       normalize :line:column numbers
+--timeout 10s           per-command timeout, ms or s
+--max-time 600s         total wall-time budget
+--max-tests 1500        commands including 2 baseline + 3 final
+--output-limit 1048576  retained bytes per stream; extra output drained
+--ignore PATH           exact relative file/directory to omit (repeatable)
+--protect PATH          reject protected target (repeatable)
+--quiet / --verbose     suppress progress / report every command
+--json-events          NDJSON events (also saved in output)
+--help                 this reference
+
+JSON environment is an object of explicit environment overrides.
+Limits: 1000 files, 1 MiB/file, 16 MiB/project, 64 KiB/target.
+Only run trusted commands. Copies are not a security sandbox.

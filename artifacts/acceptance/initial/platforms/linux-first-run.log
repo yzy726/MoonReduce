@@ -1,0 +1,14 @@
+moon 0.1.20260819 (fc2a4ee 2026-08-19) ~/.moon/bin/moon
+moonc v0.10.9+6e6c44045 (2026-08-19) ~/.moon/bin/moonc
+moonrun 0.1.20260819 (fc2a4ee 2026-08-19) ~/.moon/bin/moonrun
+
+Feature flags enabled: rr_moon_mod,rr_moon_pkg
+Finished. moon: ran 51 tasks, now up to date
+Finished. moon: ran 62 tasks, now up to date
+MR_CFG_FILE: cannot read or parse configuration JSON
+MR_CFG_FILE: cannot read or parse configuration JSON
+[Ag108/MoonReduce] test app/interruption_e2e_test.mbt:16 ("e2e_timeout_preserves_original_and_final_verification") failed: OSError("@fs.realpath(): \"_build/native/debug/build/tools/process_probe/process_probe\": No such file or directory")
+[Ag108/MoonReduce] test app/interruption_e2e_test.mbt:31 ("e2e_cancel_preserves_original_and_exports_interrupted_report") failed: OSError("@fs.realpath(): \"_build/native/debug/build/tools/process_probe/process_probe\": No such file or directory")
+[Ag108/MoonReduce] test evaluator/process/tree_test.mbt:32 ("e2e_cancellation_reaps_owned_descendant_without_shell") failed: OSError("@fs.realpath(): \"_build/native/debug/build/tools/process_probe/process_probe\": No such file or directory")
+[Ag108/MoonReduce] test evaluator/process/tree_test.mbt:2 ("regr_timeout_reaps_owned_descendant_without_shell") failed: OSError("@fs.realpath(): \"_build/native/debug/build/tools/process_probe/process_probe\": No such file or directory")
+Total tests: 149, passed: 145, failed: 4.

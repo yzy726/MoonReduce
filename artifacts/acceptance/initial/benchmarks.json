@@ -20,21 +20,31 @@
     "original_unchanged": true
   },
   {
-    "fixture": "noisy_source",
-    "status": "Completed",
-    "original_bytes": 544,
-    "reduced_bytes": 45,
-    "reduction_percent": 91.73,
-    "baseline_passed": 2,
-    "final_passed": 3,
-    "original_unchanged": true
-  },
-  {
     "fixture": "nonzero_exit",
     "status": "Completed",
     "original_bytes": 476,
     "reduced_bytes": 100,
     "reduction_percent": 78.99,
+    "baseline_passed": 2,
+    "final_passed": 3,
+    "original_unchanged": true
+  },
+  {
+    "fixture": "timeout",
+    "status": "Completed",
+    "original_bytes": 441,
+    "reduced_bytes": 79,
+    "reduction_percent": 82.09,
+    "baseline_passed": 2,
+    "final_passed": 3,
+    "original_unchanged": true
+  },
+  {
+    "fixture": "noisy_source",
+    "status": "Completed",
+    "original_bytes": 544,
+    "reduced_bytes": 45,
+    "reduction_percent": 91.73,
     "baseline_passed": 2,
     "final_passed": 3,
     "original_unchanged": true

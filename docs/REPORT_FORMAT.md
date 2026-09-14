@@ -25,3 +25,5 @@ The unified diff uses one complete-file hunk and preserves no-final-newline
 markers. Reproduction records an argv JSON array and working directory under
 `reduced`; it does not invent shell quoting. NDJSON events are capped at roughly
 4 Mi code units; event truncation metadata is not yet implemented.
+
+attempted_commands counts calls to the process adapter, including cancelled and failed-start attempts. evaluations retains its completed-engine-verdict meaning. The new field is additive in schema 1; historical reports can omit it.

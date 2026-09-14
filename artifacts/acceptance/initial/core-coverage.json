@@ -31,8 +31,8 @@
   },
   {
     "file": "report/report.mbt",
-    "covered_lines": 52,
-    "instrumented_lines": 52
+    "covered_lines": 53,
+    "instrumented_lines": 53
   },
   {
     "file": "reducer/engine/engine.mbt",

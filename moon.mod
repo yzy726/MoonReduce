@@ -19,11 +19,11 @@ repository = ""
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "testing", "reducer", "delta-debugging", "cli" ]
 
 preferred_target = "native"
 
-description = ""
+description = "Deterministic failure-preserving testcase reduction for MoonBit projects"
 
 import {
   "moonbitlang/async@0.20.4",
