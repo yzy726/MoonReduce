@@ -10,6 +10,8 @@ pub fn declarations(ReductionTree) -> Array[Node]
 
 pub fn scan(String) -> ReductionTree
 
+pub fn segments(ReductionTree, Group, String) -> Array[Node]
+
 // Errors
 
 // Types and methods
