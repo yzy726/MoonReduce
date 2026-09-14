@@ -6,7 +6,7 @@
 使用功能分支，完成后合并本地主分支。
 2026-09-15：用户明确授权 push 并测试 GitHub Actions CI，覆盖此前禁止上传的限制。
 
-2026-09-15 后续授权：现有提交 e3d64bc 已上传。此后只提交并合并本地 Git，禁止再次 push 或发布远程制品。先完成项目申报书，等待用户上传 mooncakes 后再继续终验。申报书必须命名为 .gitignore 已忽略的 项目申报书.md，仅保留本地，不得强制 git add、提交或 push。不得恢复已删除的 AI_USAGE.md，README 不描述上传或 CI 状态。
+2026-09-15 后续授权：现有提交 e3d64bc 已上传。此后只提交并合并本地 Git，禁止再次 push 或发布远程制品。项目申报书已完成；用户随后明确要求继续开发，已授权推进终验。注册表发布状态须以实际证据核实，不推断已发布。申报书必须命名为 .gitignore 已忽略的 项目申报书.md，仅保留本地，不得强制 git add、提交或 push。不得恢复已删除的 AI_USAGE.md，README 不描述上传或 CI 状态。
 
 This is a [MoonBit](https://docs.moonbitlang.com) project.
 
