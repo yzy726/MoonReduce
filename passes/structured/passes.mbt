@@ -80,6 +80,7 @@ pub fn propose_iter(name : String, source : String) -> Iter[String] {
   }
   let bytes = @source.encode(source)
   let edits = declaration_edits(name, tree)
+  edits.append(body_edits(name, tree, bytes))
   let seen : Map[String, Bool] = Map([])
   edits
   .iter()
