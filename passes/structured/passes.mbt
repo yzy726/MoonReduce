@@ -73,7 +73,11 @@ fn declaration_edits(
 ///|
 /// Generate byte-range edits lazily. Every result is strictly smaller and still
 /// requires external predicate validation. Incomplete syntax returns no edits.
-pub fn propose_iter(name : String, source : String) -> Iter[String] {
+pub fn propose_iter(
+  name : String,
+  source : String,
+  allow_format? : Bool = false,
+) -> Iter[String] {
   let tree = @moon_syntax.scan(source)
   if !tree.diagnostics.is_empty() {
     return [].iter()
@@ -81,6 +85,7 @@ pub fn propose_iter(name : String, source : String) -> Iter[String] {
   let bytes = @source.encode(source)
   let edits = declaration_edits(name, tree)
   edits.append(body_edits(name, tree, bytes))
+  edits.append(cleanup_edits(name, tree, bytes, allow_format))
   let seen : Map[String, Bool] = Map([])
   edits
   .iter()
@@ -102,6 +107,10 @@ pub fn propose_iter(name : String, source : String) -> Iter[String] {
 ///|
 /// Collect proposals for inspection and small tests. Prefer the lazy interface
 /// when driving a reducer so a successful candidate can stop the current pass.
-pub fn propose(name : String, source : String) -> Array[String] {
-  propose_iter(name, source).to_array()
+pub fn propose(
+  name : String,
+  source : String,
+  allow_format? : Bool = false,
+) -> Array[String] {
+  propose_iter(name, source, allow_format~).to_array()
 }

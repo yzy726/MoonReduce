@@ -2,9 +2,11 @@
 package "Ag108/MoonReduce/passes/structured"
 
 // Values
-pub fn propose(String, String) -> Array[String]
+pub fn names() -> Array[String]
 
-pub fn propose_iter(String, String) -> Iter[String]
+pub fn propose(String, String, allow_format? : Bool) -> Array[String]
+
+pub fn propose_iter(String, String, allow_format? : Bool) -> Iter[String]
 
 // Errors
 
