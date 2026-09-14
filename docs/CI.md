@@ -5,14 +5,13 @@ compiler and resolved dependencies. It fails at the first failed gate, builds
 the test probe and checks format, native types/tests, pure backends and CLI help.
 It never pushes code or installs software.
 
-.github/workflows/ci.yml contains the Windows/Linux hosted matrix. The user authorized GitHub push and hosted CI on 2026-09-15; the first hosted run is pending. Local Windows and Ubuntu
+.github/workflows/ci.yml contains the Windows/Linux hosted matrix. The user authorized GitHub push and hosted CI on 2026-09-15; the first hosted run failed because the latest formatter changed record trailing commas. The workflow now pins the locally verified toolchain; the next hosted result is pending. Local Windows and Ubuntu
 WSL executions of the equivalent gates are recorded separately under
 artifacts/acceptance/initial/platforms. Do not present these as GitHub Actions runs.
 
 The workflow uses official installers documented at
 https://docs.moonbitlang.com/en/stable/tutorial/tour.html .
-They currently select stable toolchains, so this is compatibility CI rather than
-a reproducible pinned release. Logs record the actual versions.
+The installers use MOONBIT_INSTALL_VERSION=0.10.10+f8a486b6f, matching the locally verified compiler. This version is the compiler release identifier, not the moon build-tool version. Upgrade it deliberately with formatting and interface review. Logs record actual versions.
 
 Local hooks are enabled with git config core.hooksPath .githooks. pre-commit checks
 whitespace, format and native types; commit-msg checks Conventional Commits.
