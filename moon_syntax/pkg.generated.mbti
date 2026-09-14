@@ -6,6 +6,8 @@ import {
 }
 
 // Values
+pub fn declarations(ReductionTree) -> Array[Node]
+
 pub fn scan(String) -> ReductionTree
 
 // Errors
@@ -18,6 +20,12 @@ pub(all) struct Group {
   inner_start : Int
   inner_end : Int
   depth : Int
+} derive(Eq, ToJson, @debug.Debug)
+
+pub(all) struct Node {
+  kind : String
+  start : Int
+  end : Int
 } derive(Eq, ToJson, @debug.Debug)
 
 pub(all) struct ReductionTree {
