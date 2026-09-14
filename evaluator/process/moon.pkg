@@ -1,4 +1,6 @@
 import {
+  "moonbitlang/core/env",
+  "moonbitlang/core/string",
   "moonbitlang/async",
   "moonbitlang/async/process" @child,
   "moonbitlang/core/encoding/utf8",
@@ -6,3 +8,7 @@ import {
 }
 
 supported_targets = "-all+native"
+
+import {
+  "moonbitlang/async/fs",
+} for "test"

@@ -9,6 +9,8 @@ try {
   if ($LASTEXITCODE -ne 0) { throw 'Formatting failed' }
   moon check --target native --warn-list +73 --deny-warn
   if ($LASTEXITCODE -ne 0) { throw 'Native check failed' }
+  moon build --target native tools/process_probe
+  if ($LASTEXITCODE -ne 0) { throw 'Native probe build failed' }
   moon test --target native --deny-warn
   if ($LASTEXITCODE -ne 0) { throw 'Native tests failed' }
   moon test --target js --deny-warn

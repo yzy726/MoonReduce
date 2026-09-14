@@ -48,6 +48,7 @@ pub async fn run(
   defer read_out.close()
   let (read_err, write_err) = @child.read_from_process()
   defer read_err.close()
+  let cleanup_error : Ref[String?] = Ref(None)
   let result = @async.with_timeout_opt(spec.timeout_ms, () => {
     @async.with_task_group(group => {
       let command = group.spawn(() => {
@@ -59,7 +60,7 @@ pub async fn run(
           stdout=write_out,
           stderr=write_err,
           no_console_window=true,
-          cancel_handler=@child.hard_cancel(),
+          cancel_handler=tree_cancel(cleanup_error),
         )
       })
       group.spawn_bg(() => drain(read_out, out, spec.output_limit))
@@ -67,6 +68,9 @@ pub async fn run(
       command.wait()
     })
   })
+  if cleanup_error.val is Some(message) {
+    raise ProcessError(message)
+  }
   {
     exit_code: result.unwrap_or(-1),
     timed_out: result is None,
