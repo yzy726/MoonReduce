@@ -134,6 +134,6 @@ moon test --target wasm-gc --deny-warn
 
 ## 许可证与贡献
 
-采用 [Apache-2.0](LICENSE)。依赖与来源见 [THIRD_PARTY.md](THIRD_PARTY.md)、[REFERENCES.md](REFERENCES.md)，AI 辅助开发记录见 [AI_USAGE.md](AI_USAGE.md)。
+采用 [Apache-2.0](LICENSE)。依赖与来源见 [THIRD_PARTY.md](THIRD_PARTY.md)、[REFERENCES.md](REFERENCES.md)。
 
 贡献流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。本项目按小步提交 Git；pre-push hook 通过 PowerShell 7（`pwsh`）运行统一验证脚本，检查失败时拒绝推送。

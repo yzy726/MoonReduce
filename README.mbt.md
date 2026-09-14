@@ -57,5 +57,4 @@ timeout and noise. All five passed three final checks and at least 30% byte redu
 
 Import Ag108/MoonReduce/reducer/engine for the pure Session request/verdict API,
 predicate/matcher for rules, or app for native execution. Generated .mbti files
-record current signatures. APIs are pre-stable. Apache-2.0; see THIRD_PARTY.md and
-AI_USAGE.md for attribution.
+record current signatures. APIs are pre-stable. Apache-2.0; see THIRD_PARTY.md and REFERENCES.md for attribution.
