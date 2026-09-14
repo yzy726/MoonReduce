@@ -1,6 +1,6 @@
 {
-  "nonblank_non_line_comment_lines": 3032,
-  "test_lines": 1331,
-  "production_lines": 1701,
+  "nonblank_non_line_comment_lines": 3145,
+  "test_lines": 1433,
+  "production_lines": 1712,
   "method": "Tracked .mbt excluding fixtures/examples/artifacts; blank lines and // lines omitted. Approximation, includes punctuation and literal data."
 }

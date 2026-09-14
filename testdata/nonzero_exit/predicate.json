@@ -11,7 +11,7 @@
   "stdout_contains": [
     "MR_TARGET_EXIT"
   ],
-  "max_tests": 150,
+  "max_tests": 1000,
   "timeout": "10s",
-  "max_time": "120s"
+  "max_time": "600s"
 }

@@ -6,41 +6,41 @@
   "exit_code": 0,
   "completed": true,
   "original": {
-    "bytes": 476,
-    "tokens": 27,
+    "bytes": 450,
+    "tokens": 20,
     "lines": 15,
-    "hash": "d8aa128741e5a800",
+    "hash": "77c551156eda758",
     "hash_algorithm": "fnv1a64"
   },
   "reduced": {
-    "bytes": 100,
-    "tokens": 24,
-    "lines": 2,
-    "hash": "283b45bc54787894",
+    "bytes": 39,
+    "tokens": 6,
+    "lines": 1,
+    "hash": "138e8c2fcca995ba",
     "hash_algorithm": "fnv1a64"
   },
   "baseline_passed": 2,
   "final_passed": 3,
-  "evaluations": 120,
-  "cache_hits": 25,
-  "duration_ms": "128431",
+  "evaluations": 41,
+  "cache_hits": 7,
+  "duration_ms": "16881",
   "original_unchanged": true,
   "accepted_sizes": [
-    476,
-    199,
-    191,
-    116,
-    110,
-    108,
-    101,
-    100
+    450,
+    173,
+    122,
+    47,
+    45,
+    43,
+    40,
+    39
   ],
   "passes": [
     {
       "name": "ddmin",
-      "attempts": 16,
-      "accepted": 5,
-      "removed_bytes": 368
+      "attempts": 7,
+      "accepted": 4,
+      "removed_bytes": 405
     },
     {
       "name": "line-block",
@@ -86,59 +86,58 @@
     },
     {
       "name": "balanced",
-      "attempts": 10,
+      "attempts": 3,
       "accepted": 0,
       "removed_bytes": 0
     },
     {
       "name": "token-range",
-      "attempts": 37,
-      "accepted": 1,
-      "removed_bytes": 7
+      "attempts": 15,
+      "accepted": 2,
+      "removed_bytes": 3
     },
     {
       "name": "token",
-      "attempts": 44,
-      "accepted": 0,
-      "removed_bytes": 0
+      "attempts": 11,
+      "accepted": 1,
+      "removed_bytes": 3
     },
     {
       "name": "string",
-      "attempts": 6,
+      "attempts": 0,
       "accepted": 0,
       "removed_bytes": 0
     },
     {
       "name": "number",
-      "attempts": 2,
-      "accepted": 1,
-      "removed_bytes": 1
+      "attempts": 0,
+      "accepted": 0,
+      "removed_bytes": 0
     }
   ],
   "config": {
     "command": [
       "moon",
-      "run",
-      ".",
+      "check",
       "--target",
       "native"
     ],
     "cwd": ".",
     "target": "repro.mbt",
     "failure": "NonZero",
-    "stdout_rules": [
+    "stdout_rules": [],
+    "stderr_rules": [
       {
-        "text": "MR_TARGET_EXIT",
+        "text": "The value identifier mr_missing_symbol is unbound",
         "negate": false,
         "ignore_case": false
       }
     ],
-    "stderr_rules": [],
     "timeout_ms": 10000,
     "output_limit": 1048576,
     "budget": {
-      "max_tests": 1000,
-      "max_time_ms": "600000"
+      "max_tests": 150,
+      "max_time_ms": "120000"
     },
     "strip_locations": false,
     "redacted_environment": [],
@@ -151,13 +150,13 @@
       "schema_version": 1,
       "phase": "baseline",
       "matched": true,
-      "candidate_hash": "d8aa128741e5a800",
-      "bytes": 476,
-      "exit_code": 23,
+      "candidate_hash": "77c551156eda758",
+      "bytes": 450,
+      "exit_code": -1,
       "timed_out": false,
-      "duration_ms": "2804",
-      "stdout_hash": "bb812f79af89d9f8",
-      "stderr_hash": "cbf29ce484222325",
+      "duration_ms": "344",
+      "stdout_hash": "cbf29ce484222325",
+      "stderr_hash": "6e4038821828a12c",
       "stdout_truncated": false,
       "stderr_truncated": false
     },
@@ -165,13 +164,13 @@
       "schema_version": 1,
       "phase": "baseline",
       "matched": true,
-      "candidate_hash": "d8aa128741e5a800",
-      "bytes": 476,
-      "exit_code": 23,
+      "candidate_hash": "77c551156eda758",
+      "bytes": 450,
+      "exit_code": -1,
       "timed_out": false,
-      "duration_ms": "1495",
-      "stdout_hash": "bb812f79af89d9f8",
-      "stderr_hash": "cbf29ce484222325",
+      "duration_ms": "319",
+      "stdout_hash": "cbf29ce484222325",
+      "stderr_hash": "a1e7be9dec4a45c7",
       "stdout_truncated": false,
       "stderr_truncated": false
     },
@@ -179,13 +178,13 @@
       "schema_version": 1,
       "phase": "final",
       "matched": true,
-      "candidate_hash": "283b45bc54787894",
-      "bytes": 100,
-      "exit_code": 1,
+      "candidate_hash": "138e8c2fcca995ba",
+      "bytes": 39,
+      "exit_code": -1,
       "timed_out": false,
-      "duration_ms": "1734",
-      "stdout_hash": "bb812f79af89d9f8",
-      "stderr_hash": "cbf29ce484222325",
+      "duration_ms": "351",
+      "stdout_hash": "cbf29ce484222325",
+      "stderr_hash": "b13a33294533eda1",
       "stdout_truncated": false,
       "stderr_truncated": false
     },
@@ -193,13 +192,13 @@
       "schema_version": 1,
       "phase": "final",
       "matched": true,
-      "candidate_hash": "283b45bc54787894",
-      "bytes": 100,
-      "exit_code": 1,
+      "candidate_hash": "138e8c2fcca995ba",
+      "bytes": 39,
+      "exit_code": -1,
       "timed_out": false,
-      "duration_ms": "2080",
-      "stdout_hash": "bb812f79af89d9f8",
-      "stderr_hash": "cbf29ce484222325",
+      "duration_ms": "359",
+      "stdout_hash": "cbf29ce484222325",
+      "stderr_hash": "e8c411c7eb538da9",
       "stdout_truncated": false,
       "stderr_truncated": false
     },
@@ -207,13 +206,13 @@
       "schema_version": 1,
       "phase": "final",
       "matched": true,
-      "candidate_hash": "283b45bc54787894",
-      "bytes": 100,
-      "exit_code": 1,
+      "candidate_hash": "138e8c2fcca995ba",
+      "bytes": 39,
+      "exit_code": -1,
       "timed_out": false,
-      "duration_ms": "1568",
-      "stdout_hash": "bb812f79af89d9f8",
-      "stderr_hash": "cbf29ce484222325",
+      "duration_ms": "385",
+      "stdout_hash": "cbf29ce484222325",
+      "stderr_hash": "f61f8819c8149285",
       "stdout_truncated": false,
       "stderr_truncated": false
     }
