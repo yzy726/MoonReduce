@@ -3,7 +3,8 @@
 ## Git 自动提交授权
 
 2026-09-09：用户授权按 goal.md 完成初验目标，每个可验证小步提交本地 Git。
-使用功能分支，完成后合并本地主分支。禁止 push 或上传 GitHub。
+使用功能分支，完成后合并本地主分支。
+2026-09-15：用户明确授权 push 并测试 GitHub Actions CI，覆盖此前禁止上传的限制。
 
 This is a [MoonBit](https://docs.moonbitlang.com) project.
 
