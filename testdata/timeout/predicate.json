@@ -8,8 +8,10 @@
     "native"
   ],
   "expect": "timeout",
-  "stdout_contains": [],
-  "max_tests": 150,
-  "timeout": "3s",
-  "max_time": "120s"
+  "stdout_contains": [
+    "MR_TARGET_TIMEOUT"
+  ],
+  "max_tests": 500,
+  "timeout": "10s",
+  "max_time": "1200s"
 }
