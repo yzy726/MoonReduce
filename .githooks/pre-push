@@ -1,3 +1,3 @@
 #!/bin/sh
-set -eu
-exec pwsh -NoProfile -File scripts/verify.ps1
+printf '%s\n' 'Push disabled: subsequent development is local-only per user instruction.' >&2
+exit 1
