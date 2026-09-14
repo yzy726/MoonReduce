@@ -5,7 +5,7 @@ compiler and resolved dependencies. It fails at the first failed gate, builds
 the test probe and checks format, native types/tests, pure backends and CLI help.
 It never pushes code or installs software.
 
-.github/workflows/ci.yml contains the Windows/Linux hosted matrix. The user authorized GitHub push and hosted CI on 2026-09-15; the first hosted run failed because the latest formatter changed record trailing commas. The workflow now pins the locally verified toolchain; the next hosted result is pending. Local Windows and Ubuntu
+.github/workflows/ci.yml contains the Windows/Linux hosted matrix. The user authorized GitHub push and hosted CI on 2026-09-15; the first hosted run failed because the latest formatter changed record trailing commas. The workflow now pins the locally verified toolchain; [run 34868084603](https://github.com/yzy726/MoonReduce/actions/runs/34868084603) passed on Windows and Linux at commit efca2d163d3ced8d793aae05a15802afd24abbd9. Local Windows and Ubuntu
 WSL executions of the equivalent gates are recorded separately under
 artifacts/acceptance/initial/platforms. Do not present these as GitHub Actions runs.
 
