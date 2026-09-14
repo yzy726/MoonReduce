@@ -1,3 +1,4 @@
 import {
   "Ag108/MoonReduce/source",
+  "Ag108/MoonReduce/workspace/glob",
 }
