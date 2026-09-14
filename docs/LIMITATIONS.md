@@ -21,6 +21,6 @@
   relies on full candidate content, not the digest.
 - Retained process output is bounded; malformed UTF-8 output is decoded lossily.
 - Reports preserve command arguments verbatim; do not pass secrets in argv.
-- CLI failure categories and resource accounting still need further fault tests:
-  invalid JSON file loading maps to the generic native error, and an interrupted
+- Resource accounting still needs further fault tests:
+  an interrupted
   command may not increment the recorded completed-evaluation counter.
