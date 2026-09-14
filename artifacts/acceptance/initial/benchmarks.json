@@ -31,12 +31,12 @@
   },
   {
     "fixture": "nonzero_exit",
-    "status": "BudgetExhausted",
+    "status": "Completed",
     "original_bytes": 476,
     "reduced_bytes": 100,
     "reduction_percent": 78.99,
     "baseline_passed": 2,
-    "final_passed": 0,
+    "final_passed": 3,
     "original_unchanged": true
   }
 ]

@@ -4,7 +4,7 @@
   "platform": "Windows",
   "command": "./scripts/verify.ps1",
   "exit_code": 0,
-  "native_tests": 139,
+  "native_tests": 145,
   "js_tests": 130,
   "wasm_gc_tests": 130,
   "format": "pass",
