@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/workspace/manifest"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Snapshot {
+  entries : Array[(String, Bytes)]
+}
+pub fn Snapshot::files(Self) -> Array[(String, Bytes)]
+pub fn Snapshot::key(Self) -> String
+pub fn Snapshot::new(Array[(String, Bytes)]) -> Result[Self, String]
+pub fn Snapshot::remove(Self, String) -> Result[Self, String]
+pub fn Snapshot::replace(Self, String, Bytes) -> Result[Self, String]
+
+// Type aliases
+
+// Traits
