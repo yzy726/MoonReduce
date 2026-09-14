@@ -8,7 +8,7 @@
 
 ## 当前状态
 
-版本：`0.1.0`。本地技术验收已通过；正式 mooncakes 发布与公开安装验证尚未完成。Windows 与 Ubuntu WSL 的自动验证结果已保存，**未运行 GitHub Actions，也未上传 GitHub**。
+版本：`0.1.0`。本地技术验收已通过；正式 mooncakes 发布与公开安装验证尚未完成。代码已推送 GitHub，Windows 与 Linux 的 [GitHub Actions CI 已通过](https://github.com/yzy726/MoonReduce/actions/runs/34868084603)，本地 Windows 与 Ubuntu WSL 验证记录也已保存。
 
 截至 2026-09-14 的验证记录：
 

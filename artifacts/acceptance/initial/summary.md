@@ -1,9 +1,6 @@
 # Initial acceptance — 0.1.0
 
-Updated 2026-09-14. Local technical acceptance is verified. Public registry
-publication/installation is the remaining release step. No GitHub upload or hosted
-Actions run has been performed. Cross-platform evidence uses the local Windows
-and Ubuntu WSL automated matrices under the user's no-GitHub-upload constraint.
+Updated 2026-09-15. Local technical acceptance and Windows/Linux GitHub Actions CI are verified. Public registry publication/installation remains pending. Hosted evidence: [run 34868084603](https://github.com/yzy726/MoonReduce/actions/runs/34868084603), commit efca2d163d3ced8d793aae05a15802afd24abbd9. Earlier local Windows/Ubuntu WSL matrices remain separate evidence.
 
 | ID | Result | Evidence |
 | --- | --- | --- |
@@ -19,13 +16,11 @@ and Ubuntu WSL automated matrices under the user's no-GitHub-upload constraint.
 | I-10 | PASS | JSON/Markdown/diff/reproduction artifacts; interrupted attempted_commands regression |
 | I-11 | PASS | Both native suites 149/149; pure suites 130/130; core lines 439/458 (95.85%) |
 | I-12 | PASS | Five fixtures each >=30%; median reduction 89.80% |
-| I-13 | LOCAL MATRIX PASS; hosted unrun | platforms/windows-final.log and platforms/linux-final-matrix.log; not GitHub Actions evidence |
+| I-13 | HOSTED CI PASS | [Windows/Linux run 34868084603](https://github.com/yzy726/MoonReduce/actions/runs/34868084603); commit efca2d1 |
 | I-14 | PASS locally | Both matrices check format, native types/tests, JS, wasm-gc and CLI |
 | I-15 | RELEASE PENDING | Required docs and clean-package smoke pass; registry dry-run accepted; public install still pending |
 
-I-13 deliberately distinguishes local equivalent checks from hosted CI. If an
-external reviewer requires actual hosted CI, that requirement remains outstanding;
-this report must not be described as proof of a hosted CI run.
+I-13 now includes a real hosted CI run. The first run failed on formatter changes in the latest toolchain; pinning the locally verified compiler fixed the failure without weakening any verification gates.
 
 ## Real benchmarks
 

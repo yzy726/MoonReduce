@@ -5,7 +5,7 @@ MoonReduce is a MoonBit library and native CLI for reducing one failing UTF-8
 
 **Status: 0.1.0 local acceptance verified; see the evidence for publication and hosted-CI status.**
 See [acceptance status](artifacts/acceptance/initial/summary.md) and
-[limitations](docs/LIMITATIONS.md). No GitHub upload has been performed.
+[limitations](docs/LIMITATIONS.md). Windows and Linux [hosted CI passed](https://github.com/yzy726/MoonReduce/actions/runs/34868084603).
 
 ## Quick start
 
