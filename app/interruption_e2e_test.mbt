@@ -1,13 +1,8 @@
 ///|
 async fn probe_path() -> String {
-  let suffix = if @env.get_env_var("OS") == Some("Windows_NT") {
-    ".exe"
-  } else {
-    ""
-  }
   @fs.realpath(
     @env.get_env_var("MR_PROCESS_PROBE").unwrap_or(
-      "_build/native/debug/build/tools/process_probe/process_probe" + suffix,
+      "_build/native/debug/build/tools/process_probe/process_probe.exe",
     ),
   )
 }
