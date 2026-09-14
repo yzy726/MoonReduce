@@ -1,0 +1,9 @@
+MR_CFG_FILE: cannot read or parse configuration JSON
+MR_CFG_FILE: cannot read or parse configuration JSON
+Total tests: 149, passed: 149, failed: 0.
+Error: failed to run test for target Js
+
+Caused by:
+    0: Failed to run test for Ag108/MoonReduce/config BlackboxTest
+    1: Failed to spawn command Command { std: cd "/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1" && "node" "--enable-source-maps" "/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/_build/js/debug/test/config/config.blackbox_test.js" "{\"package\":\"Ag108/MoonReduce/config\",\"file_and_index\":[[\"matrix_test.mbt\",[{\"start\":0,\"end\":45}]],[\"config_test.mbt\",[{\"start\":0,\"end\":4}]],[\"config.mbt\",[]],[\"matrix_test.mbt\",[]],[\"config_test.mbt\",[]],[\"config.mbt\",[]],[\"matrix_test.mbt\",[]],[\"config_test.mbt\",[]],[\"config.mbt\",[]],[\"matrix_test.mbt\",[]],[\"config_test.mbt\",[]],[\"config.mbt\",[]]]}", kill_on_drop: true }
+    2: No such file or directory (os error 2)

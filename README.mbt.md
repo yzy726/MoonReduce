@@ -3,7 +3,7 @@
 MoonReduce is a MoonBit library and native CLI for reducing one failing UTF-8
 `.mbt` file while retaining a specified external-command failure.
 
-**Status: initial acceptance candidate, not a released or fully accepted product.**
+**Status: 0.1.0 local acceptance verified; see the evidence for publication and hosted-CI status.**
 See [acceptance status](artifacts/acceptance/initial/summary.md) and
 [limitations](docs/LIMITATIONS.md). No GitHub upload has been performed.
 
@@ -36,7 +36,7 @@ passes. Only strictly smaller matching candidates are accepted. Full-content
 run-scoped caching avoids duplicate evaluation. Three final checks bypass cache.
 Budgets/cancellation retain the last accepted result, but incomplete final checks
 do not certify it. Only run trusted projects and commands: copies are not a sandbox.
-Avoid predicates that detach children; descendant cleanup remains unverified.
+Descendant timeout/cancellation tests pass on Windows and Ubuntu; see the process validation limits.
 
 ## Commands
 
@@ -51,7 +51,7 @@ moon run cmd/main -- reduce --config testdata/noisy_source/predicate.json --work
 ```
 
 Five [examples](examples/) cover compiler diagnostics, test failure, nonzero,
-timeout and noise. Timeout execution is deferred pending process-tree validation.
+timeout and noise. All five passed three final checks and at least 30% byte reduction.
 
 ## Library
 

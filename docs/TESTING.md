@@ -1,36 +1,45 @@
 # Testing
 
-Run from the repository root:
+Use ./scripts/verify.ps1 with PowerShell. It builds the bounded native test probe
+before running the native suite. The equivalent individual commands are:
 
 ```text
+moon info --target native
 moon fmt --check
-moon check --deny-warn
-moon test --deny-warn
+moon check --target native --warn-list +73 --deny-warn
+moon build --target native tools/process_probe
+moon test --target native --deny-warn
 moon test --target js --deny-warn
 moon test --target wasm-gc --deny-warn
-moon info
+moon run cmd/main -- --help
+```
+
+The native probe is _build/native/debug/build/tools/process_probe/process_probe.exe
+on both measured platforms. MR_PROCESS_PROBE can override it with an absolute
+path. It never invokes a shell and naturally expires within ten seconds.
+
+The suite includes 149 native tests (including seven app pipeline E2Es and two
+descendant lifecycle tests) and 130 pure-backend tests. Tests cover predicate
+tables, invalid configuration, UTF-8/path boundaries, lexer opacity, passes,
+cache/budget/cancel, reports, original preservation and isolated real moon check.
+The engine checks all 255 nonempty required subsets of eight lines under a
+monotone predicate; this does not prove global minimality for arbitrary predicates.
+
+Coverage commands:
+
+```text
 moon test --target js --enable-coverage --deny-warn
 moon coverage report -f summary
 moon coverage report -f coveralls -o coverage.json
 ```
 
-Native packages are excluded from JS/wasm-gc. The regular suite excludes suspended
-PowerShell/process-tree probes; never count those as passing. Native E2E tests
-execute trusted local moon commands and filesystem operations, not remote services.
+Summary coverage counts instrumentation points. Line coverage counts non-null
+coveralls entries, with positive entries covered. The measured Windows exporter
+emits unescaped path separators in name fields; normalize only those fields before
+parsing. Native-only code is excluded from core coverage. Raw platform and fixture
+evidence is under artifacts/acceptance/initial.
 
-Coverage summary counts instrumentation points. Line coverage uses non-null
-coverage array entries, with positive entries counted as covered. The Windows
-coveralls exporter emits unescaped path backslashes; normalize only source-file
-name separators before JSON parsing, retaining the raw file for auditing.
-
-Tests cover predicate tables, invalid configuration, path/encoding boundaries,
-lexer opacity, passes, cache/budget/cancel and reports. The engine exhaustively
-checks all 255 nonempty required subsets of eight lines under a monotone predicate;
-this is not a proof of global minimality for arbitrary predicates. Ten independent
-pure runs check deterministic final content.
-
-Native tests cover fresh-copy isolation, original preservation, confinement,
-owner-marker cleanup, process capture, missing executables and a complete real
-moon check reduction. Benchmark commands are in examples/*/README.md. A pass
-requires baseline=2, final=3, unchanged original and at least 30% fewer bytes.
-Budget stops without final evidence do not pass. Timeout remains deferred.
+All five owned fixtures passed baseline=2, final=3, original preservation and >=30%
+byte reduction. The compiler fixture additionally passed ten independent runs
+with identical final SHA256 and counters. Historical failed reports/logs are kept;
+they are not counted as passing. Old PowerShell probes are not in this suite.

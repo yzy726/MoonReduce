@@ -1,0 +1,215 @@
+Total tests: 130, passed: 130, failed: 0.
+[1mdiff --git a/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/app/interruption_e2e_test.mbt b/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/_build/wasm-gc/release/format/app/interruption_e2e_test.mbt[m
+[1mindex b1c2506..1c0462f 100755[m
+[1m--- a/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/app/interruption_e2e_test.mbt[m
+[1m+++ b/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/_build/wasm-gc/release/format/app/interruption_e2e_test.mbt[m
+[36m@@ -1,50 +1,50 @@[m
+[31m-///|[m
+[31m-async fn probe_path() -> String {[m
+[31m-  @fs.realpath([m
+[31m-    @env.get_env_var("MR_PROCESS_PROBE").unwrap_or([m
+[31m-      "_build/native/debug/build/tools/process_probe/process_probe.exe",[m
+[31m-    ),[m
+[31m-  )[m
+[31m-}[m
+[31m-[m
+[31m-///|[m
+[31m-async test "e2e_timeout_preserves_original_and_final_verification" {[m
+[31m-  let c = failure_fixture([m
+[31m-    "reduce",[m
+[31m-    [probe_path(), "heartbeat", "heartbeat.txt"],[m
+[31m-    "timeout",[m
+[31m-  )[m
+[31m-  let c = { ..c, predicate: { ..c.predicate, timeout_ms: 300 } }[m
+[31m-  let r = @app.execute(c)[m
+[31m-  assert_eq(r.result.status, BudgetExhausted)[m
+[31m-  assert_eq(r.result.baseline_passed, 2)[m
+[31m-  assert_eq(r.result.final_passed, 3)[m
+[31m-  assert_preserved(c, r)[m
+[31m-}[m
+[31m-[m
+[31m-///|[m
+[31m-async test "e2e_cancel_preserves_original_and_exports_interrupted_report" {[m
+[31m-  let c = failure_fixture([m
+[31m-    "reduce",[m
+[31m-    [probe_path(), "heartbeat", "heartbeat.txt"],[m
+[31m-    "timeout",[m
+[31m-  )[m
+[31m-  let cancelled = @async.with_timeout_opt(600, () => @app.execute(c))[m
+[31m-  assert_true(cancelled is None)[m
+[31m-  assert_eq([m
+[31m-    @fs.read_file(c.workspace + "/a.mbt").text(),[m
+[31m-    "// preserved original\n",[m
+[31m-  )[m
+[31m-  assert_eq([m
+[31m-    @fs.read_file(c.workspace + "/support.txt").text(),[m
+[31m-    "support stays unchanged\n",[m
+[31m-  )[m
+[31m-  assert_eq([m
+[31m-    @fs.read_file(c.output + "/reduced/a.mbt").text(),[m
+[31m-    "// preserved original\n",[m
+[31m-  )[m
+[31m-  let report = @json.parse(@fs.read_file(c.output + "/report.json").text()).stringify()[m
+[31m-  assert_true(report.contains("\"status\":\"Cancelled\""))[m
+[31m-  assert_true(report.contains("\"original_unchanged\":true"))[m
+[31m-  assert_true(report.contains("\"completed\":false"))[m
+[31m-}[m
+[32m+[m[32m///|[m
+[32m+[m[32masync fn probe_path() -> String {[m
+[32m+[m[32m  @fs.realpath([m
+[32m+[m[32m    @env.get_env_var("MR_PROCESS_PROBE").unwrap_or([m
+[32m+[m[32m      "_build/native/debug/build/tools/process_probe/process_probe.exe",[m
+[32m+[m[32m    ),[m
+[32m+[m[32m  )[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m///|[m
+[32m+[m[32masync test "e2e_timeout_preserves_original_and_final_verification" {[m
+[32m+[m[32m  let c = failure_fixture([m
+[32m+[m[32m    "reduce",[m
+[32m+[m[32m    [probe_path(), "heartbeat", "heartbeat.txt"],[m
+[32m+[m[32m    "timeout",[m
+[32m+[m[32m  )[m
+[32m+[m[32m  let c = { ..c, predicate: { ..c.predicate, timeout_ms: 300 } }[m
+[32m+[m[32m  let r = @app.execute(c)[m
+[32m+[m[32m  assert_eq(r.result.status, BudgetExhausted)[m
+[32m+[m[32m  assert_eq(r.result.baseline_passed, 2)[m
+[32m+[m[32m  assert_eq(r.result.final_passed, 3)[m
+[32m+[m[32m  assert_preserved(c, r)[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m///|[m
+[32m+[m[32masync test "e2e_cancel_preserves_original_and_exports_interrupted_report" {[m
+[32m+[m[32m  let c = failure_fixture([m
+[32m+[m[32m    "reduce",[m
+[32m+[m[32m    [probe_path(), "heartbeat", "heartbeat.txt"],[m
+[32m+[m[32m    "timeout",[m
+[32m+[m[32m  )[m
+[32m+[m[32m  let cancelled = @async.with_timeout_opt(600, () => @app.execute(c))[m
+[32m+[m[32m  assert_true(cancelled is None)[m
+[32m+[m[32m  assert_eq([m
+[32m+[m[32m    @fs.read_file(c.workspace + "/a.mbt").text(),[m
+[32m+[m[32m    "// preserved original\n",[m
+[32m+[m[32m  )[m
+[32m+[m[32m  assert_eq([m
+[32m+[m[32m    @fs.read_file(c.workspace + "/support.txt").text(),[m
+[32m+[m[32m    "support stays unchanged\n",[m
+[32m+[m[32m  )[m
+[32m+[m[32m  assert_eq([m
+[32m+[m[32m    @fs.read_file(c.output + "/reduced/a.mbt").text(),[m
+[32m+[m[32m    "// preserved original\n",[m
+[32m+[m[32m  )[m
+[32m+[m[32m  let report = @json.parse(@fs.read_file(c.output + "/report.json").text()).stringify()[m
+[32m+[m[32m  assert_true(report.contains("\"status\":\"Cancelled\""))[m
+[32m+[m[32m  assert_true(report.contains("\"original_unchanged\":true"))[m
+[32m+[m[32m  assert_true(report.contains("\"completed\":false"))[m
+[32m+[m[32m}[m
+failed to execute `git --no-pager diff --color=always --no-index /mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/app/interruption_e2e_test.mbt /mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/_build/wasm-gc/release/format/app/interruption_e2e_test.mbt`
+[1mdiff --git a/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/evaluator/process/tree_test.mbt b/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/_build/wasm-gc/release/format/evaluator/process/tree_test.mbt[m
+[1mindex 93772e3..9a3aa7c 100755[m
+[1m--- a/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/evaluator/process/tree_test.mbt[m
+[1m+++ b/mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/_build/wasm-gc/release/format/evaluator/process/tree_test.mbt[m
+[36m@@ -1,50 +1,50 @@[m
+[31m-///|[m
+[31m-async test "regr_timeout_reaps_owned_descendant_without_shell" {[m
+[31m-  let root = @fs.tmpdir(prefix="moonreduce-owned-tree-")[m
+[31m-  let heartbeat = root + "/heartbeat"[m
+[31m-  let probe = @fs.realpath([m
+[31m-    @env.get_env_var("MR_PROCESS_PROBE").unwrap_or([m
+[31m-      "_build/native/debug/build/tools/process_probe/process_probe.exe",[m
+[31m-    ),[m
+[31m-  )[m
+[31m-  let e = @process.run([m
+[31m-    {[m
+[31m-      ..@model.default_predicate([probe, "parent", heartbeat]),[m
+[31m-      timeout_ms: 1200,[m
+[31m-    },[m
+[31m-    ".",[m
+[31m-  )[m
+[31m-  assert_true(e.timed_out)[m
+[31m-  // A missing heartbeat is a fixture failure, never evidence of termination.[m
+[31m-  assert_true(@fs.exists(heartbeat))[m
+[31m-  @async.sleep(200)[m
+[31m-  let before = @fs.read_file(heartbeat).text()[m
+[31m-  @async.sleep(400)[m
+[31m-  assert_eq(@fs.read_file(heartbeat).text(), before)[m
+[31m-}[m
+[31m-[m
+[31m-///|[m
+[31m-async test "e2e_cancellation_reaps_owned_descendant_without_shell" {[m
+[31m-  let root = @fs.tmpdir(prefix="moonreduce-cancel-tree-")[m
+[31m-  let heartbeat = root + "/heartbeat"[m
+[31m-  let probe = @fs.realpath([m
+[31m-    @env.get_env_var("MR_PROCESS_PROBE").unwrap_or([m
+[31m-      "_build/native/debug/build/tools/process_probe/process_probe.exe",[m
+[31m-    ),[m
+[31m-  )[m
+[31m-  let result = @async.with_timeout_opt(1200, () => {[m
+[31m-    @process.run([m
+[31m-      {[m
+[31m-        ..@model.default_predicate([probe, "parent", heartbeat]),[m
+[31m-        timeout_ms: 5000,[m
+[31m-      },[m
+[31m-      ".",[m
+[31m-    )[m
+[31m-  })[m
+[31m-  assert_true(result is None)[m
+[31m-  assert_true(@fs.exists(heartbeat))[m
+[31m-  @async.sleep(200)[m
+[31m-  let before = @fs.read_file(heartbeat).text()[m
+[31m-  @async.sleep(400)[m
+[31m-  assert_eq(@fs.read_file(heartbeat).text(), before)[m
+[31m-}[m
+[32m+[m[32m///|[m
+[32m+[m[32masync test "regr_timeout_reaps_owned_descendant_without_shell" {[m
+[32m+[m[32m  let root = @fs.tmpdir(prefix="moonreduce-owned-tree-")[m
+[32m+[m[32m  let heartbeat = root + "/heartbeat"[m
+[32m+[m[32m  let probe = @fs.realpath([m
+[32m+[m[32m    @env.get_env_var("MR_PROCESS_PROBE").unwrap_or([m
+[32m+[m[32m      "_build/native/debug/build/tools/process_probe/process_probe.exe",[m
+[32m+[m[32m    ),[m
+[32m+[m[32m  )[m
+[32m+[m[32m  let e = @process.run([m
+[32m+[m[32m    {[m
+[32m+[m[32m      ..@model.default_predicate([probe, "parent", heartbeat]),[m
+[32m+[m[32m      timeout_ms: 1200,[m
+[32m+[m[32m    },[m
+[32m+[m[32m    ".",[m
+[32m+[m[32m  )[m
+[32m+[m[32m  assert_true(e.timed_out)[m
+[32m+[m[32m  // A missing heartbeat is a fixture failure, never evidence of termination.[m
+[32m+[m[32m  assert_true(@fs.exists(heartbeat))[m
+[32m+[m[32m  @async.sleep(200)[m
+[32m+[m[32m  let before = @fs.read_file(heartbeat).text()[m
+[32m+[m[32m  @async.sleep(400)[m
+[32m+[m[32m  assert_eq(@fs.read_file(heartbeat).text(), before)[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m///|[m
+[32m+[m[32masync test "e2e_cancellation_reaps_owned_descendant_without_shell" {[m
+[32m+[m[32m  let root = @fs.tmpdir(prefix="moonreduce-cancel-tree-")[m
+[32m+[m[32m  let heartbeat = root + "/heartbeat"[m
+[32m+[m[32m  let probe = @fs.realpath([m
+[32m+[m[32m    @env.get_env_var("MR_PROCESS_PROBE").unwrap_or([m
+[32m+[m[32m      "_build/native/debug/build/tools/process_probe/process_probe.exe",[m
+[32m+[m[32m    ),[m
+[32m+[m[32m  )[m
+[32m+[m[32m  let result = @async.with_timeout_opt(1200, () => {[m
+[32m+[m[32m    @process.run([m
+[32m+[m[32m      {[m
+[32m+[m[32m        ..@model.default_predicate([probe, "parent", heartbeat]),[m
+[32m+[m[32m        timeout_ms: 5000,[m
+[32m+[m[32m      },[m
+[32m+[m[32m      ".",[m
+[32m+[m[32m    )[m
+[32m+[m[32m  })[m
+[32m+[m[32m  assert_true(result is None)[m
+[32m+[m[32m  assert_true(@fs.exists(heartbeat))[m
+[32m+[m[32m  @async.sleep(200)[m
+[32m+[m[32m  let before = @fs.read_file(heartbeat).text()[m
+[32m+[m[32m  @async.sleep(400)[m
+[32m+[m[32m  assert_eq(@fs.read_file(heartbeat).text(), before)[m
+[32m+[m[32m}[m
+failed to execute `git --no-pager diff --color=always --no-index /mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/evaluator/process/tree_test.mbt /mnt/e/moonbit/MoonReduce/.moonreduce/linux-acceptance-1/_build/wasm-gc/release/format/evaluator/process/tree_test.mbt`
+Failed with 0 warnings, 0 errors.
+Error: failed when formatting project

@@ -1,18 +1,23 @@
 {
   "schema_version": 1,
   "verified_on": "2026-09-14",
-  "platform": "Windows",
-  "command": "./scripts/verify.ps1",
-  "exit_code": 0,
-  "native_tests": 145,
-  "js_tests": 130,
-  "wasm_gc_tests": 130,
+  "platforms": [
+    "Windows",
+    "Ubuntu WSL"
+  ],
+  "native_tests_per_platform": 149,
+  "js_tests_per_platform": 130,
+  "wasm_gc_tests_per_platform": 130,
   "format": "pass",
   "check": "native --warn-list +73 --deny-warn pass",
-  "interfaces": "unchanged",
+  "interfaces": "reviewed: additive attempted_commands optional argument",
   "cli_help": "pass",
-  "linux": "not run",
-  "remote_ci": "not run",
-  "publication": "not performed",
-  "process_tree_probes": "suspended"
+  "core_covered_lines": 439.0,
+  "core_instrumented_lines": 458.0,
+  "core_line_percent": 95.85,
+  "five_benchmarks": "pass",
+  "median_reduction_percent": 89.8,
+  "compiler_determinism_runs": 10,
+  "hosted_ci": "not run: no GitHub upload",
+  "publication": "pending"
 }

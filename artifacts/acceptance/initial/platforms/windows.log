@@ -1,0 +1,74 @@
+moon 0.1.20260824 (dae026a 2026-08-24) ~\.moon\bin\moon.exe
+moonc v0.10.10+f8a486b6f (2026-08-21) ~\.moon\bin\moonc.exe
+moonrun 0.1.20260824 (dae026a 2026-08-24) ~\.moon\bin\moonrun.exe
+
+Feature flags enabled: rr_moon_mod,rr_moon_pkg
+Finished. moon: no work to do
+Finished. moon: ran 62 tasks, now up to date
+Finished. moon: ran 51 tasks, now up to date
+process_probe.c
+Finished. moon: ran 3 tasks, now up to date
+MoonReduce.whitebox_test.c
+MoonReduce.internal_test.c
+model.internal_test.c
+source.internal_test.c
+token.internal_test.c
+config.internal_test.c
+MoonReduce.blackbox_test.c
+matcher.internal_test.c
+native.internal_test.c
+ddmin.internal_test.c
+engine.internal_test.c
+model.blackbox_test.c
+text.internal_test.c
+report.internal_test.c
+text.blackbox_test.c
+ddmin.blackbox_test.c
+matcher.blackbox_test.c
+token.blackbox_test.c
+engine.blackbox_test.c
+source.blackbox_test.c
+config.blackbox_test.c
+report.blackbox_test.c
+native.blackbox_test.c
+main.internal_test.c
+process_probe.internal_test.c
+   Creating library E:\moonbit\MoonReduce\_build\native\debug\test\tools\process_probe\process_probe.internal_test.lib and object E:\moonbit\MoonReduce\_build\native\debug\test\tools\process_probe\process_probe.internal_test.exp
+process_probe.blackbox_test.c
+   Creating library E:\moonbit\MoonReduce\_build\native\debug\test\tools\process_probe\process_probe.blackbox_test.lib and object E:\moonbit\MoonReduce\_build\native\debug\test\tools\process_probe\process_probe.blackbox_test.exp
+main.blackbox_test.c
+MR_CFG_FILE: cannot read or parse configuration JSON
+MR_CFG_FILE: cannot read or parse configuration JSON
+Total tests: 149, passed: 149, failed: 0.
+Total tests: 130, passed: 130, failed: 0.
+Total tests: 130, passed: 130, failed: 0.
+MoonReduce 0.1.0 — trusted-project testcase reduction
+moonreduce check [options] -- executable arg ...
+moonreduce reduce [options] -- executable arg ...
+moonreduce explain report.json
+moonreduce passes
+
+--workspace DIR         input project (default .)
+--target FILE.mbt       one workspace-relative UTF8 source
+--output DIR            new output directory outside the original workspace
+--config FILE           JSON defaults; CLI overrides values
+--cwd DIR               command directory relative to workspace (default .)
+--expect nonzero|timeout|INTEGER
+--stdout-contains TEXT / --stderr-contains TEXT (repeatable)
+--stdout-not-contains TEXT / --stderr-not-contains TEXT (repeatable)
+--ignore-case           case-insensitive output rules
+--strip-locations       normalize :line:column numbers
+--timeout 10s           per-command timeout, ms or s
+--max-time 600s         total wall-time budget
+--max-tests 1500        commands including 2 baseline + 3 final
+--output-limit 1048576  retained bytes per stream; extra output drained
+--ignore PATH           exact relative file/directory to omit (repeatable)
+--protect PATH          reject protected target (repeatable)
+--quiet / --verbose     suppress progress / report every command
+--json-events          NDJSON events (also saved in output)
+--help                 this reference
+
+JSON environment is an object of explicit environment overrides.
+Limits: 1000 files, 1 MiB/file, 16 MiB/project, 64 KiB/target.
+Only run trusted commands. Copies are not a security sandbox.
+warning: in the working copy of 'tools/process_probe/pkg.generated.mbti', LF will be replaced by CRLF the next time Git touches it
