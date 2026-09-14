@@ -45,6 +45,7 @@ async test "e2e_cancel_preserves_original_and_exports_interrupted_report" {
   )
   let report = @json.parse(@fs.read_file(c.output + "/report.json").text()).stringify()
   assert_true(report.contains("\"status\":\"Cancelled\""))
+  assert_true(report.contains("\"attempted_commands\":1"))
   assert_true(report.contains("\"original_unchanged\":true"))
   assert_true(report.contains("\"completed\":false"))
 }

@@ -41,6 +41,7 @@ pub fn render_json(
   elapsed_ms : Int64,
   unchanged : Bool,
   evidence? : Array[Json] = [],
+  attempted_commands? : Int? = None,
 ) -> Json {
   {
     "schema_version": 1,
@@ -54,6 +55,7 @@ pub fn render_json(
     "baseline_passed": r.baseline_passed,
     "final_passed": r.final_passed,
     "evaluations": r.evaluations,
+    "attempted_commands": attempted_commands.unwrap_or(r.evaluations),
     "cache_hits": r.cache_hits,
     "duration_ms": elapsed_ms,
     "original_unchanged": unchanged,

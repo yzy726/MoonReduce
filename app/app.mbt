@@ -61,6 +61,7 @@ pub async fn execute(c : @config.Config) -> Run {
   let evidence : Array[Json] = []
   let events = StringBuilder()
   let mut events_size = 0
+  let mut attempted_commands = 0
   let mut error : String? = None
   try {
     while true {
@@ -78,6 +79,7 @@ pub async fn execute(c : @config.Config) -> Run {
         ..c.predicate,
         timeout_ms: c.predicate.timeout_ms.min(remaining.to_int()),
       }
+      attempted_commands += 1
       let e = @process.run(spec, cwd)
       if @async.now() - start >= c.budget.max_time_ms {
         s.elapsed(c.budget.max_time_ms)
@@ -142,9 +144,14 @@ pub async fn execute(c : @config.Config) -> Run {
     w.export_best(r.best)
     save(
       w.output + "/report.json",
-      @report.render_json(c, r, elapsed, unchanged, evidence~).stringify(
-        indent=2,
-      ),
+      @report.render_json(
+        c,
+        r,
+        elapsed,
+        unchanged,
+        evidence~,
+        attempted_commands=Some(attempted_commands),
+      ).stringify(indent=2),
     )
     save(w.output + "/report.md", @report.markdown(c, r, elapsed, unchanged))
     save(
