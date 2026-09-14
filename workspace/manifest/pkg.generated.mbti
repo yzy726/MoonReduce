@@ -2,6 +2,7 @@
 package "Ag108/MoonReduce/workspace/manifest"
 
 // Values
+pub fn select(Snapshot, Array[String], Array[String], Array[String]) -> Result[Array[String], String]
 
 // Errors
 
