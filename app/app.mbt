@@ -170,7 +170,18 @@ pub async fn run(argv : Array[String]) -> Int {
       break
     }
     if argv[i] == "--config" && i + 1 < argv.length() {
-      json = Some(@json.parse(@fs.read_file(argv[i + 1]).text()))
+      let parsed = @json.parse(@fs.read_file(argv[i + 1]).text()) catch {
+        e => {
+          if @async.is_cancellation_error(e) {
+            raise e
+          }
+          @stdio.stderr.write(
+            "MR_CFG_FILE: cannot read or parse configuration JSON\n",
+          )
+          return 1
+        }
+      }
+      json = Some(parsed)
       i += 1
     }
     i += 1
