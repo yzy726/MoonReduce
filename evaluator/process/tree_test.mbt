@@ -2,14 +2,9 @@
 async test "regr_timeout_reaps_owned_descendant_without_shell" {
   let root = @fs.tmpdir(prefix="moonreduce-owned-tree-")
   let heartbeat = root + "/heartbeat"
-  let suffix = if @env.get_env_var("OS") == Some("Windows_NT") {
-    ".exe"
-  } else {
-    ""
-  }
   let probe = @fs.realpath(
     @env.get_env_var("MR_PROCESS_PROBE").unwrap_or(
-      "_build/native/debug/build/tools/process_probe/process_probe" + suffix,
+      "_build/native/debug/build/tools/process_probe/process_probe.exe",
     ),
   )
   let e = @process.run(
@@ -32,14 +27,9 @@ async test "regr_timeout_reaps_owned_descendant_without_shell" {
 async test "e2e_cancellation_reaps_owned_descendant_without_shell" {
   let root = @fs.tmpdir(prefix="moonreduce-cancel-tree-")
   let heartbeat = root + "/heartbeat"
-  let suffix = if @env.get_env_var("OS") == Some("Windows_NT") {
-    ".exe"
-  } else {
-    ""
-  }
   let probe = @fs.realpath(
     @env.get_env_var("MR_PROCESS_PROBE").unwrap_or(
-      "_build/native/debug/build/tools/process_probe/process_probe" + suffix,
+      "_build/native/debug/build/tools/process_probe/process_probe.exe",
     ),
   )
   let result = @async.with_timeout_opt(1200, () => {
