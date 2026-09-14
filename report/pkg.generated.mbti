@@ -13,7 +13,7 @@ pub fn markdown(@config.Config, @engine.ReductionResult, Int64, Bool) -> String
 
 pub fn metrics(String) -> Json
 
-pub fn render_json(@config.Config, @engine.ReductionResult, Int64, Bool, evidence? : Array[Json]) -> Json
+pub fn render_json(@config.Config, @engine.ReductionResult, Int64, Bool, evidence? : Array[Json], attempted_commands? : Int?) -> Json
 
 pub fn reproduce(@config.Config) -> String
 
