@@ -1,0 +1,46 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/predicate/advanced"
+
+import {
+  "Ag108/MoonReduce/model",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn crash_class(@model.Evaluation) -> String
+
+pub fn defaults() -> Spec
+
+pub fn diagnostic_codes(String) -> Array[String]
+
+pub fn matches(Spec, @model.Evaluation, @model.Evaluation?, String, String) -> Bool?
+
+pub fn normalize(String, String) -> String
+
+pub fn prepare(Spec, @model.Evaluation, String) -> @model.Evaluation
+
+pub fn test_names(String) -> Array[String]
+
+// Errors
+
+// Types and methods
+pub(all) struct Spec {
+  schema_version : Int
+  stdout_regex : Array[String]
+  stderr_regex : Array[String]
+  crash : String
+  diagnostic_codes : Array[String]
+  test_names : Array[String]
+  normalize : Bool
+  differential : String
+  wrapper : Bool
+  timeout_ms : Int
+  timeout_tolerance_ms : Int
+} derive(ToJson, @debug.Debug, @json.FromJson)
+pub fn Spec::from_json(Json) -> Result[Self, String]
+pub fn Spec::validate(Self) -> Result[Unit, String]
+
+// Type aliases
+
+// Traits

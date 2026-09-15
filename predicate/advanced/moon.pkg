@@ -1,0 +1,6 @@
+import {
+  "Ag108/MoonReduce/model",
+  "Ag108/MoonReduce/predicate/matcher",
+  "Ag108/MoonReduce/predicate/regex",
+  "moonbitlang/core/json",
+}
