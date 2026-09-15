@@ -502,3 +502,51 @@ async test "project/e2e real flaky predicate records four of five successes" {
     0,
   )
 }
+
+///|
+async test "project/e2e cancellation persists checkpoint and resumes to final validation" {
+  let base = project_fixture(1)
+  let c = { ..base, budget: { ..base.budget, max_tests: 150 } }
+  @async.with_task_group(group => {
+    let task = group.spawn(() => @app.execute_project(c), allow_failure=true)
+    let mut reached = false
+    for _ in 0..<1000 {
+      if @fs.exists(c.output + "/checkpoint.json") {
+        let document = @json.parse(
+          @fs.read_file(c.output + "/checkpoint.json").text(),
+        )
+        if document is { "engine": { "evaluations": Number(n, ..), .. }, .. } &&
+          n >= 10.0 {
+          reached = true
+          break
+        }
+      }
+      @async.sleep(5)
+    }
+    assert_true(reached)
+    task.cancel()
+    ignore(task.wait()) catch {
+      _ => ()
+    }
+  })
+  assert_true(@fs.exists(c.output + "/checkpoint.json"))
+  assert_true(
+    @fs.read_file(c.output + "/report.json").text().contains("Cancelled"),
+  )
+  let resumed = c.output + "-resume"
+  assert_eq(
+    @app.run([
+      "resume",
+      c.output + "/checkpoint.json",
+      "--output",
+      resumed,
+      "--max-tests",
+      "500",
+      "--quiet",
+    ]),
+    0,
+  )
+  let report = @fs.read_file(resumed + "/report.json").text()
+  assert_true(report.contains("\"final_passed\": 3"))
+  assert_true(report.contains("\"original_unchanged\": true"))
+}
