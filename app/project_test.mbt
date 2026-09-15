@@ -226,3 +226,92 @@ async test "project/e2e resume retains repeated predicate policy" {
   assert_true(report.contains("\"final_passed\": 5"))
   assert_true(report.contains("\"repeat\": 3"))
 }
+
+///|
+async test "project/e2e advanced regex rejects unrelated output" {
+  let base = project_fixture(1)
+  let c = { ..base, advanced: { ..base.advanced, stdout_regex: ["UNRELATED"] } }
+  let result = @app.execute_project(c)
+  assert_eq(result.result.baseline_passed, 0)
+  assert_eq(result.result.status, BaselineFailed)
+}
+
+///|
+async test "project/e2e malformed wrapper is inconclusive" {
+  let base = project_fixture(1)
+  let result = @app.execute_project({
+    ..base,
+    advanced: { ..base.advanced, wrapper: true },
+  })
+  assert_eq(result.result.baseline_passed, 0)
+  let report = @fs.read_file(base.output + "/report.json").text()
+  assert_true(report.contains("\"resolved\": 0"))
+}
+
+///|
+async test "project/e2e differential runs both commands within budget" {
+  let base = project_fixture(2)
+  let c = {
+    ..base,
+    reference: [probe_path(), "silent", "keep.mbt"],
+    advanced: { ..base.advanced, differential: "stdout" },
+    budget: { ..base.budget, max_tests: 30 },
+  }
+  let result = @app.execute_project(c)
+  assert_true(result.error is None)
+  assert_eq(result.result.final_passed, 3)
+  assert_true(
+    result.result.evaluations <= 30 && result.result.evaluations % 2 == 0,
+  )
+  let report = @fs.read_file(c.output + "/report.json").text()
+  assert_true(report.contains("\"commands_per_trial\": 2"))
+}
+
+///|
+async test "project/e2e equal differential results reject baseline" {
+  let base = project_fixture(1)
+  let c = {
+    ..base,
+    reference: base.predicate.command.copy(),
+    advanced: { ..base.advanced, differential: "stdout" },
+  }
+  let result = @app.execute_project(c)
+  assert_eq(result.result.baseline_passed, 0)
+}
+
+///|
+async test "project/e2e valid wrapper preserves interesting candidates" {
+  let base = project_fixture(1)
+  let c = {
+    ..base,
+    predicate: {
+      ..base.predicate,
+      command: [probe_path(), "wrapper", "keep.mbt"],
+      stdout_rules: [],
+    },
+    advanced: { ..base.advanced, wrapper: true },
+  }
+  let result = @app.execute_project(c)
+  assert_eq(result.result.final_passed, 3)
+  assert_true(result.result.best.files().iter().any(f => f.0 == "keep.mbt"))
+}
+
+///|
+async test "project/e2e diagnostic and test fingerprint remain present" {
+  let base = project_fixture(1)
+  let c = {
+    ..base,
+    predicate: {
+      ..base.predicate,
+      command: [probe_path(), "fingerprint", "keep.mbt"],
+    },
+    advanced: {
+      ..base.advanced,
+      stdout_regex: ["E[0-9]+"],
+      diagnostic_codes: ["E1234"],
+      test_names: ["case"],
+    },
+  }
+  let result = @app.execute_project(c)
+  assert_eq(result.result.final_passed, 3)
+}

@@ -9,6 +9,17 @@ fn checkpoint_config(c : @config.Config) -> Json {
   }
   {
     "project": true,
+    "schema_version": 1,
+    "stdout_regex": c.advanced.stdout_regex.to_json(),
+    "stderr_regex": c.advanced.stderr_regex.to_json(),
+    "diagnostic_code": c.advanced.diagnostic_codes.to_json(),
+    "test_name": c.advanced.test_names.to_json(),
+    "normalize": c.advanced.normalize,
+    "crash": c.advanced.crash,
+    "wrapper": c.advanced.wrapper,
+    "differential": c.advanced.differential,
+    "timeout_tolerance": c.advanced.timeout_tolerance_ms,
+    "reference": c.reference.to_json(),
     "workspace": c.workspace,
     "include": c.includes.to_json(),
     "protect": c.protect.to_json(),
@@ -57,6 +68,8 @@ fn checkpoint_context(c : @config.Config, toolchain : String) -> String {
   // Arrays make order explicit; worker count and extended budgets are allowed
   // to change, while all evaluation-affecting settings must remain identical.
   let context : Json = [
+    c.advanced.to_json(),
+    c.reference.to_json(),
     c.repeat.to_json(),
     c.quorum.to_json(),
     c.consecutive.to_json(),

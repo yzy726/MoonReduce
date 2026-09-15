@@ -31,6 +31,11 @@ pub fn help() -> String {
     #|--expect nonzero|timeout|INTEGER
     #|--stdout-contains TEXT / --stderr-contains TEXT (repeatable)
     #|--stdout-not-contains TEXT / --stderr-not-contains TEXT (repeatable)
+    #|--stdout-regex PATTERN / --stderr-regex PATTERN (project mode)
+    #|--diagnostic-code CODE / --test-name NAME / --crash CLASS
+    #|--normalize / --wrapper / --timeout-tolerance 10ms
+    #|--reference ARG        repeat for each reference argv element
+    #|--differential stdout|stderr|exit|any
     #|--ignore-case           case-insensitive output rules
     #|--strip-locations       normalize :line:column numbers
     #|--timeout 10s           per-command timeout, ms or s
