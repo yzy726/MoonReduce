@@ -1,1 +1,10 @@
+import {
+  "Ag108/MoonReduce/workspace/manifest",
+  "Ag108/MoonReduce/reducer/project",
+  "Ag108/MoonReduce/predicate/stability",
+  "Ag108/MoonReduce/passes/api" @pass_api,
+}
 
+import {
+  "Ag108/MoonReduce/source",
+} for "test"
