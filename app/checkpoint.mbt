@@ -9,6 +9,10 @@ fn checkpoint_config(c : @config.Config) -> Json {
   }
   {
     "project": true,
+    "score": c.score,
+    "pass_include": c.pass_include.to_json(),
+    "pass_exclude": c.pass_exclude.to_json(),
+    "keep_workdir": c.keep_workdir,
     "schema_version": 1,
     "stdout_regex": c.advanced.stdout_regex.to_json(),
     "stderr_regex": c.advanced.stderr_regex.to_json(),
@@ -68,6 +72,9 @@ fn checkpoint_context(c : @config.Config, toolchain : String) -> String {
   // Arrays make order explicit; worker count and extended budgets are allowed
   // to change, while all evaluation-affecting settings must remain identical.
   let context : Json = [
+    c.score.to_json(),
+    c.pass_include.to_json(),
+    c.pass_exclude.to_json(),
     c.advanced.to_json(),
     c.reference.to_json(),
     c.repeat.to_json(),

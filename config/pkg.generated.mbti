@@ -16,6 +16,10 @@ pub fn parse(Array[String], Json?) -> Result[Config, String]
 pub(all) struct Config {
   project : Bool
   includes : Array[String]
+  score : String
+  pass_include : Array[String]
+  pass_exclude : Array[String]
+  keep_workdir : Bool
   jobs : Int
   repeat : Int
   quorum : Int
