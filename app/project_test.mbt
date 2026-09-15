@@ -466,3 +466,39 @@ async test "project/e2e replay refuses corrupt evidence before executing" {
   assert_true(rejected)
   assert_true(!@fs.exists(out))
 }
+
+///|
+async test "project/e2e real flaky predicate records four of five successes" {
+  let base = project_fixture(1)
+  let counter = base.workspace + "-counter"
+  @fs.write_file(counter, "", create_mode=CreateNew)
+  let environment : Map[String, String] = { "MR_FLAKY_STATE": counter }
+  let c = {
+    ..base,
+    repeat: 5,
+    quorum: 4,
+    final_repeat: 5,
+    final_quorum: 4,
+    budget: { ..base.budget, max_tests: 200 },
+    predicate: {
+      ..base.predicate,
+      command: [probe_path(), "flaky", "keep.mbt"],
+      environment,
+    },
+  }
+  let result = @app.execute_project(c)
+  assert_eq(result.result.baseline_passed, 4)
+  assert_eq(result.result.final_passed, 4)
+  let report = @fs.read_file(c.output + "/report.json").text()
+  assert_true(report.contains("\"rate\": 0.8"))
+  assert_true(report.contains("\"probabilistic\": true"))
+  assert_eq(
+    @app.run([
+      "replay",
+      c.output + "/report.json",
+      "--output",
+      c.output + "-replay",
+    ]),
+    0,
+  )
+}

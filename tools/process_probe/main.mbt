@@ -3,6 +3,20 @@
 async fn main {
   let args = @env.args()
   guard args.length() == 3 else { return }
+  if args[1] == "flaky" {
+    let state = match @env.get_env_var("MR_FLAKY_STATE") {
+      Some(s) => s
+      None => return
+    }
+    let previous = @fs.read_file(state).text()
+    guard previous.length() < 100000 else { return }
+    @fs.write_file(state, previous + "x")
+    if previous.length() % 5 != 4 &&
+      @fs.read_file(args[2]).text().contains("KEEP") {
+      println("KEEP")
+    }
+    return
+  }
   if args[1] == "contains" || args[1] == "consume" || args[1] == "fingerprint" {
     if @fs.read_file(args[2]).text().contains("KEEP") {
       println("KEEP")
