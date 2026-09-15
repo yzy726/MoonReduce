@@ -1,0 +1,40 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/reducer/project"
+
+import {
+  "Ag108/MoonReduce/model",
+  "Ag108/MoonReduce/workspace/manifest",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Candidate {
+  id : Int
+  snapshot : @manifest.Snapshot
+}
+
+pub(all) struct ResultSummary {
+  best : @manifest.Snapshot
+  status : @model.RunStatus
+  evaluations : Int
+  cache_hits : Int
+  baseline_passed : Int
+  final_passed : Int
+}
+
+pub struct Session {
+  // private fields
+}
+pub fn Session::new(@manifest.Snapshot, Array[String], Array[String], Array[String], max_tests? : Int) -> Result[Self, String]
+pub fn Session::next_batch(Self) -> Array[Candidate]
+pub fn Session::phase(Self) -> String
+pub fn Session::record(Self, Int, Bool) -> Result[Unit, String]
+pub fn Session::result(Self) -> ResultSummary
+pub fn Session::stop(Self, @model.RunStatus) -> Unit
+
+// Type aliases
+
+// Traits
