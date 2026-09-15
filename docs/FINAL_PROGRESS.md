@@ -1,17 +1,28 @@
 # Final development progress
 
-## Phase 1 completed — portable project model
+## Verified local state (2026-09-15)
 
-- workspace/glob provides validated, anchored *, ? and whole-component ** matching; Unicode scalar ?, portable separators, unsupported syntax and traversal rejection. 17 blackbox tests.
-- workspace/manifest provides defensive immutable snapshots, canonical lexical path order, case collision and file/directory conflict rejection, strict source UTF8, file/count/total size limits, pure replace/remove and an exact versioned path/content key. 20 blackbox tests.
-- manifest selection applies explicit includes, ignores and protections with default documentation/scripts/Git metadata protection. Ancestor protection wins; selection never mutates the snapshot or removes support files. 10 blackbox tests.
+Full scripts/verify.ps1 passed on Windows with moonc 0.10.10+f8a486b6f: native 365/365, JS 334/334, wasm-gc 334/334. Counts are distinct test declarations per target, not added across backends. Formatting, native type checks with warning 73, generated interfaces and CLI help passed.
 
-Verification on Windows with moonc 0.10.10+f8a486b6f: scripts/verify.ps1 passed; native 196/196, JS 177/177, wasm-gc 177/177. Native types, formatting, generated interfaces and CLI help passed. No .mbti regression in existing packages. New tests are repeated across backends, not counted as different scenarios per backend.
+- Phase 1: validated portable globs, immutable bounded project snapshots and protected selection (47 tests).
+- Phase 2: lightweight UTF8 byte-span syntax tree (60 tests) and 16 structured pass families (64 tests). Malformed groups suppress structured edits; strings/comments are opaque. This is a reduction-oriented scanner, not a complete MoonBit parser.
+- Phase 3: project CLI, independent native copies, file deletion and source edits, stable four-candidate batches with configurable workers. Real jobs=1/4 tests agree and preserve original/support files. Glob omission and failed-copy cleanup have native regressions. Package/dependency manifest edits remain pending.
+- Phase 4 foundation: pure repeat/quorum/consecutive three-state policy and Wilson confidence statistics (5 tests). These policies are not yet wired to CLI evaluation; advanced predicates remain pending.
+- Phase 5: versioned settled-boundary checkpoints, complete binary-safe snapshots and cache restoration (9 tests). Native atomic replacement and resume CLI work, including budget extension, input/context/toolchain mismatch rejection and uncached final revalidation. Cache keys currently store complete contents; large-run storage and interruption repeat-rate benchmarks remain to be measured.
 
-Feature commits: 98e7065 (glob), 8f9bd55 (snapshot), 9fc785c (selection and lexical-order regression). All merged locally. No push after e3d64bc; the project proposal remains ignored and untracked.
+Feature commits include a1b68cb/2a337c6/f7a82be (syntax), 7d27479/2dcf700/3115dd7 (passes), 4fc1a75/cd50255/9aabc6f/53d3f18/d480543 (project integration), 9f01afe (cleanup), d39f255 (stability), 92750f2 (checkpoint engine), 2ec206d (native resume). All merged locally.
 
-## Remaining work
+## Resume usage
 
-This is foundation for F-02, not a completed project reducer. Existing CLI remains single-target. Next planned phase: lightweight structure with byte spans, conservative recovery, declaration and statement ranges; then structured passes and integration with independent native candidate workspaces. Complete predicate, checkpoint/resume, stable concurrent execution, product CLI and final benchmarks follow docs/FINAL_PLAN.md.
+```text
+moonreduce reduce --project --workspace INPUT --output FIRST --max-tests 100 -- COMMAND ARGS
+moonreduce resume FIRST/checkpoint.json --output SECOND --max-tests 2500
+```
 
-Final acceptance is not complete. New final code has not run hosted CI, registry publication was not verified, and no final release was performed. Do not infer final coverage from the initial coverage report. The user's no-push/no-remote-release constraint remains in force.
+SECOND must be new and outside INPUT. Omitting --output allocates a new temporary result directory. Resume compares the original full snapshot, selection, predicate settings and installed MoonBit toolchain. Jobs and total budgets may change. Checkpoints contain explicit environment overrides needed for replay: treat them as private trusted local configuration. They are not a public environment dump or a security boundary. Abrupt interruption can repeat the unfinished batch; completed cached candidates are skipped. Final verification always executes again.
+
+## Outstanding acceptance work
+
+Complete predicate integration (regex, crash/diagnostic/differential/wrapper, repeated native execution), score and pass controls, manifest reduction, evidence SHA256/environment/replay, remaining CLI/API extensions, 12 examples and 10-fixture benchmarks, jobs determinism across ten runs per setting, measured resume repeat rate, final coverage and Windows/Linux clean installation. See FINAL_PLAN.md for acceptance phases.
+
+Final acceptance is NOT complete. Do not use initial coverage or hosted CI as evidence for these changes. No push after e3d64bc, no final remote release, and registry publication has not been verified. The local 项目申报书.md remains ignored and untracked. User authorization continues through all remaining local development; do not stop at this progress checkpoint.
