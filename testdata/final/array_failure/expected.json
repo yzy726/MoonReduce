@@ -1,0 +1,6 @@
+{
+  "failure": "test",
+  "minimum_reduction_percent": 50,
+  "deterministic": true,
+  "fingerprint": "MR_ARRAY_TARGET"
+}
