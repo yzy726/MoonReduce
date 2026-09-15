@@ -13,6 +13,8 @@ pub(all) struct Config {
   workspace : String
   target : String
   output : String
+  advanced : @advanced.Spec
+  reference : Array[String]
   predicate : @model.PredicateSpec
   budget : @model.Budget
   quiet : Bool
@@ -120,7 +122,9 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     "max_tests", "output_limit", "stdout_contains", "stderr_contains", "stdout_not_contains",
     "stderr_not_contains", "ignore_case", "strip_locations", "quiet", "verbose",
     "json_events", "environment", "ignore", "protect", "project", "include", "jobs",
-    "repeat", "quorum", "consecutive", "final_repeat", "final_quorum",
+    "repeat", "quorum", "consecutive", "final_repeat", "final_quorum", "stdout_regex",
+    "stderr_regex", "diagnostic_code", "test_name", "normalize", "crash", "wrapper",
+    "reference", "differential", "timeout_tolerance", "schema_version",
   ]
   for key, _ in m {
     if !known.contains(key) {
@@ -171,7 +175,8 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     }
     let array_option = [
       "stdout_contains", "stderr_contains", "stdout_not_contains", "stderr_not_contains",
-      "ignore", "protect", "include",
+      "ignore", "protect", "include", "stdout_regex", "stderr_regex", "diagnostic_code",
+      "test_name", "reference",
     ].contains(key)
     if seen.contains(key) && !array_option {
       raise ConfigError("MR_CFG_DUPLICATE: " + arg)
@@ -180,7 +185,7 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     seen[key] = true
     if [
         "quiet", "verbose", "json_events", "ignore_case", "strip_locations", "project",
-        "consecutive",
+        "consecutive", "normalize", "wrapper",
       ].contains(key) {
       m[key] = true
       i += 1
@@ -315,8 +320,67 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
       raise ConfigError("MR_CFG_COMMAND: NUL in argv")
     }
   }
+  if integer(m, "schema_version", 1) != 1 {
+    raise ConfigError("MR_CFG_VERSION: expected schema version 1")
+  }
+  let reference = strings(m, "reference")
+  for arg in reference {
+    if arg.contains("\u0000") {
+      raise ConfigError("MR_CFG_COMMAND: NUL in reference argv")
+    }
+  }
+  if reference.get(0) == Some("") {
+    raise ConfigError("MR_CFG_COMMAND: empty reference executable")
+  }
+  let tolerance = match m.get("timeout_tolerance") {
+    None | Some(Number(0, ..)) | Some(String("0")) | Some(String("0ms")) => 0
+    _ => duration(m, "timeout_tolerance", 0)
+  }
+  let advanced : @advanced.Spec = {
+    schema_version: 1,
+    stdout_regex: strings(m, "stdout_regex"),
+    stderr_regex: strings(m, "stderr_regex"),
+    diagnostic_codes: strings(m, "diagnostic_code"),
+    test_names: strings(m, "test_name"),
+    normalize: bool_value(m, "normalize"),
+    crash: string_value(m, "crash", ""),
+    wrapper: bool_value(m, "wrapper"),
+    differential: string_value(
+      m,
+      "differential",
+      if reference.is_empty() {
+        ""
+      } else {
+        "any"
+      },
+    ),
+    timeout_ms: duration(m, "timeout", 10000),
+    timeout_tolerance_ms: tolerance,
+  }
+  match advanced.validate() {
+    Err(e) => raise ConfigError(e)
+    Ok(_) => ()
+  }
+  if advanced.differential != "" && reference.is_empty() {
+    raise ConfigError("MR_CFG_REFERENCE: differential requires reference argv")
+  }
+  if !project &&
+    (
+      !advanced.stdout_regex.is_empty() ||
+      !advanced.stderr_regex.is_empty() ||
+      !advanced.diagnostic_codes.is_empty() ||
+      !advanced.test_names.is_empty() ||
+      advanced.normalize ||
+      advanced.crash != "" ||
+      advanced.wrapper ||
+      !reference.is_empty() ||
+      tolerance != 0
+    ) {
+    raise ConfigError("MR_CFG_PROJECT: advanced predicates require --project")
+  }
   let max_tests = integer(m, "max_tests", 1500)
-  if max_tests < repeat.max(2) + final_repeat {
+  if max_tests <
+    (repeat.max(2) + final_repeat) * (if reference.is_empty() { 1 } else { 2 }) {
     raise ConfigError("MR_CFG_BUDGET: at least five executions required")
   }
   let ignore = strings(m, "ignore")
@@ -350,6 +414,8 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     workspace,
     target: target.replace_all(old="\\", new="/"),
     output,
+    advanced,
+    reference,
     predicate: {
       command,
       cwd,

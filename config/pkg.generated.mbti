@@ -3,6 +3,7 @@ package "Ag108/MoonReduce/config"
 
 import {
   "Ag108/MoonReduce/model",
+  "Ag108/MoonReduce/predicate/advanced",
   "moonbitlang/core/debug",
 }
 
@@ -25,6 +26,8 @@ pub(all) struct Config {
   workspace : String
   target : String
   output : String
+  advanced : @advanced.Spec
+  reference : Array[String]
   predicate : @model.PredicateSpec
   budget : @model.Budget
   quiet : Bool
