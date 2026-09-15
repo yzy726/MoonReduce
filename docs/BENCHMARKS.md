@@ -14,7 +14,7 @@ exercise structural/token reduction. Initial fixtures remain versioned separatel
 Every run records status, bytes, significant tokens, command count, wall time,
 baseline predicate duration, final count, independent original-file SHA-256 checks,
 and a fresh evidence replay. Budget: 2500 command launches and 600 seconds; timeout
-fixture uses two seconds per command. Report all runs, including failures; do not
+fixture uses ten seconds per command and the bounded `text:line-block` pass. The first two-second timeout run failed its baseline and remains in the failure evidence. Report all runs, including failures; do not
 replace the matrix with best-case timing. Byte scores include protected captured
 files, while token scores measure MoonBit source tokens.
 
@@ -23,4 +23,4 @@ byte reduction >=70%, median token reduction >=60%; multi-file input removes hal
 of reducible files or 60% of source bytes. At least nine fixtures meet the budget.
 Predicate times above 200 ms are identified rather than presented as meeting the
 fast-predicate premise. Final numerical results belong to
-`artifacts/acceptance/final/summary.md`, after measurements finish.
+`artifacts/acceptance/final/summary.md`.

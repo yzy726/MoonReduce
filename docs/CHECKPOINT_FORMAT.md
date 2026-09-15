@@ -1,7 +1,7 @@
 # Checkpoints and recovery
 
 A native checkpoint envelope has schema_version 1, parser-compatible configuration,
-MoonBit toolchain identity and engine state. Engine schema 4 (`project-v4`) stores
+MoonBit toolchain identity, engine state and `engine_sha256` of its compact JSON encoding. Resume verifies this digest before executing commands. Legacy envelopes without the digest require a complete verified evidence bundle. Engine schema 4 (`project-v4`) stores
 the original snapshot key, canonical predicate context, immutable candidate files,
 selected paths/pass names, scoring and repeat policies, pass cursor, counters and
 settled candidate cache. Earlier development schemas are rejected explicitly.
