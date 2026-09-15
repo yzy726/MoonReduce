@@ -16,6 +16,11 @@ pub(all) struct Config {
   project : Bool
   includes : Array[String]
   jobs : Int
+  repeat : Int
+  quorum : Int
+  consecutive : Bool
+  final_repeat : Int
+  final_quorum : Int
   action : String
   workspace : String
   target : String
