@@ -28,7 +28,7 @@ fn project_summary(snapshot : @manifest.Snapshot) -> Json {
 ///|
 /// Execute a pure project session. A fixed batch is evaluated with up to jobs
 /// workers in isolated directories; completion order cannot affect acceptance.
-pub async fn execute_project(c : @config.Config) -> ProjectRun {
+pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun {
   let output = if c.output == "" {
     @fs.tmpdir(prefix="moonreduce-project-check-") + "/result"
   } else {
@@ -36,17 +36,32 @@ pub async fn execute_project(c : @config.Config) -> ProjectRun {
   }
   let w = @workspace.prepare_project(c.workspace, output, c.ignore)
   let original = w.snapshot()
+  let toolchain = toolchain_identity()
+  let context = checkpoint_context(c, toolchain)
   let session = match
-    @project.Session::new(
-      original,
-      c.includes,
-      c.protect,
-      c.ignore,
-      max_tests=c.budget.max_tests,
-    ) {
+    (if restore is Some(document) {
+      @project.Session::restore(
+        document,
+        original,
+        c.includes,
+        c.protect,
+        c.ignore,
+        context,
+        max_tests=c.budget.max_tests,
+      )
+    } else {
+      @project.Session::new(
+        original,
+        c.includes,
+        c.protect,
+        c.ignore,
+        max_tests=c.budget.max_tests,
+      )
+    }) {
     Ok(s) => s
     Err(e) => raise ProjectError(e)
   }
+  persist_project(c, session, original, w.output, context, toolchain)
   let start = @async.now()
   let attempts = Ref(0)
   let events : Array[Json] = []
@@ -135,6 +150,7 @@ pub async fn execute_project(c : @config.Config) -> ProjectRun {
         w.cleanup(dir)
       }
       live.clear()
+      persist_project(c, session, original, w.output, context, toolchain)
       if c.action == "check" && session.result().baseline_passed == 2 {
         session.stop(Completed)
         break
@@ -164,6 +180,7 @@ pub async fn execute_project(c : @config.Config) -> ProjectRun {
       session.stop(ExecutionFailed)
       error = Some("MR_INPUT_CHANGED")
     }
+    persist_project(c, session, original, w.output, context, toolchain)
     let result = session.result()
     w.export_snapshot(result.best)
     let report : Json = {

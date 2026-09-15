@@ -107,3 +107,51 @@ async test "project/e2e missing command records failure without modifying input"
   )
   assert_true(@fs.exists(c.output + "/report.json"))
 }
+
+///|
+async test "project/e2e resume preserves best and revalidates finals" {
+  let c = project_fixture(1)
+  let limited = { ..c, budget: { ..c.budget, max_tests: 5 } }
+  let first = @app.execute_project(limited)
+  assert_eq(first.result.status, BudgetExhausted)
+  assert_true(@fs.exists(c.output + "/checkpoint.json"))
+  let result = @app.run([
+    "resume",
+    c.output + "/checkpoint.json",
+    "--output",
+    c.output + "-resumed",
+    "--max-tests",
+    "80",
+    "--quiet",
+  ])
+  assert_true(result == 0 || result == 4)
+  let report = @fs.read_file(c.output + "-resumed/report.json").text()
+  assert_true(report.contains("\"final_passed\": 3"))
+  assert_true(
+    @fs.read_file(c.output + "-resumed/reduced/keep.mbt")
+    .text()
+    .contains("KEEP"),
+  )
+  assert_true(@fs.exists(c.workspace + "/noise.mbt"))
+}
+
+///|
+async test "project/e2e resume refuses changed original" {
+  let c = project_fixture(1)
+  ignore(@app.execute_project({ ..c, budget: { ..c.budget, max_tests: 5 } }))
+  @fs.write_file(c.workspace + "/noise.mbt", "changed")
+  let rejected = try {
+    let code = @app.run([
+      "resume",
+      c.output + "/checkpoint.json",
+      "--output",
+      c.output + "-resumed",
+      "--max-tests",
+      "80",
+    ])
+    code != 0 && code != 4
+  } catch {
+    _ => true
+  }
+  assert_true(rejected)
+}

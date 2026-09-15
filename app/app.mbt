@@ -13,6 +13,7 @@ pub fn help() -> String {
     #|MoonReduce 0.1.0 — trusted-project testcase reduction
     #|moonreduce check [options] -- executable arg ...
     #|moonreduce reduce [options] -- executable arg ...
+    #|moonreduce resume checkpoint.json [--output DIR] [--max-tests N]
     #|moonreduce explain report.json
     #|moonreduce passes
     #|
@@ -173,6 +174,9 @@ pub async fn execute(c : @config.Config) -> Run {
 ///|
 /// CLI dispatcher; returns the specified exit code after artifact writes complete.
 pub async fn run(argv : Array[String]) -> Int {
+  if argv.get(0) == Some("resume") {
+    return resume_project(argv)
+  }
   let mut json : Json? = None
   let mut i = 1
   while i < argv.length() {
