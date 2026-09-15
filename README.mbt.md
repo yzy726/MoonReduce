@@ -1,60 +1,62 @@
-# Ag108/MoonReduce
+# MoonReduce
 
-MoonReduce is a MoonBit library and native CLI for reducing one failing UTF-8
-`.mbt` file while retaining a specified external-command failure.
+A MoonBit testcase reducer and native CLI. It removes irrelevant project files,
+declarations, statements and tokens in independent copies while preserving a
+user-defined failure predicate.
 
-**Status: 0.1.0 local acceptance verified; see the evidence for publication status.**
-See [acceptance status](artifacts/acceptance/initial/summary.md) and
-[limitations](docs/LIMITATIONS.md).
+[中文](README.md) · [Project mode](docs/PROJECT_MODE.md) · [Predicates](docs/PREDICATES.md) · [Library API](docs/API_STABILITY.md)
 
 ## Quick start
 
-Requires the MoonBit native toolchain and a C compiler. Tested locally with
-MoonBit 0.1.20260824, async 0.20.4 and Windows.
+Use the pinned MoonBit toolchain and a native C compiler. The native runtime uses
+moonbitlang/async 0.20.4.
 
 ```text
-moon check --deny-warn
-moon run cmd/main -- --help
-moon run cmd/main -- passes
-moon run cmd/main -- reduce --config testdata/compile_diagnostic/predicate.json --workspace testdata/compile_diagnostic/input --output ./compile_diagnostic-result
-moon run cmd/main -- explain ./compile_diagnostic-result/report.json
+moon update
+moon run cmd/main -- reduce --project --config testdata/final/compile_diagnostic/predicate.json --workspace testdata/final/compile_diagnostic/input --output ./compile-result
+moon run cmd/main -- replay ./compile-result/report.json
 ```
 
-Choose a new output directory outside the input workspace. Its parent must exist.
-The result contains reduced/, report.json, report.md, reduction.diff,
-reproduce.txt and events.ndjson. The compiler fixture locally reduced from
-450 to 39 bytes, preserving its diagnostic with three uncached final matches.
-
-Build with `moon build --target native cmd/main`. The executable is under
-`_build/native/debug/build/cmd/main/`; the extension varies by platform.
-Use `moon run cmd/main -- ...` as the portable development command.
-
-## Behavior
-
-Two baseline matches precede adaptive ddmin and twelve deterministic text/token
-passes. Only strictly smaller matching candidates are accepted. Full-content
-run-scoped caching avoids duplicate evaluation. Three final checks bypass cache.
-Budgets/cancellation retain the last accepted result, but incomplete final checks
-do not certify it. Only run trusted projects and commands: copies are not a sandbox.
-Descendant timeout/cancellation tests pass on Windows and Ubuntu; see the process validation limits.
-
-## Commands
-
-check validates the baseline; reduce runs the pipeline; passes lists the registry;
-explain formats report JSON. --help lists all options, including JSON defaults,
-CLI overrides, stream rules, limits and progress. See [predicates](docs/PREDICATES.md),
-[passes](docs/REDUCTION_PASSES.md), [reports](docs/REPORT_FORMAT.md),
-[design](docs/DESIGN.md), and [testing](docs/TESTING.md).
+Use a fresh output directory outside the input, with an existing parent. Replay
+checks SHA-256 and executes uncached final trials in new copies.
 
 ```text
-moon run cmd/main -- reduce --config testdata/noisy_source/predicate.json --workspace testdata/noisy_source/input --output ./noisy-result --max-tests 100 --max-time 120s --timeout 10s --output-limit 65536 --verbose
+moon build --target native --release cmd/main
+moon install ./cmd/main --bin ./local-bin
+moon run examples/custom_pass --target native
 ```
 
-Five [examples](examples/) cover compiler diagnostics, test failure, nonzero,
-timeout and noise. All five passed three final checks and at least 30% byte reduction.
+## Features
 
-## Library
+- Single-file and multi-file reduction, protected glob selection and package edits.
+- Text/token passes and 16 structured families with conservative syntax fallback.
+- Exit/timeout/output predicates, bounded regex, diagnostic fingerprints, wrappers,
+  differential commands, repeated quorum and inconclusive decisions.
+- Deterministic candidate batches with configurable workers and strict scoring.
+- Checkpoints, resume, run-scoped cache, budgets and uncached final verification.
+- Checksummed evidence bundles, environment summaries, diff and standalone replay.
+- Pure evaluator/pass/event extension contracts and check/reduce library facade.
 
-Import Ag108/MoonReduce/reducer/engine for the pure Session request/verdict API,
-predicate/matcher for rules, or app for native execution. Generated .mbti files
-record current signatures. APIs are pre-stable. Apache-2.0; see THIRD_PARTY.md and REFERENCES.md for attribution.
+Commands: check, reduce, resume, replay, diff, explain, passes, config validate,
+cache stats and cache clean. Run `--help` for all options. JSON defaults are
+validated and overridden by CLI arguments. The twelve examples in `examples/`
+include a runnable custom library extension.
+
+## Verification and boundaries
+
+Run `scripts/verify.ps1`, `scripts/benchmark-final.ps1` and
+`scripts/determinism-final.ps1` from PowerShell. Pure packages support native,
+JavaScript and wasm-gc; process/workspace/CLI packages require native. See
+[testing](docs/TESTING.md), [benchmarks](docs/BENCHMARKS.md),
+[compatibility](docs/COMPATIBILITY.md) and the
+[acceptance record](artifacts/acceptance/final/summary.md).
+
+Only trusted commands/projects are supported. Copies are not a sandbox. The
+scanner is not a complete MoonBit parser. Snapshot limits are 1000 files/16 MiB,
+1 MiB per file and 64 KiB per MoonBit source. Private checkpoints retain explicit
+environment overrides; ordinary reports omit values. Do not put secrets in argv
+or share private checkpoints. SHA-256 detects corruption, not a malicious author.
+See [security](docs/SECURITY_MODEL.md) and [limitations](docs/LIMITATIONS.md).
+
+Apache-2.0. Dependencies and owned fixture provenance are in THIRD_PARTY.md and
+each fixture's LICENSE.

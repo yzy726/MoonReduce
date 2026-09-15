@@ -1,139 +1,103 @@
 # MoonReduce
 
-用 MoonBit 编写的失败测试用例约减库与原生命令行工具。在项目副本中删除无关内容，让一个失败的 `.mbt` 文件变小，同时通过外部命令确认指定的失败特征仍然存在。
+用 MoonBit 编写的失败用例约减库与原生命令行工具。在独立项目副本中删除无关文件、声明、语句和 Token，并通过外部命令持续确认目标失败仍然存在。
 
-适用于整理编译诊断、测试失败、非零退出或超时的最小复现。
+[English](README.mbt.md) · [项目模式](docs/PROJECT_MODE.md) · [判定规则](docs/PREDICATES.md) · [库 API](docs/API_STABILITY.md) · [终验记录](artifacts/acceptance/final/summary.md)
 
-[English](README.mbt.md) · [设计](docs/DESIGN.md) · [测试说明](docs/TESTING.md) · [验收记录](artifacts/acceptance/initial/summary.md)
+## 能力
 
-## 当前状态
-
-版本：`0.1.0`。本地技术验收已通过；正式 mooncakes 发布与公开安装验证尚未完成。
-
-截至 2026-09-14 的验证记录：
-
-| 项目 | 结果 |
-| --- | --- |
-| Windows / Ubuntu 原生测试 | 各 149/149 通过 |
-| JavaScript / wasm-gc 测试 | 两个平台分别各 130/130 通过 |
-| 核心包行覆盖率 | 439/458，95.85%（不含原生专用包） |
-| 真实约减夹具 | 5/5 通过，每个均完成 3 次最终复验 |
-| 约减比例中位数 | 89.80% |
-| 确定性 | 编译诊断夹具独立运行 10 次，最终 SHA256 一致 |
-
-完整门槛、历史失败和剩余事项见[初验报告](artifacts/acceptance/initial/summary.md)。
-
-## 核心能力
-
-- 直接通过 argv 执行判定命令，组合退出码、非零退出、超时与 stdout/stderr 文本规则。
-- 两次原始基线验证，随后执行 ddmin 和 12 种文本/Token 变换。
-- 仅接受 UTF-8 字节数严格减少且仍匹配失败特征的候选。
-- 每个候选使用独立项目副本；运行内按完整内容缓存，最终三次验证绕过缓存。
-- 支持次数预算、总时间预算、单次超时和取消；中断时保存当前结果并标记未完成状态。
-- 输出约减项目、JSON/Markdown 报告、统一 diff、复现说明和事件记录。
+- 单文件和多文件约减，支持包目录删除、保护／忽略 glob，以及可选清单字段约减。
+- 文本、Token 和 16 类结构化变换；轻量语法扫描失败时可继续文本层约减。
+- 退出码、超时、输出文本、有限正则、诊断码、测试名、崩溃类别、差分命令和 JSON wrapper 判定。
+- repeat/quorum 与三态结果，记录稳定率和置信区间；默认最终三次无缓存复验。
+- 确定性批次调度、并行工作进程、次数／时间预算、检查点与恢复。
+- SHA-256 证据清单、diff、环境摘要和独立重放。
+- 可复用的 evaluator、pass、事件回调及 `check/reduce` 库入口。
 
 ## 快速开始
 
-需要 MoonBit 工具链、原生目标所需的 C 编译器，以及项目依赖。当前依赖为 `moonbitlang/async@0.20.4`。在仓库根目录运行：
+需要 MoonBit 工具链及其原生 C 编译环境。已固定的依赖是 `moonbitlang/async@0.20.4`。
+在仓库根目录执行：
 
 ```text
-moon check --target native --deny-warn
+moon update
 moon run cmd/main -- --help
-moon run cmd/main -- passes
+moon run cmd/main -- reduce --project --config testdata/final/compile_diagnostic/predicate.json --workspace testdata/final/compile_diagnostic/input --output ./compile-result
+moon run cmd/main -- replay ./compile-result/report.json
 ```
 
-使用项目自带的编译诊断夹具：
+最后一条命令校验证据文件，然后在新副本中重新执行最终判定。输出目录必须尚不存在、位于输入目录之外，且父目录已经存在。再次运行请换新目录名。
+
+构建和安装到自选目录：
 
 ```text
-moon run cmd/main -- reduce --config testdata/compile_diagnostic/predicate.json --workspace testdata/compile_diagnostic/input --output ./compile-diagnostic-result
-moon run cmd/main -- explain ./compile-diagnostic-result/report.json
+moon build --target native --release cmd/main
+moon install ./cmd/main --bin ./local-bin
 ```
 
-输出目录必须尚不存在，位于输入工作区之外，且父目录已经存在。再次运行时请换一个新的输出目录。
+开发时推荐 `moon run cmd/main -- ...`。本项目固定工具链的原生构建文件位于 `_build/native/release/build/cmd/main/main.exe`；Linux 下该文件也是原生可执行程序。
 
-构建 CLI：
-
-```text
-moon build --target native cmd/main
-```
-
-已验证的 Windows、Ubuntu 工具链会生成 `_build/native/debug/build/cmd/main/main.exe`；Linux 下它也是原生可执行文件。开发时可统一使用 `moon run cmd/main -- ...`。
-
-## 命令与输出
+## 命令
 
 | 命令 | 用途 |
 | --- | --- |
-| `check` | 连续验证两次原始失败，不执行约减 |
-| `reduce` | 运行完整约减流程 |
-| `passes` | 列出变换 |
-| `explain <report.json>` | 格式化展示 JSON 报告 |
+| `check` | 验证原始失败，不执行约减 |
+| `reduce` | 约减并进行最终复验 |
+| `resume checkpoint.json` | 从已保存状态继续，可增大预算 |
+| `replay report.json` | 校验证据并无缓存重放结果 |
+| `diff report.json` | 校验后输出统一 diff |
+| `explain report.json` | 展示 JSON 报告 |
+| `passes` | 列出变换名称 |
+| `config validate FILE` | 检查配置，不运行外部命令 |
+| `cache stats --run DIR` | 查看结果目录中的缓存统计 |
+| `cache clean --run DIR` | 清除该运行的候选缓存，保留结果与恢复状态 |
 
-`--help` 包含命令、输出匹配、预算和进度选项。配置文件提供默认值，CLI 参数可以覆盖配置。详见[判定规则](docs/PREDICATES.md)。
+常用选项包括 `--project`、`--jobs 4`、`--repeat 5 --quorum 4`、`--score bytes|tokens|lines`、`--include`、`--protect`、`--ignore`、`--pass-include`、`--pass-exclude`、`--keep-workdir`。完整参数见 `--help`；配置文件提供默认值，命令行覆盖同名配置。
 
-一次约减的输出：
+## 输出与成功判定
 
 ```text
-output/
+result/
 ├── reduced/
+├── original-summary.json
 ├── report.json
 ├── report.md
+├── events.ndjson
+├── checkpoint.json
+├── environment.json
+├── checksums.txt
 ├── reduction.diff
-├── reproduce.txt
-└── events.ndjson
+└── reproduce.txt
 ```
 
-成功的基线检查不等于成功约减。`report.json` 的 `completed` 只有在状态为 Completed、最终匹配达到三次且原始文件未改变时才为 true。预算停止、取消或最终复验失败的结果应按报告状态处理。
+`completed` 要求正常结束、达到配置的最终复验阈值，且原始文件未改变。预算停止、取消或最终验证失败的候选可以保留供继续处理，但不会被标为成功。详见[报告格式](docs/REPORT_FORMAT.md)。
 
-## 实测约减结果
+## 示例和开发
 
-| 夹具 | 原始字节 | 最终字节 | 减少比例 |
-| --- | ---: | ---: | ---: |
-| 编译诊断 | 450 | 39 | 91.33% |
-| 测试失败 | 451 | 46 | 89.80% |
-| 非零退出 | 476 | 100 | 78.99% |
-| 超时 | 441 | 79 | 82.09% |
-| 噪声源码 | 544 | 45 | 91.73% |
+[examples](examples/) 包含十二个示例，覆盖真实编译／测试失败、多文件、诊断指纹、差分、不稳定判定、恢复、并行和自定义 pass。
 
-输入、配置和许可证位于 [testdata](testdata/)，使用说明位于 [examples](examples/)。这些是固定夹具的实测结果，不代表任意输入都能达到相同比例。
+```text
+moon run examples/custom_pass --target native
+```
 
-## 开发与验证
-
-在 PowerShell 中运行统一检查：
+PowerShell 完整检查入口：
 
 ```powershell
 ./scripts/verify.ps1
+./scripts/benchmark-final.ps1
+./scripts/determinism-final.ps1
 ```
 
-或者逐项执行：
-
-```text
-moon info --target native
-moon fmt --check
-moon check --target native --warn-list +73 --deny-warn
-moon build --target native tools/process_probe
-moon test --target native --deny-warn
-moon test --target js --deny-warn
-moon test --target wasm-gc --deny-warn
-```
-
-原生生命周期测试需要先构建 `tools/process_probe`。它只创建受控测试进程，最长十秒自行退出；统一脚本已包含构建步骤。
-
-作为库使用时，可导入 `Ag108/MoonReduce/reducer/engine` 的纯 `Session` 状态机，或使用 `predicate/matcher`、`report` 等包。当前公开接口见各包的 `pkg.generated.mbti`；0.x API 尚未承诺稳定。
+验证会先构建有界测试辅助进程。纯核心支持 native、JavaScript、wasm-gc；外部进程和 CLI 使用 native。测量口径和结果见[测试说明](docs/TESTING.md)、[基准说明](docs/BENCHMARKS.md)和[终验记录](artifacts/acceptance/final/summary.md)。
 
 ## 使用边界
 
-仅运行可信项目和可信命令。隔离副本不是安全沙箱，外部命令仍拥有当前用户的权限。
+仅运行可信项目和可信命令。副本不是安全沙箱，命令仍有当前用户权限。
 
-- 初验只约减一个 UTF-8 `.mbt` 文件，不提供完整语法树、多文件约减或断点恢复。
-- 目标文件上限 64 KiB，单文件上限 1 MiB，项目快照上限 1000 文件/16 MiB。
-- 进程回收针对本次父 PID 的可识别后代；无法保证约束主动逃逸、重设父进程或改变权限的程序。
-- 环境变量值不写入报告，但命令参数会保留原文，不要把密钥放在 argv 中。
-- FNV-1a 用于稳定标识，不是安全校验哈希；缓存以完整内容判断相等。
+- 轻量结构树不等于完整 MoonBit 编译器，候选始终需要目标失败谓词验证。
+- 正则支持有界子集，具体限制见[判定规则](docs/PREDICATES.md)。
+- 快照最多 1000 文件／16 MiB，单文件最多 1 MiB，MoonBit 源文件最多 64 KiB。
+- 报告省略环境变量值；私有检查点为恢复保存显式环境覆盖。不要把秘密放进 argv，也不要公开含秘密的检查点。
+- 校验和检测损坏，不证明证据来源可信。对主动逃逸进程不提供操作系统级约束。
 
-详见[安全说明](SECURITY.md)、[进程验证](docs/PROCESS_VALIDATION.md)和[已知限制](docs/LIMITATIONS.md)。不要通过关闭安全软件来让测试通过。
-
-## 许可证与贡献
-
-采用 [Apache-2.0](LICENSE)。依赖与来源见 [THIRD_PARTY.md](THIRD_PARTY.md)、[REFERENCES.md](REFERENCES.md)。
-
-贡献流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。本项目按小步提交 Git；pre-push hook 通过 PowerShell 7（`pwsh`）运行统一验证脚本，检查失败时拒绝推送。
+详见[安全模型](docs/SECURITY_MODEL.md)和[已知限制](docs/LIMITATIONS.md)。许可证为 Apache-2.0。

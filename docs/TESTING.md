@@ -1,45 +1,44 @@
 # Testing
 
-Use ./scripts/verify.ps1 with PowerShell. It builds the bounded native test probe
-before running the native suite. The equivalent individual commands are:
+Run `./scripts/verify.ps1` from PowerShell. It generates interfaces, checks
+formatting and warning 73, builds the bounded native probe, runs native/JS/wasm-gc
+suites and CLI help. Public `.mbti` changes must be reviewed and committed.
+
+Current local core verification: 492 native test declarations, 435 on each pure
+backend. Counts are not added across targets. The application has 43 test
+declarations, including real compiler/process E2E and fault-injection checks.
+See `artifacts/acceptance/final/test-inventory.txt` for exact names and locations.
+
+Coverage is measured on all project pure packages, excluding native-only process,
+workspace and app adapters and excluding dependencies. Coveralls line coverage
+counts non-null entries, with positive entries covered. Current measured result:
+1467/1585 instrumented lines, 92.56%. The Windows exporter needs path separators
+normalized only within its name fields before JSON parsing.
 
 ```text
-moon info --target native
-moon fmt --check
-moon check --target native --warn-list +73 --deny-warn
-moon build --target native tools/process_probe
-moon test --target native --deny-warn
-moon test --target js --deny-warn
-moon test --target wasm-gc --deny-warn
-moon run cmd/main -- --help
-```
-
-The native probe is _build/native/debug/build/tools/process_probe/process_probe.exe
-on both measured platforms. MR_PROCESS_PROBE can override it with an absolute
-path. It never invokes a shell and naturally expires within ten seconds.
-
-The suite includes 149 native tests (including seven app pipeline E2Es and two
-descendant lifecycle tests) and 130 pure-backend tests. Tests cover predicate
-tables, invalid configuration, UTF-8/path boundaries, lexer opacity, passes,
-cache/budget/cancel, reports, original preservation and isolated real moon check.
-The engine checks all 255 nonempty required subsets of eight lines under a
-monotone predicate; this does not prove global minimality for arbitrary predicates.
-
-Coverage commands:
-
-```text
+moon coverage clean
 moon test --target js --enable-coverage --deny-warn
-moon coverage report -f summary
-moon coverage report -f coveralls -o coverage.json
+moon coverage report -f coveralls -o .moonreduce/final-coverage.json
 ```
 
-Summary coverage counts instrumentation points. Line coverage counts non-null
-coveralls entries, with positive entries covered. The measured Windows exporter
-emits unescaped path separators in name fields; normalize only those fields before
-parsing. Native-only code is excluded from core coverage. Raw platform and fixture
-evidence is under artifacts/acceptance/initial.
+Always clean old coverage counters before a new measurement. Otherwise changes to
+instrumentation sites can mix incompatible runs. Native tests cover additional
+filesystem/process behavior outside the pure-core denominator.
 
-All five owned fixtures passed baseline=2, final=3, original preservation and >=30%
-byte reduction. The compiler fixture additionally passed ten independent runs
-with identical final SHA256 and counters. Historical failed reports/logs are kept;
-they are not counted as passing. Old PowerShell probes are not in this suite.
+The suite includes 60 syntax cases, 64 structured cases, per-pass strict-decrease
+and determinism invariants, exhaustive eight-element ddmin checks, stable batch
+ordering, cache reuse, zero known repeats on checkpoint restore, invalid replies,
+protected paths and original preservation. Predicate suites cover Unicode, bounded
+regex, timeout tolerance, differential observations, wrappers and real 5/4 flaky
+statistics. Native fault checks cover bad commands/config, process timeout and
+cancellation, partial checkpoint writes, occupied paths and corrupt evidence.
+
+`tools/process_probe` expires naturally within ten seconds in its waiting modes.
+It uses no shell and requires no antivirus exception. Its expected debug output
+path is `_build/native/debug/build/tools/process_probe/process_probe.exe` on both
+tested platforms; `MR_PROCESS_PROBE` can override that path.
+
+Fixed budget, uncached final replay and parallel determinism scripts are in
+`scripts/benchmark-final.ps1` and `scripts/determinism-final.ps1`. Preserve failed
+runs as failures. Platform, installation and benchmark evidence is under
+`artifacts/acceptance/final`; historical initial evidence is separate.

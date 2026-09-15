@@ -35,3 +35,24 @@ All edits must be in bounds, non-overlapping for the proposal, and strictly smal
 in UTF-8 bytes. Strings and comments cannot introduce false delimiters. Structural
 recognition does not guarantee that every emitted edit preserves syntax; irrelevant
 compiler errors are rejected by a sufficiently specific user predicate.
+
+## Structural edit contracts
+
+For every family the common fallback is no structured proposal on malformed
+balanced groups, followed by the independent text/token registry. Candidate spans
+are UTF-8 byte ranges, never string code-unit offsets.
+
+- import/function/type-declaration/test remove a complete recognized top-level
+  unit. This may leave missing names, instances or imports; the predicate rejects
+  unrelated errors.
+- parameter/field remove one complete comma segment. Call arity, generic argument
+  counts and construction patterns may become invalid; no semantic repair is
+  assumed.
+- statement/if-branch/match-arm/loop-body remove a recognized body segment or
+  branch. Exhaustiveness, required returns or scope can break.
+- binding/expression/type-annotation replace one recognized expression/annotation
+  span. Type inference, expression precedence or generic constraints may break.
+- metadata/identifier-literal remove a metadata span or shorten one token. Labels,
+  references and escape validity may change, so external validation is mandatory.
+- format removes eligible whitespace only when explicitly enabled. Token merging
+  may change syntax; strings/comments are opaque and the same predicate applies.
