@@ -10,7 +10,7 @@ pub(all) struct Run {
 /// CLI reference for the initial commands and options.
 pub fn help() -> String {
   let text =
-    #|MoonReduce 0.1.0 — trusted-project testcase reduction
+    #|MoonReduce 1.0.0 — trusted-project testcase reduction
     #|moonreduce check [options] -- executable arg ...
     #|moonreduce reduce [options] -- executable arg ...
     #|moonreduce resume checkpoint.json [--output DIR] [--max-tests N]
@@ -150,7 +150,7 @@ pub async fn execute(c : @config.Config) -> Run {
         error = Some("MR_BUDGET_CANCELLED")
       } else {
         s.stop(ExecutionFailed)
-        error = Some("MR_EXEC_FAILURE: " + e.to_string())
+        error = Some("MR_EXEC_FAILURE: " + execution_error(e))
       }
   }
   @async.protect_from_cancel(resume_on_cancel=false, () => {
@@ -280,5 +280,13 @@ pub async fn run(argv : Array[String]) -> Int {
         raise ProjectError(message)
       }
     e => raise e
+  }
+}
+
+///|
+fn execution_error(error : Error) -> String {
+  match error {
+    @process.ProcessError(message) => message
+    _ => error.to_string()
   }
 }

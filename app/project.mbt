@@ -291,7 +291,7 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         session.stop(BudgetExhausted)
       } else {
         session.stop(ExecutionFailed)
-        error = Some("MR_EXEC_FAILURE: " + e.to_string())
+        error = Some("MR_EXEC_FAILURE: " + execution_error(e))
       }
   }
   @async.protect_from_cancel(resume_on_cancel=false, () => {
