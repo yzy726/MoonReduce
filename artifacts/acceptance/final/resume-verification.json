@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "source_revision": "5bc591262f959387078153e74bb7795ad6064934",
+  "baseline_fixture": "reducer/project/checkpoint_test.mbt: checkpoint interrupted run reexecutes zero settled cached candidates",
+  "known_candidates_minimum": 20,
+  "repeated_known_candidates": 0,
+  "repeat_percent": 0,
+  "native_interruption_e2e": "app/project_test.mbt: cancellation persists checkpoint and resumes to final validation",
+  "final_uncached_passes": 3,
+  "scope": "Settled cached candidates. Pending unfinished work and final revalidation are excluded."
+}

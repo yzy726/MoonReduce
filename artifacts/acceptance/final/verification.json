@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "source_revision": "da06f78517952256699890762e8c2955c4660710",
+  "windows_native": 492,
+  "linux_native": 492,
+  "js": 435,
+  "wasm_gc": 435,
+  "app_test_declarations": 43,
+  "named_native_e2e_declarations": 43,
+  "native_async_declarations": 56,
+  "core_covered_lines": 1467,
+  "core_instrumented_lines": 1585,
+  "core_line_percent": 92.56,
+  "core_coverage_backend": "js",
+  "core_coverage_scope": "All instrumented lines emitted by moon coverage for the portable packages, excluding native-only adapters; no cross-target summation",
+  "windows_binary_sha256": "ed5b194c60ebf5ab5660450fe80a01d410867f37e4e3e9e227064cdefbc223e2",
+  "linux_binary_sha256": "a5c0251b46060cb14f282746d0080fc43b859b1a5f903d03e206033571e816b2",
+  "remote_release": "not performed"
+}

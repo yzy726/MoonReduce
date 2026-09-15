@@ -1,0 +1,44 @@
+[
+  {
+    "path": "moon.mod",
+    "bytes": 48,
+    "fnv1a": "9b2c7a1f0d0276b4",
+    "sha256": "bc9b212aad67a633a094931ef6bd4095de6afa1ef715fbadabbb0ca2404df20b"
+  },
+  {
+    "path": "moon.pkg",
+    "bytes": 0,
+    "fnv1a": "cbf29ce484222325",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "noise1.mbt",
+    "bytes": 27,
+    "fnv1a": "ef4a641cd1d5cd5d",
+    "sha256": "ef73f94aae4eb410b704c787dcde09290818966867ec73fb004e5bd87200e733"
+  },
+  {
+    "path": "noise2.mbt",
+    "bytes": 27,
+    "fnv1a": "f316bcf581a2f9eb",
+    "sha256": "1e5dfef29800040bd052ed6f3dbdb84ba103e04aace62c3025d7308bc0568e24"
+  },
+  {
+    "path": "noise3.mbt",
+    "bytes": 27,
+    "fnv1a": "cda6ebdf1d888c25",
+    "sha256": "755a48638dee5d84a649088fa6d1ddd082ee87dc2f789fd19a91d690a0431a45"
+  },
+  {
+    "path": "noise4.mbt",
+    "bytes": 27,
+    "fnv1a": "c3be5b9b46ef611f",
+    "sha256": "508c12b2ed47e779eec3c34ea98d6249eaa6684107b68900c3b62bb1799535e9"
+  },
+  {
+    "path": "repro.mbt",
+    "bytes": 1179,
+    "fnv1a": "8bccb49f4d81a1c6",
+    "sha256": "db4075a2f5424a92b2966e5ae0c34c14f6ffcccb0c3b186ed30889894e89303b"
+  }
+]

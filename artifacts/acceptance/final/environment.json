@@ -1,0 +1,17 @@
+{
+  "processor": {
+    "Name": "Intel(R) Core(TM) i7-14700HX",
+    "NumberOfCores": 20,
+    "NumberOfLogicalProcessors": 28
+  },
+  "memory": 16944848896,
+  "os": {
+    "Caption": "Microsoft Windows 11 家庭中文版",
+    "Version": "10.0.22631",
+    "OSArchitecture": "64 位"
+  },
+  "toolchain": "moonc 0.10.10+f8a486b6f; moon 0.1.20260824",
+  "candidate_cache": "cold per run",
+  "toolchain_cache": "warm",
+  "measurement_note": "Local workstation; development checks and WSL setup occurred during parts of the run. All timings retained, not best-case samples."
+}

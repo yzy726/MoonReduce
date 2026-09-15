@@ -1,0 +1,261 @@
+{
+  "schema_version": 2,
+  "mode": "project",
+  "status": "Completed",
+  "completed": true,
+  "jobs": 1,
+  "score_strategy": "bytes",
+  "pass_include": [],
+  "pass_exclude": [],
+  "workdirs_retained": false,
+  "original_score": {
+    "bytes": 1116,
+    "tokens": 203,
+    "lines": 27,
+    "files": 3,
+    "nodes": 30,
+    "paths": "moon.mod\u0000moon.pkg\u0000repro.mbt"
+  },
+  "reduced_score": {
+    "bytes": 217,
+    "tokens": 24,
+    "lines": 2,
+    "files": 3,
+    "nodes": 6,
+    "paths": "moon.mod\u0000moon.pkg\u0000repro.mbt"
+  },
+  "commands_per_trial": 1,
+  "predicate_spec": {
+    "schema_version": 1,
+    "stdout_regex": [],
+    "stderr_regex": [],
+    "crash": "",
+    "diagnostic_codes": [],
+    "test_names": [],
+    "normalize": false,
+    "differential": "",
+    "wrapper": false,
+    "timeout_ms": 10000,
+    "timeout_tolerance_ms": 0
+  },
+  "repeat": 1,
+  "quorum": 1,
+  "final_repeat": 3,
+  "final_quorum": 3,
+  "probabilistic": false,
+  "baseline_statistics": {
+    "attempts": 2,
+    "resolved": 2,
+    "passed": 2,
+    "rate": 1,
+    "lower": 0.34238022750665303,
+    "upper": 1
+  },
+  "final_statistics": {
+    "attempts": 3,
+    "resolved": 3,
+    "passed": 3,
+    "rate": 1,
+    "lower": 0.4385029682449546,
+    "upper": 1
+  },
+  "evaluations": 164,
+  "attempted_commands": 164,
+  "cache_hits": 4,
+  "baseline_passed": 2,
+  "final_passed": 3,
+  "original_unchanged": true,
+  "original_files": [
+    {
+      "path": "moon.mod",
+      "bytes": 91,
+      "fnv1a": "3e7e89252678236f",
+      "sha256": "03251866fe6bd08ce1ce8c48043b39a7ef0f67508b431a76dee3f7456a5393b5"
+    },
+    {
+      "path": "moon.pkg",
+      "bytes": 29,
+      "fnv1a": "34844b877c0fef81",
+      "sha256": "4119ad8c3735ceb7bfe3fb4d8102c1eec33c0f05b74ed0831d75830434d7caff"
+    },
+    {
+      "path": "repro.mbt",
+      "bytes": 996,
+      "fnv1a": "401e8bd4722828e0",
+      "sha256": "82960bf49752b4ae318fc06bc792dbc3ddf5c039aa3c8385af6c3127cfac9544"
+    }
+  ],
+  "reduced_files": [
+    {
+      "path": "moon.mod",
+      "bytes": 91,
+      "fnv1a": "3e7e89252678236f",
+      "sha256": "03251866fe6bd08ce1ce8c48043b39a7ef0f67508b431a76dee3f7456a5393b5"
+    },
+    {
+      "path": "moon.pkg",
+      "bytes": 29,
+      "fnv1a": "34844b877c0fef81",
+      "sha256": "4119ad8c3735ceb7bfe3fb4d8102c1eec33c0f05b74ed0831d75830434d7caff"
+    },
+    {
+      "path": "repro.mbt",
+      "bytes": 97,
+      "fnv1a": "ae5f43725e893849",
+      "sha256": "8e6084057694229023689f010d1e46a4c8b44412d5ff8421415a3e2d36b1fe29"
+    }
+  ],
+  "evidence": [
+    {
+      "schema_version": 2,
+      "id": 1,
+      "phase": "baseline",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": 23,
+          "timed_out": false,
+          "duration_ms": "967"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": 23,
+      "timed_out": false,
+      "duration_ms": "967"
+    },
+    {
+      "schema_version": 2,
+      "id": 2,
+      "phase": "baseline",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": 23,
+          "timed_out": false,
+          "duration_ms": "1012"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": 23,
+      "timed_out": false,
+      "duration_ms": "1012"
+    },
+    {
+      "schema_version": 2,
+      "id": 162,
+      "phase": "final",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": 1,
+          "timed_out": false,
+          "duration_ms": "1045"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": 1,
+      "timed_out": false,
+      "duration_ms": "1045"
+    },
+    {
+      "schema_version": 2,
+      "id": 163,
+      "phase": "final",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": 1,
+          "timed_out": false,
+          "duration_ms": "1017"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": 1,
+      "timed_out": false,
+      "duration_ms": "1017"
+    },
+    {
+      "schema_version": 2,
+      "id": 164,
+      "phase": "final",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": 1,
+          "timed_out": false,
+          "duration_ms": "1001"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": 1,
+      "timed_out": false,
+      "duration_ms": "1001"
+    }
+  ],
+  "elapsed_ms": "123195"
+}

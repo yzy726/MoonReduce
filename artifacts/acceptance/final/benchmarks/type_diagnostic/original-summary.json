@@ -1,0 +1,20 @@
+[
+  {
+    "path": "moon.mod",
+    "bytes": 45,
+    "fnv1a": "6d80ba5c7ae4c8f4",
+    "sha256": "06ced7bee9c7ab153bff160a1c980d923001cecc7714c27cbb33f95d6e754cce"
+  },
+  {
+    "path": "moon.pkg",
+    "bytes": 0,
+    "fnv1a": "cbf29ce484222325",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "repro.mbt",
+    "bytes": 1179,
+    "fnv1a": "90d3d4894fc90230",
+    "sha256": "cf0a964f6b384e990640c79d8b9200bc3690318cf3a0301ddfc849bda21a6a73"
+  }
+]

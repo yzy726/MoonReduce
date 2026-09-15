@@ -1,0 +1,57 @@
+--- a/noise1.mbt
++++ b/noise1.mbt
+@@ -1,1 +0,0 @@
+-fn unused_1() -> Int { 1 }
+--- a/noise2.mbt
++++ b/noise2.mbt
+@@ -1,1 +0,0 @@
+-fn unused_2() -> Int { 2 }
+--- a/noise3.mbt
++++ b/noise3.mbt
+@@ -1,1 +0,0 @@
+-fn unused_3() -> Int { 3 }
+--- a/noise4.mbt
++++ b/noise4.mbt
+@@ -1,1 +0,0 @@
+-fn unused_4() -> Int { 4 }
+--- a/repro.mbt
++++ b/repro.mbt
+@@ -1,37 +1,1 @@
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-// Original MoonReduce fixture. Removable context and notes.
+-
+-///|
+-fn reproduce() -> Int { mr_multi_missing }
+-
+-///|
+-fn irrelevant_1(x : Int) -> Int { let y = x + 1; y * 2 }
+-
+-///|
+-fn irrelevant_2(x : Int) -> Int { let y = x + 2; y * 2 }
+-
+-///|
+-fn irrelevant_3(x : Int) -> Int { let y = x + 3; y * 2 }
+-
+-///|
+-fn irrelevant_4(x : Int) -> Int { let y = x + 4; y * 2 }
+-
+-///|
+-fn irrelevant_5(x : Int) -> Int { let y = x + 5; y * 2 }
+-
+-///|
+-fn irrelevant_6(x : Int) -> Int { let y = x + 6; y * 2 }
+-
+-///|
+-fn irrelevant_7(x : Int) -> Int { let y = x + 7; y * 2 }
+-
+-///|
+-fn irrelevant_8(x : Int) -> Int { let y = x + 8; y * 2 }
++fn x ->  { mr_multi_missing 

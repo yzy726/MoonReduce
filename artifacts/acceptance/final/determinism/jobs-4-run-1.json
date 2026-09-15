@@ -1,0 +1,285 @@
+{
+  "schema_version": 2,
+  "mode": "project",
+  "status": "Completed",
+  "completed": true,
+  "jobs": 4,
+  "score_strategy": "bytes",
+  "pass_include": [],
+  "pass_exclude": [],
+  "workdirs_retained": false,
+  "original_score": {
+    "bytes": 1335,
+    "tokens": 226,
+    "lines": 32,
+    "files": 7,
+    "nodes": 39,
+    "paths": "moon.mod\u0000moon.pkg\u0000noise1.mbt\u0000noise2.mbt\u0000noise3.mbt\u0000noise4.mbt\u0000repro.mbt"
+  },
+  "reduced_score": {
+    "bytes": 77,
+    "tokens": 6,
+    "lines": 1,
+    "files": 3,
+    "nodes": 0,
+    "paths": "moon.mod\u0000moon.pkg\u0000repro.mbt"
+  },
+  "commands_per_trial": 1,
+  "predicate_spec": {
+    "schema_version": 1,
+    "stdout_regex": [],
+    "stderr_regex": [],
+    "crash": "",
+    "diagnostic_codes": [],
+    "test_names": [],
+    "normalize": false,
+    "differential": "",
+    "wrapper": false,
+    "timeout_ms": 10000,
+    "timeout_tolerance_ms": 0
+  },
+  "repeat": 1,
+  "quorum": 1,
+  "final_repeat": 3,
+  "final_quorum": 3,
+  "probabilistic": false,
+  "baseline_statistics": {
+    "attempts": 2,
+    "resolved": 2,
+    "passed": 2,
+    "rate": 1,
+    "lower": 0.34238022750665303,
+    "upper": 1
+  },
+  "final_statistics": {
+    "attempts": 3,
+    "resolved": 3,
+    "passed": 3,
+    "rate": 1,
+    "lower": 0.4385029682449546,
+    "upper": 1
+  },
+  "evaluations": 104,
+  "attempted_commands": 104,
+  "cache_hits": 0,
+  "baseline_passed": 2,
+  "final_passed": 3,
+  "original_unchanged": true,
+  "original_files": [
+    {
+      "path": "moon.mod",
+      "bytes": 48,
+      "fnv1a": "9b2c7a1f0d0276b4",
+      "sha256": "bc9b212aad67a633a094931ef6bd4095de6afa1ef715fbadabbb0ca2404df20b"
+    },
+    {
+      "path": "moon.pkg",
+      "bytes": 0,
+      "fnv1a": "cbf29ce484222325",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "noise1.mbt",
+      "bytes": 27,
+      "fnv1a": "ef4a641cd1d5cd5d",
+      "sha256": "ef73f94aae4eb410b704c787dcde09290818966867ec73fb004e5bd87200e733"
+    },
+    {
+      "path": "noise2.mbt",
+      "bytes": 27,
+      "fnv1a": "f316bcf581a2f9eb",
+      "sha256": "1e5dfef29800040bd052ed6f3dbdb84ba103e04aace62c3025d7308bc0568e24"
+    },
+    {
+      "path": "noise3.mbt",
+      "bytes": 27,
+      "fnv1a": "cda6ebdf1d888c25",
+      "sha256": "755a48638dee5d84a649088fa6d1ddd082ee87dc2f789fd19a91d690a0431a45"
+    },
+    {
+      "path": "noise4.mbt",
+      "bytes": 27,
+      "fnv1a": "c3be5b9b46ef611f",
+      "sha256": "508c12b2ed47e779eec3c34ea98d6249eaa6684107b68900c3b62bb1799535e9"
+    },
+    {
+      "path": "repro.mbt",
+      "bytes": 1179,
+      "fnv1a": "8bccb49f4d81a1c6",
+      "sha256": "db4075a2f5424a92b2966e5ae0c34c14f6ffcccb0c3b186ed30889894e89303b"
+    }
+  ],
+  "reduced_files": [
+    {
+      "path": "moon.mod",
+      "bytes": 48,
+      "fnv1a": "9b2c7a1f0d0276b4",
+      "sha256": "bc9b212aad67a633a094931ef6bd4095de6afa1ef715fbadabbb0ca2404df20b"
+    },
+    {
+      "path": "moon.pkg",
+      "bytes": 0,
+      "fnv1a": "cbf29ce484222325",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "repro.mbt",
+      "bytes": 29,
+      "fnv1a": "cd81bba96a424ee7",
+      "sha256": "fe5d16d84616ef5c2f9d51e2ad70a640f50007f29a56609cb9e05e58574f2fb8"
+    }
+  ],
+  "evidence": [
+    {
+      "schema_version": 2,
+      "id": 1,
+      "phase": "baseline",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": -1,
+          "timed_out": false,
+          "duration_ms": "238"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": -1,
+      "timed_out": false,
+      "duration_ms": "238"
+    },
+    {
+      "schema_version": 2,
+      "id": 2,
+      "phase": "baseline",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": -1,
+          "timed_out": false,
+          "duration_ms": "235"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": -1,
+      "timed_out": false,
+      "duration_ms": "235"
+    },
+    {
+      "schema_version": 2,
+      "id": 102,
+      "phase": "final",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": -1,
+          "timed_out": false,
+          "duration_ms": "260"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": -1,
+      "timed_out": false,
+      "duration_ms": "260"
+    },
+    {
+      "schema_version": 2,
+      "id": 103,
+      "phase": "final",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": -1,
+          "timed_out": false,
+          "duration_ms": "247"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": -1,
+      "timed_out": false,
+      "duration_ms": "247"
+    },
+    {
+      "schema_version": 2,
+      "id": 104,
+      "phase": "final",
+      "matched": [
+        true
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            true
+          ],
+          "exit_code": -1,
+          "timed_out": false,
+          "duration_ms": "249"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 1,
+        "rate": 1,
+        "lower": 0.20654931437723745,
+        "upper": 1
+      },
+      "exit_code": -1,
+      "timed_out": false,
+      "duration_ms": "249"
+    }
+  ],
+  "elapsed_ms": "19050"
+}

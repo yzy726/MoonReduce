@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "decision": "Interesting",
+  "statistics": {
+    "attempts": 3,
+    "resolved": 3,
+    "passed": 3,
+    "rate": 1,
+    "lower": 0.4385029682449546,
+    "upper": 1
+  },
+  "runs": [
+    {
+      "trial": 1,
+      "matched": [
+        true
+      ],
+      "exit_code": -1,
+      "timed_out": true
+    },
+    {
+      "trial": 2,
+      "matched": [
+        true
+      ],
+      "exit_code": -1,
+      "timed_out": true
+    },
+    {
+      "trial": 3,
+      "matched": [
+        true
+      ],
+      "exit_code": -1,
+      "timed_out": true
+    }
+  ],
+  "cache_used": false,
+  "original_unchanged": true,
+  "toolchain": "moon 0.1.20260824 (dae026a 2026-08-24) ~\\.moon\\bin\\moon.exe\nmoonc v0.10.10+f8a486b6f (2026-08-21) ~\\.moon\\bin\\moonc.exe\nmoonrun 0.1.20260824 (dae026a 2026-08-24) ~\\.moon\\bin\\moonrun.exe\n\nFeature flags enabled: rr_moon_mod,rr_moon_pkg\n"
+}

@@ -1,0 +1,3 @@
+PASS: ten sealed bundles, 110 SHA-256 entries, original fixture hashes, twenty deterministic runs, resume, coverage and local platform evidence.
+Nine-fixture median byte reduction: 88.76%; core line coverage: 92.56%.
+This audits saved local evidence; it does not run tests, publish packages or certify remote CI.

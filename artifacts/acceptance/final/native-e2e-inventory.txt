@@ -1,0 +1,56 @@
+workspace/native\cleanup_test.mbt:2:async test "e2e/cleanup only removes owned evaluation copies" {
+workspace/native\cleanup_test.mbt:22:async test "invalid/cleanup rejects altered owner marker" {
+workspace/native\workspace_test.mbt:2:async test "e2e/workspace isolates candidates and exports original support files" {
+workspace/native\workspace_test.mbt:25:async test "e2e/workspace rejects output over original and target traversal" {
+workspace/native\project_test.mbt:2:async test "project/e2e materializes multiple replacements and file deletion" {
+workspace/native\project_test.mbt:34:async test "project/e2e copies remain independent" {
+workspace/native\project_test.mbt:50:async test "project/e2e exports entire selected snapshot" {
+workspace/native\project_test.mbt:68:async test "project/e2e ignored glob omits files from every copy" {
+workspace/native\project_test.mbt:88:async test "regr_project_materialize_failure_cleans_owned_copy" {
+app\app_test.mbt:13:async test "e2e/real moon diagnostic reduced in isolated copies" {
+evaluator/process\tree_test.mbt:2:async test "regr_timeout_reaps_owned_descendant_without_shell" {
+evaluator/process\tree_test.mbt:27:async test "e2e_cancellation_reaps_owned_descendant_without_shell" {
+evaluator/process\process_test.mbt:2:async test "e2e/real direct argv captures bounded output" {
+evaluator/process\process_test.mbt:11:async test "e2e/missing executable is an error not an interesting failure" {
+evaluator/process\process_test.mbt:27:async test "invalid/empty command does not panic" {
+app\interruption_e2e_test.mbt:11:async test "e2e_timeout_preserves_original_and_final_verification" {
+app\interruption_e2e_test.mbt:26:async test "e2e_cancel_preserves_original_and_exports_interrupted_report" {
+app\checkpoint_wbtest.mbt:2:async test "checkpoint atomic replacement leaves no partial file" {
+app\checkpoint_wbtest.mbt:12:async test "checkpoint occupied temporary path preserves both files" {
+app\checkpoint_wbtest.mbt:29:async test "checkpoint partial write failure preserves prior checkpoint" {
+app\checkpoint_wbtest.mbt:48:async test "checkpoint cancellation while writing cleans partial temporary" {
+app\config_file_test.mbt:2:async test "regr_invalid_json_file_is_configuration_error" {
+app\config_file_test.mbt:10:async test "regr_missing_config_file_is_configuration_error" {
+app\config_file_test.mbt:16:async test "e2e maintenance argument errors return configuration exit code" {
+app\maintenance_wbtest.mbt:2:async test "maintenance config validates without executing commands" {
+app\maintenance_wbtest.mbt:25:async test "maintenance rejects missing explicit cache clean run" {
+app\maintenance_wbtest.mbt:36:async test "maintenance cache clean preserves candidate and sealed replay state" {
+app\failure_e2e_test.mbt:55:async test "e2e/baseline mismatch preserves original and exports uncertified result" {
+app\failure_e2e_test.mbt:66:async test "e2e/spawn failure preserves original and writes explicit error" {
+app\failure_e2e_test.mbt:83:async test "e2e/execution budget reserves final checks and preserves original" {
+app\failure_e2e_test.mbt:95:async test "e2e/check stops after baseline without certifying a reduction" {
+app\project_test.mbt:48:async test "project/e2e CLI reduces multiple files and preserves support" {
+app\project_test.mbt:84:async test "project/e2e worker counts choose identical snapshots" {
+app\project_test.mbt:95:async test "project/e2e missing command records failure without modifying input" {
+app\project_test.mbt:112:async test "project/e2e resume preserves best and revalidates finals" {
+app\project_test.mbt:139:async test "project/e2e resume refuses changed original" {
+app\project_test.mbt:160:async test "project/e2e repeated predicates count commands and final quorum" {
+app\project_test.mbt:182:async test "project/e2e repeated destructive commands use fresh copies" {
+app\project_test.mbt:204:async test "project/e2e resume retains repeated predicate policy" {
+app\project_test.mbt:231:async test "project/e2e advanced regex rejects unrelated output" {
+app\project_test.mbt:240:async test "project/e2e malformed wrapper is inconclusive" {
+app\project_test.mbt:252:async test "project/e2e differential runs both commands within budget" {
+app\project_test.mbt:271:async test "project/e2e equal differential results reject baseline" {
+app\project_test.mbt:283:async test "project/e2e valid wrapper preserves interesting candidates" {
+app\project_test.mbt:300:async test "project/e2e diagnostic and test fingerprint remain present" {
+app\project_test.mbt:320:async test "project/e2e strategy controls retain requested workspaces" {
+app\project_test.mbt:341:async test "project/e2e deletes unused package directory only in copies" {
+app\project_test.mbt:357:async test "project/e2e opt-in manifest edit appears in diff" {
+app\project_test.mbt:377:async test "project/e2e evidence bundle has checksums and redacted environment" {
+app\project_test.mbt:407:async test "project/e2e evidence rejects missing extra and traversal entries" {
+app\project_test.mbt:447:async test "project/e2e replay verifies fresh copies without original input" {
+app\project_test.mbt:461:async test "project/e2e replay refuses corrupt evidence before executing" {
+app\project_test.mbt:477:async test "project/e2e real flaky predicate records four of five successes" {
+app\project_test.mbt:513:async test "project/e2e cancellation persists checkpoint and resumes to final validation" {
+app\project_test.mbt:567:async test "project/e2e resume rejects modified cache before creating output" {
+app\project_test.mbt:607:async test "project/e2e cancellation counts an active worker" {
