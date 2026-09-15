@@ -16,6 +16,10 @@ pub fn help() -> String {
     #|moonreduce resume checkpoint.json [--output DIR] [--max-tests N]
     #|moonreduce replay report.json [--output DIR]
     #|moonreduce explain report.json
+    #|moonreduce diff report.json
+    #|moonreduce config validate FILE
+    #|moonreduce cache stats [--run DIR]
+    #|moonreduce cache clean --run DIR
     #|moonreduce passes
     #|
     #|--workspace DIR         input project (default .)
@@ -186,6 +190,10 @@ pub async fn execute(c : @config.Config) -> Run {
 ///|
 /// CLI dispatcher; returns the specified exit code after artifact writes complete.
 pub async fn run(argv : Array[String]) -> Int {
+  if [Some("diff"), Some("config"), Some("cache")].contains(argv.get(0)) {
+    @stdio.stdout.write(maintenance(argv))
+    return 0
+  }
   if argv.get(0) == Some("replay") {
     return replay_project(argv)
   }
