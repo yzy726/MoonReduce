@@ -1,0 +1,17 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/predicate/regex"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Regex {
+  // private fields
+}
+pub fn Regex::compile(String) -> Result[Self, String]
+pub fn Regex::matches(Self, String, max_steps? : Int) -> Result[Bool, String]
+
+// Type aliases
+
+// Traits
