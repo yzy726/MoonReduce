@@ -189,7 +189,7 @@ pub async fn execute(c : @config.Config) -> Run {
 
 ///|
 /// CLI dispatcher; returns the specified exit code after artifact writes complete.
-pub async fn run(argv : Array[String]) -> Int {
+async fn run_inner(argv : Array[String]) -> Int {
   if [Some("diff"), Some("config"), Some("cache")].contains(argv.get(0)) {
     @stdio.stdout.write(maintenance(argv))
     return 0
@@ -265,5 +265,20 @@ pub async fn run(argv : Array[String]) -> Int {
       }
       r.result.status.exit_code()
     }
+  }
+}
+
+///|
+/// CLI dispatcher. Configuration failures consistently return exit code 1.
+pub async fn run(argv : Array[String]) -> Int {
+  run_inner(argv) catch {
+    ProjectError(message) =>
+      if message.has_prefix("MR_CFG_") {
+        @stdio.stderr.write(message + "\n")
+        1
+      } else {
+        raise ProjectError(message)
+      }
+    e => raise e
   }
 }

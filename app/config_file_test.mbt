@@ -11,3 +11,11 @@ async test "regr_missing_config_file_is_configuration_error" {
   let root = @fs.tmpdir(prefix="moonreduce-config-missing-")
   assert_eq(@app.run(["reduce", "--config", root + "/missing.json"]), 1)
 }
+
+///|
+async test "e2e maintenance argument errors return configuration exit code" {
+  let code = @app.run(["replay"]) catch { _ => -1 }
+  assert_eq(code, 1)
+  let config = @app.run(["config", "validate"]) catch { _ => -1 }
+  assert_eq(config, 1)
+}
