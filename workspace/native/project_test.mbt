@@ -63,3 +63,23 @@ async test "project/e2e exports entire selected snapshot" {
   assert_true(!@fs.exists(root + "/out/reduced/b.mbt"))
   assert_true(w.original_unchanged())
 }
+
+///|
+async test "project/e2e ignored glob omits files from every copy" {
+  let root = @fs.tmpdir(prefix="moonreduce-project-ignore-")
+  let input = root + "/input"
+  @fs.mkdir(input)
+  @fs.mkdir(input + "/vendor")
+  @fs.write_file(input + "/a.mbt", "KEEP", create_mode=CreateNew)
+  @fs.write_file(
+    input + "/vendor/ignored.mbt",
+    "ignored",
+    create_mode=CreateNew,
+  )
+  let w = @native.prepare_project(input, root + "/out", ["**/ignored.mbt"])
+  let dir = w.materialize_snapshot(w.snapshot())
+  assert_true(!@fs.exists(dir + "/vendor/ignored.mbt"))
+  assert_true(@fs.exists(input + "/vendor/ignored.mbt"))
+  assert_true(w.original_unchanged())
+  w.cleanup(dir)
+}
