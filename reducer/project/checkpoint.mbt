@@ -94,6 +94,7 @@ pub fn Session::restore(
   score? : String = "bytes",
   pass_include? : Array[String] = [],
   pass_exclude? : Array[String] = [],
+  extra_passes? : Array[&@pass_api.ReductionPass] = [],
 ) -> Result[Session, String] {
   let saved : Checkpoint = @json.from_json(document) catch {
     _ => return Err("MR_CHECKPOINT_FORMAT: malformed checkpoint")
@@ -122,6 +123,7 @@ pub fn Session::restore(
       score~,
       pass_include~,
       pass_exclude~,
+      extra_passes~,
     ) {
     Ok(s) => s
     Err(e) => return Err(e)
