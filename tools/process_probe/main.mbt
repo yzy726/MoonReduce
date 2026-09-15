@@ -3,7 +3,11 @@
 async fn main {
   let args = @env.args()
   guard args.length() == 3 else { return }
-  if args[1] == "parent" {
+  if args[1] == "contains" {
+    if @fs.read_file(args[2]).text().contains("KEEP") {
+      println("KEEP")
+    }
+  } else if args[1] == "parent" {
     ignore(
       @child.spawn_orphan(
         args[0],
