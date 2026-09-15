@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/json",
   "Ag108/MoonReduce/workspace/manifest",
   "Ag108/MoonReduce/source",
   "Ag108/MoonReduce/model",

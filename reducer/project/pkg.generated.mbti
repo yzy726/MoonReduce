@@ -28,10 +28,12 @@ pub(all) struct ResultSummary {
 pub struct Session {
   // private fields
 }
+pub fn Session::checkpoint(Self, @manifest.Snapshot, String) -> Result[Json, String]
 pub fn Session::new(@manifest.Snapshot, Array[String], Array[String], Array[String], max_tests? : Int) -> Result[Self, String]
 pub fn Session::next_batch(Self) -> Array[Candidate]
 pub fn Session::phase(Self) -> String
 pub fn Session::record(Self, Int, Bool) -> Result[Unit, String]
+pub fn Session::restore(Json, @manifest.Snapshot, Array[String], Array[String], Array[String], String, max_tests? : Int) -> Result[Self, String]
 pub fn Session::result(Self) -> ResultSummary
 pub fn Session::stop(Self, @model.RunStatus) -> Unit
 
