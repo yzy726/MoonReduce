@@ -99,7 +99,10 @@ async fn collect(
 async fn write_entry(root : String, entry : Entry, bytes : Bytes) -> Unit {
   let path = root + "/" + entry.path
   if entry.path.rev_split_once("/") is Some((parent, _)) {
-    @fs.mkdir(root + "/" + parent.to_owned(), recursive=true)
+    let directory = root + "/" + parent.to_owned()
+    if !@fs.exists(directory) {
+      @fs.mkdir(directory, recursive=true)
+    }
   }
   @fs.write_file(
     path,

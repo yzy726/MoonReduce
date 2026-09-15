@@ -1,4 +1,5 @@
 import {
+  "Ag108/MoonReduce/passes/manifest" @manifest_pass,
   "Ag108/MoonReduce/reducer/score",
   "Ag108/MoonReduce/predicate/stability",
   "moonbitlang/core/json",

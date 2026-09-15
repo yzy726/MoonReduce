@@ -73,3 +73,21 @@ test "selection/limits total rule count" {
     @manifest.select(snapshot([]), Array::make(129, "**"), [], []) is Err(_),
   )
 }
+
+///|
+test "manifest selection preserves protected package metadata" {
+  let s = @manifest.Snapshot::new([
+    ("moon.mod", b"name = \"x/y\""),
+    ("moon.pkg", b""),
+    ("src/moon.pkg", b""),
+    ("vendor/moon.pkg", b""),
+  ]).unwrap()
+  assert_eq(
+    @manifest.select_manifests(s, [], ["vendor/**"], [], include_root=false).unwrap(),
+    ["src/moon.pkg"],
+  )
+  assert_eq(
+    @manifest.select_manifests(s, ["moon.mod"], [], [], include_root=true).unwrap(),
+    ["moon.mod"],
+  )
+}
