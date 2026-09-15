@@ -48,6 +48,11 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         c.ignore,
         context,
         max_tests=c.budget.max_tests,
+        repeat=c.repeat,
+        quorum=c.quorum,
+        consecutive=c.consecutive,
+        final_repeat=c.final_repeat,
+        final_quorum=c.final_quorum,
       )
     } else {
       @project.Session::new(
@@ -56,12 +61,22 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         c.protect,
         c.ignore,
         max_tests=c.budget.max_tests,
+        repeat=c.repeat,
+        quorum=c.quorum,
+        consecutive=c.consecutive,
+        final_repeat=c.final_repeat,
+        final_quorum=c.final_quorum,
       )
     }) {
     Ok(s) => s
     Err(e) => raise ProjectError(e)
   }
   persist_project(c, session, original, w.output, context, toolchain)
+  let policy = @stability.Policy::new(
+    c.repeat,
+    c.quorum,
+    consecutive=c.consecutive,
+  ).unwrap()
   let start = @async.now()
   let attempts = Ref(0)
   let events : Array[Json] = []
@@ -83,6 +98,8 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         batch.length(),
         None,
       )
+      let outcomes : Array[Array[Bool?]] = Array::makei(batch.length(), _ => [])
+      let runs : Array[Array[Json]] = Array::makei(batch.length(), _ => [])
       let directories : Array[String] = []
       for candidate in batch {
         let dir = w.materialize_snapshot(candidate.snapshot)
@@ -90,39 +107,71 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         directories.push(dir)
       }
       for base = 0; base < batch.length(); base = base + c.jobs {
-        let remaining = c.budget.max_time_ms - (@async.now() - start)
-        if remaining <= 0L {
+        if @async.now() - start >= c.budget.max_time_ms {
           session.stop(BudgetExhausted)
           break
-        }
-        let spec = {
-          ..c.predicate,
-          timeout_ms: c.predicate.timeout_ms.min(remaining.to_int()),
         }
         @async.with_task_group(group => {
           for index in base..<(base + c.jobs).min(batch.length()) {
             let index = index
             group.spawn_bg(() => {
-              let cwd = w.working_directory(directories[index], c.predicate.cwd)
-              attempts.val += 1
-              observations[index] = Some(@process.run(spec, cwd))
+              let count = if phase == "reducing" { c.repeat } else { 1 }
+              for trial in 0..<count {
+                let remaining = c.budget.max_time_ms - (@async.now() - start)
+                if remaining <= 0L {
+                  break
+                }
+                let dir = if trial == 0 {
+                  directories[index]
+                } else {
+                  let fresh = w.materialize_snapshot(batch[index].snapshot)
+                  live.push(fresh)
+                  fresh
+                }
+                let spec = {
+                  ..c.predicate,
+                  timeout_ms: c.predicate.timeout_ms.min(remaining.to_int()),
+                }
+                let cwd = w.working_directory(dir, c.predicate.cwd)
+                attempts.val += 1
+                let observation = @process.run(spec, cwd)
+                observations[index] = Some(observation)
+                let matched = @matcher.matches(c.predicate, observation, dir)
+                outcomes[index].push(Some(matched))
+                runs[index].push({
+                  "trial": trial + 1,
+                  "matched": matched,
+                  "exit_code": observation.exit_code,
+                  "timed_out": observation.timed_out,
+                  "duration_ms": observation.duration_ms.to_json(),
+                })
+              }
             })
           }
         })
       }
       if session.phase() != "stopped" {
         for i in 0..<batch.length() {
-          guard observations[i] is Some(observation) else { continue }
           if @async.now() - start >= c.budget.max_time_ms {
             session.stop(BudgetExhausted)
             break
           }
-          let matched = @matcher.matches(
-            c.predicate,
-            observation,
-            directories[i],
-          )
-          match session.record(batch[i].id, matched) {
+          guard observations[i] is Some(observation) else { continue }
+          let matched = if phase == "reducing" {
+            match policy.decide(outcomes[i]) {
+              Interesting => Some(true)
+              Uninteresting => Some(false)
+              Unresolved => None
+            }
+          } else {
+            outcomes[i].get(0).unwrap_or(None)
+          }
+          match
+            session.record_result(
+              batch[i].id,
+              matched,
+              cost=outcomes[i].length(),
+            ) {
             Err(e) => raise ProjectError(e)
             Ok(_) => ()
           }
@@ -130,7 +179,9 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
             "schema_version": 2,
             "id": batch[i].id,
             "phase": phase,
-            "matched": matched,
+            "matched": matched.to_json(),
+            "runs": runs[i].to_json(),
+            "statistics": @stability.summarize(outcomes[i]).to_json(),
             "exit_code": observation.exit_code,
             "timed_out": observation.timed_out,
             "duration_ms": observation.duration_ms,
@@ -151,7 +202,7 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
       }
       live.clear()
       persist_project(c, session, original, w.output, context, toolchain)
-      if c.action == "check" && session.result().baseline_passed == 2 {
+      if c.action == "check" && session.phase() == "reducing" {
         session.stop(Completed)
         break
       }
@@ -187,8 +238,16 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
       "schema_version": 2,
       "mode": "project",
       "status": result.status.to_json(),
-      "completed": result.status == Completed && result.final_passed == 3,
+      "completed": result.status == Completed &&
+      result.final_passed >= c.final_quorum,
       "jobs": c.jobs,
+      "repeat": c.repeat,
+      "quorum": c.quorum,
+      "final_repeat": c.final_repeat,
+      "final_quorum": c.final_quorum,
+      "probabilistic": c.quorum < c.repeat || c.final_quorum < c.final_repeat,
+      "baseline_statistics": session.baseline_statistics().to_json(),
+      "final_statistics": session.final_statistics().to_json(),
       "evaluations": result.evaluations,
       "attempted_commands": attempts.val,
       "cache_hits": result.cache_hits,
@@ -207,7 +266,9 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
       result.status.to_json().stringify() +
       "\n\nFinal verification: " +
       result.final_passed.to_string() +
-      "/3\n",
+      "/" +
+      c.final_repeat.to_string() +
+      "\n",
     )
     save(
       w.output + "/original-summary.json",

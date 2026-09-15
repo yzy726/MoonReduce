@@ -14,6 +14,11 @@ fn checkpoint_config(c : @config.Config) -> Json {
     "protect": c.protect.to_json(),
     "ignore": c.ignore.to_json(),
     "jobs": c.jobs,
+    "repeat": c.repeat,
+    "quorum": c.quorum,
+    "consecutive": c.consecutive,
+    "final_repeat": c.final_repeat,
+    "final_quorum": c.final_quorum,
     "cwd": c.predicate.cwd,
     "expect": expect,
     "command": c.predicate.command.to_json(),
@@ -52,6 +57,11 @@ fn checkpoint_context(c : @config.Config, toolchain : String) -> String {
   // Arrays make order explicit; worker count and extended budgets are allowed
   // to change, while all evaluation-affecting settings must remain identical.
   let context : Json = [
+    c.repeat.to_json(),
+    c.quorum.to_json(),
+    c.consecutive.to_json(),
+    c.final_repeat.to_json(),
+    c.final_quorum.to_json(),
     toolchain.to_json(),
     c.predicate.command.to_json(),
     c.predicate.cwd.to_json(),

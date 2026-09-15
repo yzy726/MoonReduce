@@ -1,4 +1,5 @@
 import {
+  "Ag108/MoonReduce/predicate/stability",
   "moonbitlang/async",
   "moonbitlang/async/fs",
   "moonbitlang/async/stdio",

@@ -3,9 +3,12 @@
 async fn main {
   let args = @env.args()
   guard args.length() == 3 else { return }
-  if args[1] == "contains" {
+  if args[1] == "contains" || args[1] == "consume" {
     if @fs.read_file(args[2]).text().contains("KEEP") {
       println("KEEP")
+      if args[1] == "consume" {
+        @fs.write_file(args[2], "")
+      }
     }
   } else if args[1] == "parent" {
     ignore(
