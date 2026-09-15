@@ -38,6 +38,7 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
   let original = w.snapshot()
   let toolchain = toolchain_identity()
   let context = checkpoint_context(c, toolchain)
+  let command_cost = if c.reference.is_empty() { 1 } else { 2 }
   let session = match
     (if restore is Some(document) {
       @project.Session::restore(
@@ -53,6 +54,7 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         consecutive=c.consecutive,
         final_repeat=c.final_repeat,
         final_quorum=c.final_quorum,
+        command_cost~,
       )
     } else {
       @project.Session::new(
@@ -66,6 +68,7 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         consecutive=c.consecutive,
         final_repeat=c.final_repeat,
         final_quorum=c.final_quorum,
+        command_cost~,
       )
     }) {
     Ok(s) => s
@@ -136,8 +139,52 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
                 attempts.val += 1
                 let observation = @process.run(spec, cwd)
                 observations[index] = Some(observation)
-                let matched = @matcher.matches(c.predicate, observation, dir)
-                outcomes[index].push(Some(matched))
+                let mut reference_root = ""
+                let reference = if c.reference.is_empty() {
+                  None
+                } else {
+                  let reference_remaining = c.budget.max_time_ms -
+                    (@async.now() - start)
+                  if reference_remaining <= 0L {
+                    raise ProjectError("MR_BUDGET_TIME")
+                  }
+                  reference_root = w.materialize_snapshot(batch[index].snapshot)
+                  live.push(reference_root)
+                  let reference_spec = {
+                    ..c.predicate,
+                    command: c.reference,
+                    timeout_ms: c.predicate.timeout_ms.min(
+                      reference_remaining.to_int(),
+                    ),
+                  }
+                  attempts.val += 1
+                  Some(
+                    @process.run(
+                      reference_spec,
+                      w.working_directory(reference_root, c.predicate.cwd),
+                    ),
+                  )
+                }
+                let matched = match
+                  @advanced.matches(
+                    c.advanced,
+                    observation,
+                    reference,
+                    dir,
+                    reference_root,
+                  ) {
+                  None => None
+                  Some(value) =>
+                    Some(
+                      value &&
+                      @matcher.matches(
+                        c.predicate,
+                        @advanced.prepare(c.advanced, observation, dir),
+                        dir,
+                      ),
+                    )
+                }
+                outcomes[index].push(matched)
                 runs[index].push({
                   "trial": trial + 1,
                   "matched": matched,
@@ -170,7 +217,7 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
             session.record_result(
               batch[i].id,
               matched,
-              cost=outcomes[i].length(),
+              cost=outcomes[i].length() * command_cost,
             ) {
             Err(e) => raise ProjectError(e)
             Ok(_) => ()
@@ -212,6 +259,8 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
       if @async.is_cancellation_error(e) {
         session.stop(Cancelled)
         error = Some("MR_BUDGET_CANCELLED")
+      } else if @async.now() - start >= c.budget.max_time_ms {
+        session.stop(BudgetExhausted)
       } else {
         session.stop(ExecutionFailed)
         error = Some("MR_EXEC_FAILURE: " + e.to_string())
@@ -241,6 +290,8 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
       "completed": result.status == Completed &&
       result.final_passed >= c.final_quorum,
       "jobs": c.jobs,
+      "commands_per_trial": command_cost,
+      "predicate_spec": c.advanced.to_json(),
       "repeat": c.repeat,
       "quorum": c.quorum,
       "final_repeat": c.final_repeat,
