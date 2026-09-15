@@ -1,6 +1,9 @@
 ///|
 /// Validated initial CLI configuration. Relative target/cwd are workspace-relative.
 pub(all) struct Config {
+  project : Bool
+  includes : Array[String]
+  jobs : Int
   action : String
   workspace : String
   target : String
@@ -111,7 +114,7 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     "workspace", "target", "output", "cwd", "expect", "command", "timeout", "max_time",
     "max_tests", "output_limit", "stdout_contains", "stderr_contains", "stdout_not_contains",
     "stderr_not_contains", "ignore_case", "strip_locations", "quiet", "verbose",
-    "json_events", "environment", "ignore", "protect",
+    "json_events", "environment", "ignore", "protect", "project", "include", "jobs",
   ]
   for key, _ in m {
     if !known.contains(key) {
@@ -162,16 +165,16 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     }
     let array_option = [
       "stdout_contains", "stderr_contains", "stdout_not_contains", "stderr_not_contains",
-      "ignore", "protect",
+      "ignore", "protect", "include",
     ].contains(key)
     if seen.contains(key) && !array_option {
       raise ConfigError("MR_CFG_DUPLICATE: " + arg)
     }
     let first = !seen.contains(key)
     seen[key] = true
-    if ["quiet", "verbose", "json_events", "ignore_case", "strip_locations"].contains(
-        key,
-      ) {
+    if [
+        "quiet", "verbose", "json_events", "ignore_case", "strip_locations", "project",
+      ].contains(key) {
       m[key] = true
       i += 1
       continue
@@ -194,6 +197,15 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     }
     i += 2
   }
+  let project = bool_value(m, "project")
+  let includes = strings(m, "include")
+  let jobs = integer(m, "jobs", 1)
+  if jobs > 64 {
+    raise ConfigError("MR_CFG_JOBS: maximum 64 workers")
+  }
+  if !project && (jobs != 1 || !includes.is_empty()) {
+    raise ConfigError("MR_CFG_PROJECT: --jobs/--include require --project")
+  }
   let workspace = string_value(m, "workspace", ".")
   let target = string_value(m, "target", "")
   let output = if action == "explain" {
@@ -203,12 +215,14 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
   }
   let command = strings(m, "command")
   if action == "check" || action == "reduce" {
-    match @source.validate_path(target) {
-      Err(e) => raise ConfigError(e)
-      _ => ()
-    }
-    if !target.has_suffix(".mbt") {
-      raise ConfigError("MR_CFG_TARGET: target must end in .mbt")
+    if !project {
+      match @source.validate_path(target) {
+        Err(e) => raise ConfigError(e)
+        _ => ()
+      }
+      if !target.has_suffix(".mbt") {
+        raise ConfigError("MR_CFG_TARGET: target must end in .mbt")
+      }
     }
     if command.is_empty() || command[0] == "" {
       raise ConfigError("MR_CFG_COMMAND: argv required after --")
@@ -284,16 +298,26 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
   }
   let ignore = strings(m, "ignore")
   let protect = strings(m, "protect")
-  for p in ignore + protect {
+  for p in ignore + protect + includes {
+    if project {
+      match @glob.matches(p, "validation.mbt") {
+        Err(e) => raise ConfigError(e)
+        _ => ()
+      }
+      continue
+    }
     match @source.validate_path(p) {
       Err(e) => raise ConfigError(e)
       _ => ()
     }
   }
-  if protect.contains(target) {
+  if !project && protect.contains(target) {
     raise ConfigError("MR_CFG_TARGET: target is protected")
   }
   {
+    project,
+    includes,
+    jobs,
     action,
     workspace,
     target: target.replace_all(old="\\", new="/"),
