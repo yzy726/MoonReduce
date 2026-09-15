@@ -4,6 +4,11 @@ pub(all) struct Config {
   project : Bool
   includes : Array[String]
   jobs : Int
+  repeat : Int
+  quorum : Int
+  consecutive : Bool
+  final_repeat : Int
+  final_quorum : Int
   action : String
   workspace : String
   target : String
@@ -115,6 +120,7 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     "max_tests", "output_limit", "stdout_contains", "stderr_contains", "stdout_not_contains",
     "stderr_not_contains", "ignore_case", "strip_locations", "quiet", "verbose",
     "json_events", "environment", "ignore", "protect", "project", "include", "jobs",
+    "repeat", "quorum", "consecutive", "final_repeat", "final_quorum",
   ]
   for key, _ in m {
     if !known.contains(key) {
@@ -174,6 +180,7 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     seen[key] = true
     if [
         "quiet", "verbose", "json_events", "ignore_case", "strip_locations", "project",
+        "consecutive",
       ].contains(key) {
       m[key] = true
       i += 1
@@ -200,6 +207,21 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
   let project = bool_value(m, "project")
   let includes = strings(m, "include")
   let jobs = integer(m, "jobs", 1)
+  let repeat = integer(m, "repeat", 1)
+  let quorum = integer(m, "quorum", repeat)
+  let final_repeat = integer(m, "final_repeat", 3)
+  let final_quorum = integer(m, "final_quorum", final_repeat)
+  let consecutive = bool_value(m, "consecutive")
+  if repeat > 100 ||
+    quorum > repeat ||
+    final_repeat > 100 ||
+    final_quorum > final_repeat {
+    raise ConfigError("MR_CFG_STABILITY: require 1 <= quorum <= repeat <= 100")
+  }
+  if !project &&
+    (repeat != 1 || final_repeat != 3 || final_quorum != 3 || consecutive) {
+    raise ConfigError("MR_CFG_PROJECT: stability options require --project")
+  }
   if jobs > 64 {
     raise ConfigError("MR_CFG_JOBS: maximum 64 workers")
   }
@@ -293,7 +315,7 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     }
   }
   let max_tests = integer(m, "max_tests", 1500)
-  if max_tests < 5 {
+  if max_tests < repeat.max(2) + final_repeat {
     raise ConfigError("MR_CFG_BUDGET: at least five executions required")
   }
   let ignore = strings(m, "ignore")
@@ -318,6 +340,11 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     project,
     includes,
     jobs,
+    repeat,
+    quorum,
+    consecutive,
+    final_repeat,
+    final_quorum,
     action,
     workspace,
     target: target.replace_all(old="\\", new="/"),
