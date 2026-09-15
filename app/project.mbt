@@ -89,6 +89,8 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
   ).unwrap()
   let start = @async.now()
   let attempts = Ref(0)
+  let cancelled_tasks = Ref(0)
+  let dropped_events = Ref(0)
   let events : Array[Json] = []
   let evidence : Array[Json] = []
   let live : Array[String] = []
@@ -125,6 +127,9 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
           for index in base..<(base + c.jobs).min(batch.length()) {
             let index = index
             group.spawn_bg(() => {
+              errdefer (if @async.is_being_cancelled() {
+                cancelled_tasks.val += 1
+              })
               let count = if phase == "reducing" { c.repeat } else { 1 }
               for trial in 0..<count {
                 let remaining = c.budget.max_time_ms - (@async.now() - start)
@@ -242,6 +247,8 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
           }
           if events.length() < 10000 {
             events.push(event)
+          } else {
+            dropped_events.val += 1
           }
           if phase != "reducing" {
             evidence.push(event)
@@ -258,6 +265,18 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
       }
       live.clear()
       persist_project(c, session, original, w.output, context, toolchain)
+      if !c.quiet && !c.json_events {
+        let progress = session.result()
+        @stdio.stderr.write(
+          "MoonReduce " +
+          session.phase() +
+          ": " +
+          progress.evaluations.to_string() +
+          " commands, " +
+          @score.measure(progress.best).bytes.to_string() +
+          " bytes\n",
+        )
+      }
       if c.action == "check" && session.phase() == "reducing" {
         session.stop(Completed)
         break
@@ -319,6 +338,8 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
       "final_statistics": session.final_statistics().to_json(),
       "evaluations": result.evaluations,
       "attempted_commands": attempts.val,
+      "cancelled_tasks": cancelled_tasks.val,
+      "dropped_events": dropped_events.val,
       "cache_hits": result.cache_hits,
       "baseline_passed": result.baseline_passed,
       "final_passed": result.final_passed,

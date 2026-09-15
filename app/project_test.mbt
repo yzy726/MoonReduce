@@ -533,6 +533,12 @@ async test "project/e2e cancellation persists checkpoint and resumes to final va
   assert_true(
     @fs.read_file(c.output + "/report.json").text().contains("Cancelled"),
   )
+  let cancelled_report = @json.parse(
+    @fs.read_file(c.output + "/report.json").text(),
+  )
+  assert_true(
+    cancelled_report is { "cancelled_tasks": Number(n, ..), .. } && n >= 0.0,
+  )
   let resumed = c.output + "-resume"
   assert_eq(
     @app.run([
@@ -589,4 +595,41 @@ async test "project/e2e resume rejects modified cache before creating output" {
   }
   assert_true(rejected)
   assert_true(!@fs.exists(out))
+}
+
+///|
+async test "project/e2e cancellation counts an active worker" {
+  let base = project_fixture(1)
+  let c = {
+    ..base,
+    predicate: {
+      ..base.predicate,
+      command: [probe_path(), "heartbeat", "keep.mbt"],
+      failure: Timeout,
+      stdout_rules: [],
+      timeout_ms: 5000,
+    },
+  }
+  @async.with_task_group(group => {
+    let task = group.spawn(() => @app.execute_project(c), allow_failure=true)
+    let marker = c.output + "/.moonreduce/work/run-1/keep.mbt"
+    let mut started = false
+    for _ in 0..<1000 {
+      let observed = try @fs.read_file(marker).text() == "0" catch {
+        _ => false
+      }
+      if observed {
+        started = true
+        break
+      }
+      @async.sleep(5)
+    }
+    assert_true(started)
+    task.cancel()
+    ignore(task.wait()) catch {
+      _ => ()
+    }
+  })
+  let report = @json.parse(@fs.read_file(c.output + "/report.json").text())
+  assert_true(report is { "cancelled_tasks": 1, .. })
 }
