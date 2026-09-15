@@ -2,7 +2,7 @@
 /// Validated immutable portable project contents. No filesystem operations.
 /// Entries and bytes are copied at the public boundary.
 pub struct Snapshot {
-  entries : Array[(String, Bytes)]
+  priv entries : Array[(String, Bytes)]
 }
 
 ///|

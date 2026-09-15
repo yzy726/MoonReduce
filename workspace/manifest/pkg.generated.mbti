@@ -8,7 +8,7 @@ pub fn select(Snapshot, Array[String], Array[String], Array[String]) -> Result[A
 
 // Types and methods
 pub struct Snapshot {
-  entries : Array[(String, Bytes)]
+  // private fields
 }
 pub fn Snapshot::files(Self) -> Array[(String, Bytes)]
 pub fn Snapshot::key(Self) -> String
