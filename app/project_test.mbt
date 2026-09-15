@@ -155,3 +155,74 @@ async test "project/e2e resume refuses changed original" {
   }
   assert_true(rejected)
 }
+
+///|
+async test "project/e2e repeated predicates count commands and final quorum" {
+  let base = project_fixture(1)
+  let c = {
+    ..base,
+    repeat: 3,
+    quorum: 2,
+    final_repeat: 5,
+    final_quorum: 4,
+    budget: { ..base.budget, max_tests: 30 },
+  }
+  let result = @app.execute_project(c)
+  assert_true(result.error is None)
+  assert_eq(result.result.final_passed, 5)
+  assert_true(result.result.evaluations <= 30)
+  let report = @fs.read_file(c.output + "/report.json").text()
+  assert_true(report.contains("\"repeat\": 3"))
+  assert_true(report.contains("baseline_statistics"))
+  let saved = @fs.read_file(c.output + "/checkpoint.json").text()
+  assert_true(saved.contains("\"quorum\":2"))
+}
+
+///|
+async test "project/e2e repeated destructive commands use fresh copies" {
+  let base = project_fixture(4)
+  let c = {
+    ..base,
+    repeat: 3,
+    quorum: 3,
+    predicate: {
+      ..base.predicate,
+      command: [probe_path(), "consume", "keep.mbt"],
+    },
+    budget: { ..base.budget, max_tests: 30 },
+  }
+  let result = @app.execute_project(c)
+  assert_true(result.error is None)
+  assert_eq(result.result.final_passed, 3)
+  assert_true(@fs.read_file(c.workspace + "/keep.mbt").text().contains("KEEP"))
+  assert_true(
+    @fs.read_file(c.output + "/reduced/keep.mbt").text().contains("KEEP"),
+  )
+}
+
+///|
+async test "project/e2e resume retains repeated predicate policy" {
+  let base = project_fixture(1)
+  let c = {
+    ..base,
+    repeat: 3,
+    quorum: 2,
+    final_repeat: 5,
+    final_quorum: 4,
+    budget: { ..base.budget, max_tests: 8 },
+  }
+  ignore(@app.execute_project(c))
+  let code = @app.run([
+    "resume",
+    c.output + "/checkpoint.json",
+    "--output",
+    c.output + "-again",
+    "--max-tests",
+    "30",
+    "--quiet",
+  ])
+  assert_true(code == 0 || code == 4)
+  let report = @fs.read_file(c.output + "-again/report.json").text()
+  assert_true(report.contains("\"final_passed\": 5"))
+  assert_true(report.contains("\"repeat\": 3"))
+}

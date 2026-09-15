@@ -21,6 +21,9 @@ pub fn help() -> String {
     #|--project              reduce selected files as one project
     #|--include GLOB         selected source pattern (repeatable)
     #|--jobs N               project worker count, default 1
+    #|--repeat N / --quorum K  project candidate repeats and acceptance threshold
+    #|--consecutive          require consecutive successes
+    #|--final-repeat N / --final-quorum K  final verification (default 3/3)
     #|--target FILE.mbt       one workspace-relative UTF8 source
     #|--output DIR            new output directory outside the original workspace
     #|--config FILE           JSON defaults; CLI overrides values

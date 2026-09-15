@@ -3,6 +3,7 @@ package "Ag108/MoonReduce/reducer/project"
 
 import {
   "Ag108/MoonReduce/model",
+  "Ag108/MoonReduce/predicate/stability",
   "Ag108/MoonReduce/workspace/manifest",
 }
 
@@ -28,7 +29,9 @@ pub(all) struct ResultSummary {
 pub struct Session {
   // private fields
 }
+pub fn Session::baseline_statistics(Self) -> @stability.Statistics
 pub fn Session::checkpoint(Self, @manifest.Snapshot, String) -> Result[Json, String]
+pub fn Session::final_statistics(Self) -> @stability.Statistics
 pub fn Session::new(@manifest.Snapshot, Array[String], Array[String], Array[String], max_tests? : Int, repeat? : Int, quorum? : Int, consecutive? : Bool, final_repeat? : Int, final_quorum? : Int) -> Result[Self, String]
 pub fn Session::next_batch(Self) -> Array[Candidate]
 pub fn Session::phase(Self) -> String

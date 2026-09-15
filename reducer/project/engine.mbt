@@ -380,3 +380,15 @@ pub fn Session::record(
     cost=if self.state == 1 { self.candidate_policy.repeat } else { 1 },
   )
 }
+
+///|
+/// Baseline success rate and confidence from actual command observations.
+pub fn Session::baseline_statistics(self : Session) -> @stability.Statistics {
+  @stability.summarize(self.baseline_trials)
+}
+
+///|
+/// Final success rate; restored sessions re-collect this evidence uncached.
+pub fn Session::final_statistics(self : Session) -> @stability.Statistics {
+  @stability.summarize(self.final_trials)
+}
