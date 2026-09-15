@@ -1,0 +1,17 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/examples/custom_pass"
+
+// Values
+
+// Errors
+
+// Types and methods
+type Events
+
+type Marker
+
+type Prefix
+
+// Type aliases
+
+// Traits
