@@ -1,0 +1,2 @@
+Working directory: reduced/.
+Direct argv: ["moon","check","--target","native"]

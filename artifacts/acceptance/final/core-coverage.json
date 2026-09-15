@@ -1,0 +1,162 @@
+[
+  {
+    "file": "evidence/sha256/sha256.mbt",
+    "instrumented_lines": 28,
+    "covered_lines": 28
+  },
+  {
+    "file": "passes/text/text.mbt",
+    "instrumented_lines": 33,
+    "covered_lines": 32
+  },
+  {
+    "file": "config/config.mbt",
+    "instrumented_lines": 198,
+    "covered_lines": 182
+  },
+  {
+    "file": "passes/structured/passes.mbt",
+    "instrumented_lines": 39,
+    "covered_lines": 37
+  },
+  {
+    "file": "moon_syntax/groups.mbt",
+    "instrumented_lines": 42,
+    "covered_lines": 42
+  },
+  {
+    "file": "reducer/score/score.mbt",
+    "instrumented_lines": 30,
+    "covered_lines": 25
+  },
+  {
+    "file": "predicate/stability/stability.mbt",
+    "instrumented_lines": 29,
+    "covered_lines": 29
+  },
+  {
+    "file": "passes/token/lexer.mbt",
+    "instrumented_lines": 52,
+    "covered_lines": 52
+  },
+  {
+    "file": "passes/token/passes.mbt",
+    "instrumented_lines": 39,
+    "covered_lines": 38
+  },
+  {
+    "file": "MoonReduce.mbt",
+    "instrumented_lines": 0,
+    "covered_lines": 0
+  },
+  {
+    "file": "predicate/advanced/advanced.mbt",
+    "instrumented_lines": 136,
+    "covered_lines": 121
+  },
+  {
+    "file": "passes/structured/cleanup.mbt",
+    "instrumented_lines": 35,
+    "covered_lines": 35
+  },
+  {
+    "file": "report/report.mbt",
+    "instrumented_lines": 53,
+    "covered_lines": 53
+  },
+  {
+    "file": "passes/api/api.mbt",
+    "instrumented_lines": 0,
+    "covered_lines": 0
+  },
+  {
+    "file": "reducer/ddmin/ddmin.mbt",
+    "instrumented_lines": 5,
+    "covered_lines": 5
+  },
+  {
+    "file": "model/types.mbt",
+    "instrumented_lines": 10,
+    "covered_lines": 7
+  },
+  {
+    "file": "reducer/project/checkpoint.mbt",
+    "instrumented_lines": 62,
+    "covered_lines": 51
+  },
+  {
+    "file": "library.mbt",
+    "instrumented_lines": 44,
+    "covered_lines": 38
+  },
+  {
+    "file": "predicate/regex/regex.mbt",
+    "instrumented_lines": 115,
+    "covered_lines": 106
+  },
+  {
+    "file": "workspace/manifest/selection.mbt",
+    "instrumented_lines": 40,
+    "covered_lines": 38
+  },
+  {
+    "file": "reducer/engine/limits.mbt",
+    "instrumented_lines": 4,
+    "covered_lines": 4
+  },
+  {
+    "file": "examples/custom_pass/main.mbt",
+    "instrumented_lines": 19,
+    "covered_lines": 0
+  },
+  {
+    "file": "workspace/glob/glob.mbt",
+    "instrumented_lines": 38,
+    "covered_lines": 38
+  },
+  {
+    "file": "moon_syntax/declarations.mbt",
+    "instrumented_lines": 24,
+    "covered_lines": 24
+  },
+  {
+    "file": "source/source.mbt",
+    "instrumented_lines": 40,
+    "covered_lines": 39
+  },
+  {
+    "file": "workspace/manifest/manifest.mbt",
+    "instrumented_lines": 65,
+    "covered_lines": 62
+  },
+  {
+    "file": "reducer/engine/engine.mbt",
+    "instrumented_lines": 62,
+    "covered_lines": 60
+  },
+  {
+    "file": "passes/structured/body.mbt",
+    "instrumented_lines": 58,
+    "covered_lines": 56
+  },
+  {
+    "file": "passes/manifest/manifest.mbt",
+    "instrumented_lines": 32,
+    "covered_lines": 30
+  },
+  {
+    "file": "moon_syntax/segments.mbt",
+    "instrumented_lines": 39,
+    "covered_lines": 38
+  },
+  {
+    "file": "predicate/matcher/matcher.mbt",
+    "instrumented_lines": 26,
+    "covered_lines": 26
+  },
+  {
+    "file": "reducer/project/engine.mbt",
+    "instrumented_lines": 188,
+    "covered_lines": 171
+  }
+]

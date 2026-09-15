@@ -1,0 +1,6 @@
+{
+  "minimum_reduction_percent": 50,
+  "final_verifications": 3,
+  "source": "original MoonReduce fixture",
+  "pending": "Process-tree cleanup validation required before automatic execution"
+}

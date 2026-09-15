@@ -1,0 +1,6 @@
+{
+  "failure": "check",
+  "minimum_reduction_percent": 50,
+  "deterministic": true,
+  "fingerprint": "The value identifier mr_multi_missing is unbound"
+}

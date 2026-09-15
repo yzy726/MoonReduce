@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "project": true,
+  "command": [
+    "moon",
+    "run",
+    ".",
+    "--target",
+    "native"
+  ],
+  "expect": "nonzero",
+  "max_tests": 2500,
+  "max_time": "600s",
+  "timeout": "10s",
+  "stdout_contains": [
+    "MR_EXIT_TARGET"
+  ]
+}

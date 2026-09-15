@@ -1,0 +1,217 @@
+[
+  {
+    "file": "MoonReduce.mbt",
+    "physical_lines": 3,
+    "nonblank_noncomment_lines": 0
+  },
+  {
+    "file": "app/app.mbt",
+    "physical_lines": 292,
+    "nonblank_noncomment_lines": 274
+  },
+  {
+    "file": "app/checkpoint.mbt",
+    "physical_lines": 247,
+    "nonblank_noncomment_lines": 230
+  },
+  {
+    "file": "app/evidence.mbt",
+    "physical_lines": 135,
+    "nonblank_noncomment_lines": 124
+  },
+  {
+    "file": "app/maintenance.mbt",
+    "physical_lines": 101,
+    "nonblank_noncomment_lines": 100
+  },
+  {
+    "file": "app/project.mbt",
+    "physical_lines": 411,
+    "nonblank_noncomment_lines": 402
+  },
+  {
+    "file": "app/replay.mbt",
+    "physical_lines": 148,
+    "nonblank_noncomment_lines": 144
+  },
+  {
+    "file": "cmd/main/main.mbt",
+    "physical_lines": 15,
+    "nonblank_noncomment_lines": 12
+  },
+  {
+    "file": "config/config.mbt",
+    "physical_lines": 479,
+    "nonblank_noncomment_lines": 460
+  },
+  {
+    "file": "evaluator/process/cancellation.mbt",
+    "physical_lines": 85,
+    "nonblank_noncomment_lines": 80
+  },
+  {
+    "file": "evaluator/process/process.mbt",
+    "physical_lines": 83,
+    "nonblank_noncomment_lines": 72
+  },
+  {
+    "file": "evidence/sha256/sha256.mbt",
+    "physical_lines": 98,
+    "nonblank_noncomment_lines": 93
+  },
+  {
+    "file": "library.mbt",
+    "physical_lines": 197,
+    "nonblank_noncomment_lines": 164
+  },
+  {
+    "file": "model/types.mbt",
+    "physical_lines": 96,
+    "nonblank_noncomment_lines": 70
+  },
+  {
+    "file": "moon_syntax/declarations.mbt",
+    "physical_lines": 72,
+    "nonblank_noncomment_lines": 63
+  },
+  {
+    "file": "moon_syntax/groups.mbt",
+    "physical_lines": 136,
+    "nonblank_noncomment_lines": 120
+  },
+  {
+    "file": "moon_syntax/segments.mbt",
+    "physical_lines": 125,
+    "nonblank_noncomment_lines": 116
+  },
+  {
+    "file": "passes/api/api.mbt",
+    "physical_lines": 10,
+    "nonblank_noncomment_lines": 6
+  },
+  {
+    "file": "passes/manifest/manifest.mbt",
+    "physical_lines": 68,
+    "nonblank_noncomment_lines": 63
+  },
+  {
+    "file": "passes/structured/body.mbt",
+    "physical_lines": 151,
+    "nonblank_noncomment_lines": 145
+  },
+  {
+    "file": "passes/structured/cleanup.mbt",
+    "physical_lines": 102,
+    "nonblank_noncomment_lines": 98
+  },
+  {
+    "file": "passes/structured/passes.mbt",
+    "physical_lines": 116,
+    "nonblank_noncomment_lines": 107
+  },
+  {
+    "file": "passes/text/text.mbt",
+    "physical_lines": 77,
+    "nonblank_noncomment_lines": 66
+  },
+  {
+    "file": "passes/token/lexer.mbt",
+    "physical_lines": 112,
+    "nonblank_noncomment_lines": 100
+  },
+  {
+    "file": "passes/token/passes.mbt",
+    "physical_lines": 99,
+    "nonblank_noncomment_lines": 88
+  },
+  {
+    "file": "predicate/advanced/advanced.mbt",
+    "physical_lines": 368,
+    "nonblank_noncomment_lines": 330
+  },
+  {
+    "file": "predicate/matcher/matcher.mbt",
+    "physical_lines": 89,
+    "nonblank_noncomment_lines": 81
+  },
+  {
+    "file": "predicate/regex/regex.mbt",
+    "physical_lines": 324,
+    "nonblank_noncomment_lines": 278
+  },
+  {
+    "file": "predicate/stability/stability.mbt",
+    "physical_lines": 121,
+    "nonblank_noncomment_lines": 104
+  },
+  {
+    "file": "reducer/ddmin/ddmin.mbt",
+    "physical_lines": 19,
+    "nonblank_noncomment_lines": 16
+  },
+  {
+    "file": "reducer/engine/engine.mbt",
+    "physical_lines": 233,
+    "nonblank_noncomment_lines": 208
+  },
+  {
+    "file": "reducer/engine/limits.mbt",
+    "physical_lines": 22,
+    "nonblank_noncomment_lines": 13
+  },
+  {
+    "file": "reducer/project/checkpoint.mbt",
+    "physical_lines": 236,
+    "nonblank_noncomment_lines": 222
+  },
+  {
+    "file": "reducer/project/engine.mbt",
+    "physical_lines": 550,
+    "nonblank_noncomment_lines": 494
+  },
+  {
+    "file": "reducer/score/score.mbt",
+    "physical_lines": 79,
+    "nonblank_noncomment_lines": 70
+  },
+  {
+    "file": "report/report.mbt",
+    "physical_lines": 164,
+    "nonblank_noncomment_lines": 145
+  },
+  {
+    "file": "source/source.mbt",
+    "physical_lines": 106,
+    "nonblank_noncomment_lines": 92
+  },
+  {
+    "file": "tools/process_probe/main.mbt",
+    "physical_lines": 51,
+    "nonblank_noncomment_lines": 49
+  },
+  {
+    "file": "workspace/glob/glob.mbt",
+    "physical_lines": 78,
+    "nonblank_noncomment_lines": 71
+  },
+  {
+    "file": "workspace/manifest/manifest.mbt",
+    "physical_lines": 163,
+    "nonblank_noncomment_lines": 138
+  },
+  {
+    "file": "workspace/manifest/selection.mbt",
+    "physical_lines": 109,
+    "nonblank_noncomment_lines": 94
+  },
+  {
+    "file": "workspace/native/project.mbt",
+    "physical_lines": 91,
+    "nonblank_noncomment_lines": 75
+  },
+  {
+    "file": "workspace/native/workspace.mbt",
+    "physical_lines": 284,
+    "nonblank_noncomment_lines": 246
+  }
+]

@@ -1,0 +1,586 @@
+diff --git a/app/pkg.generated.mbti b/app/pkg.generated.mbti
+index 731ca4b..401aa77 100644
+--- a/app/pkg.generated.mbti
++++ b/app/pkg.generated.mbti
+@@ -4,18 +4,29 @@ package "Ag108/MoonReduce/app"
+ import {
+   "Ag108/MoonReduce/config",
+   "Ag108/MoonReduce/reducer/engine",
++  "Ag108/MoonReduce/reducer/project",
+ }
+ 
+ // Values
+ pub async fn execute(@config.Config) -> Run
+ 
++pub async fn execute_project(@config.Config, restore? : Json) -> ProjectRun
++
+ pub fn help() -> String
+ 
+ pub async fn run(Array[String]) -> Int
+ 
++pub async fn verify_bundle(String) -> Unit
++
+ // Errors
+ 
+ // Types and methods
++pub(all) struct ProjectRun {
++  result : @project.ResultSummary
++  output : String
++  error : String?
++}
++
+ pub(all) struct Run {
+   result : @engine.ReductionResult
+   output : String
+diff --git a/config/pkg.generated.mbti b/config/pkg.generated.mbti
+index f27c260..59ee99b 100644
+--- a/config/pkg.generated.mbti
++++ b/config/pkg.generated.mbti
+@@ -3,6 +3,7 @@ package "Ag108/MoonReduce/config"
+ 
+ import {
+   "Ag108/MoonReduce/model",
++  "Ag108/MoonReduce/predicate/advanced",
+   "moonbitlang/core/debug",
+ }
+ 
+@@ -13,10 +14,24 @@ pub fn parse(Array[String], Json?) -> Result[Config, String]
+ 
+ // Types and methods
+ pub(all) struct Config {
++  project : Bool
++  includes : Array[String]
++  score : String
++  pass_include : Array[String]
++  pass_exclude : Array[String]
++  keep_workdir : Bool
++  jobs : Int
++  repeat : Int
++  quorum : Int
++  consecutive : Bool
++  final_repeat : Int
++  final_quorum : Int
+   action : String
+   workspace : String
+   target : String
+   output : String
++  advanced : @advanced.Spec
++  reference : Array[String]
+   predicate : @model.PredicateSpec
+   budget : @model.Budget
+   quiet : Bool
+diff --git a/evidence/sha256/pkg.generated.mbti b/evidence/sha256/pkg.generated.mbti
+new file mode 100644
+index 0000000..f03f337
+--- /dev/null
++++ b/evidence/sha256/pkg.generated.mbti
+@@ -0,0 +1,13 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/evidence/sha256"
++
++// Values
++pub fn digest(Bytes) -> String
++
++// Errors
++
++// Types and methods
++
++// Type aliases
++
++// Traits
+diff --git a/examples/custom_pass/pkg.generated.mbti b/examples/custom_pass/pkg.generated.mbti
+new file mode 100644
+index 0000000..4e324cd
+--- /dev/null
++++ b/examples/custom_pass/pkg.generated.mbti
+@@ -0,0 +1,17 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/examples/custom_pass"
++
++// Values
++
++// Errors
++
++// Types and methods
++type Events
++
++type Marker
++
++type Prefix
++
++// Type aliases
++
++// Traits
+diff --git a/moon_syntax/pkg.generated.mbti b/moon_syntax/pkg.generated.mbti
+new file mode 100644
+index 0000000..2cc5ceb
+--- /dev/null
++++ b/moon_syntax/pkg.generated.mbti
+@@ -0,0 +1,48 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/moon_syntax"
++
++import {
++  "moonbitlang/core/debug",
++}
++
++// Values
++pub fn declarations(ReductionTree) -> Array[Node]
++
++pub fn scan(String) -> ReductionTree
++
++pub fn segments(ReductionTree, Group, String) -> Array[Node]
++
++// Errors
++
++// Types and methods
++pub(all) struct Group {
++  kind : String
++  start : Int
++  end : Int
++  inner_start : Int
++  inner_end : Int
++  depth : Int
++} derive(Eq, ToJson, @debug.Debug)
++
++pub(all) struct Node {
++  kind : String
++  start : Int
++  end : Int
++} derive(Eq, ToJson, @debug.Debug)
++
++pub(all) struct ReductionTree {
++  tokens : Array[Token]
++  groups : Array[Group]
++  diagnostics : Array[String]
++} derive(Eq, ToJson, @debug.Debug)
++
++pub(all) struct Token {
++  kind : String
++  text : String
++  start : Int
++  end : Int
++} derive(Eq, ToJson, @debug.Debug)
++
++// Type aliases
++
++// Traits
+diff --git a/passes/api/pkg.generated.mbti b/passes/api/pkg.generated.mbti
+new file mode 100644
+index 0000000..a555444
+--- /dev/null
++++ b/passes/api/pkg.generated.mbti
+@@ -0,0 +1,20 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/passes/api"
++
++import {
++  "Ag108/MoonReduce/workspace/manifest",
++}
++
++// Values
++
++// Errors
++
++// Types and methods
++
++// Type aliases
++
++// Traits
++pub(open) trait ReductionPass {
++  fn name(Self) -> String
++  fn propose(Self, @manifest.Snapshot, Array[String]) -> Iter[@manifest.Snapshot]
++}
+diff --git a/passes/manifest/pkg.generated.mbti b/passes/manifest/pkg.generated.mbti
+new file mode 100644
+index 0000000..e896c26
+--- /dev/null
++++ b/passes/manifest/pkg.generated.mbti
+@@ -0,0 +1,13 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/passes/manifest"
++
++// Values
++pub fn propose(String, String) -> Array[String]
++
++// Errors
++
++// Types and methods
++
++// Type aliases
++
++// Traits
+diff --git a/passes/structured/pkg.generated.mbti b/passes/structured/pkg.generated.mbti
+new file mode 100644
+index 0000000..bbdee5a
+--- /dev/null
++++ b/passes/structured/pkg.generated.mbti
+@@ -0,0 +1,17 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/passes/structured"
++
++// Values
++pub fn names() -> Array[String]
++
++pub fn propose(String, String, allow_format? : Bool) -> Array[String]
++
++pub fn propose_iter(String, String, allow_format? : Bool) -> Iter[String]
++
++// Errors
++
++// Types and methods
++
++// Type aliases
++
++// Traits
+diff --git a/pkg.generated.mbti b/pkg.generated.mbti
+index c673234..a617f7e 100644
+--- a/pkg.generated.mbti
++++ b/pkg.generated.mbti
+@@ -1,12 +1,56 @@
+ // Generated using `moon info`, DON'T EDIT IT
+ package "Ag108/MoonReduce"
+ 
++import {
++  "Ag108/MoonReduce/passes/api",
++  "Ag108/MoonReduce/predicate/stability",
++  "Ag108/MoonReduce/reducer/project",
++  "Ag108/MoonReduce/workspace/manifest",
++}
++
+ // Values
++pub fn check(@manifest.Snapshot, &CandidateEvaluator, config? : ReduceConfig, sink? : &EventSink) -> Result[@stability.Statistics, String]
++
++pub fn default_config() -> ReduceConfig
++
++pub fn default_passes() -> Array[&@api.ReductionPass]
++
++pub fn reduce(@manifest.Snapshot, &CandidateEvaluator, config? : ReduceConfig, sink? : &EventSink) -> Result[@project.ResultSummary, String]
+ 
+ // Errors
+ 
+ // Types and methods
++pub(all) struct Event {
++  schema_version : Int
++  candidate_id : Int
++  phase : String
++  trial : Int
++  decision : @stability.Decision
++} derive(ToJson)
++
++pub(all) struct ReduceConfig {
++  max_tests : Int
++  repeat : Int
++  quorum : Int
++  consecutive : Bool
++  final_repeat : Int
++  final_quorum : Int
++  score : String
++  includes : Array[String]
++  protects : Array[String]
++  ignores : Array[String]
++  pass_include : Array[String]
++  pass_exclude : Array[String]
++  extra_passes : Array[&@api.ReductionPass]
++}
+ 
+ // Type aliases
+ 
+ // Traits
++pub(open) trait CandidateEvaluator {
++  fn evaluate(Self, @manifest.Snapshot) -> Result[@stability.Decision, String]
++}
++
++pub(open) trait EventSink {
++  fn emit(Self, Event) -> Unit
++}
+diff --git a/predicate/advanced/pkg.generated.mbti b/predicate/advanced/pkg.generated.mbti
+new file mode 100644
+index 0000000..54db44b
+--- /dev/null
++++ b/predicate/advanced/pkg.generated.mbti
+@@ -0,0 +1,46 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/predicate/advanced"
++
++import {
++  "Ag108/MoonReduce/model",
++  "moonbitlang/core/debug",
++  "moonbitlang/core/json",
++}
++
++// Values
++pub fn crash_class(@model.Evaluation) -> String
++
++pub fn defaults() -> Spec
++
++pub fn diagnostic_codes(String) -> Array[String]
++
++pub fn matches(Spec, @model.Evaluation, @model.Evaluation?, String, String) -> Bool?
++
++pub fn normalize(String, String) -> String
++
++pub fn prepare(Spec, @model.Evaluation, String) -> @model.Evaluation
++
++pub fn test_names(String) -> Array[String]
++
++// Errors
++
++// Types and methods
++pub(all) struct Spec {
++  schema_version : Int
++  stdout_regex : Array[String]
++  stderr_regex : Array[String]
++  crash : String
++  diagnostic_codes : Array[String]
++  test_names : Array[String]
++  normalize : Bool
++  differential : String
++  wrapper : Bool
++  timeout_ms : Int
++  timeout_tolerance_ms : Int
++} derive(ToJson, @debug.Debug, @json.FromJson)
++pub fn Spec::from_json(Json) -> Result[Self, String]
++pub fn Spec::validate(Self) -> Result[Unit, String]
++
++// Type aliases
++
++// Traits
+diff --git a/predicate/regex/pkg.generated.mbti b/predicate/regex/pkg.generated.mbti
+new file mode 100644
+index 0000000..dd1b931
+--- /dev/null
++++ b/predicate/regex/pkg.generated.mbti
+@@ -0,0 +1,17 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/predicate/regex"
++
++// Values
++
++// Errors
++
++// Types and methods
++pub struct Regex {
++  // private fields
++}
++pub fn Regex::compile(String) -> Result[Self, String]
++pub fn Regex::matches(Self, String, max_steps? : Int) -> Result[Bool, String]
++
++// Type aliases
++
++// Traits
+diff --git a/predicate/stability/pkg.generated.mbti b/predicate/stability/pkg.generated.mbti
+new file mode 100644
+index 0000000..78e0ba5
+--- /dev/null
++++ b/predicate/stability/pkg.generated.mbti
+@@ -0,0 +1,39 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/predicate/stability"
++
++import {
++  "moonbitlang/core/debug",
++}
++
++// Values
++pub fn summarize(Array[Bool?]) -> Statistics
++
++// Errors
++
++// Types and methods
++pub(all) enum Decision {
++  Interesting
++  Uninteresting
++  Unresolved
++} derive(Eq, ToJson, @debug.Debug)
++
++pub struct Policy {
++  repeat : Int
++  quorum : Int
++  consecutive : Bool
++}
++pub fn Policy::decide(Self, Array[Bool?]) -> Decision
++pub fn Policy::new(Int, Int, consecutive? : Bool) -> Result[Self, String]
++
++pub(all) struct Statistics {
++  attempts : Int
++  resolved : Int
++  passed : Int
++  rate : Double
++  lower : Double
++  upper : Double
++} derive(ToJson, @debug.Debug)
++
++// Type aliases
++
++// Traits
+diff --git a/reducer/project/pkg.generated.mbti b/reducer/project/pkg.generated.mbti
+new file mode 100644
+index 0000000..09f1e75
+--- /dev/null
++++ b/reducer/project/pkg.generated.mbti
+@@ -0,0 +1,50 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/reducer/project"
++
++import {
++  "Ag108/MoonReduce/model",
++  "Ag108/MoonReduce/passes/api",
++  "Ag108/MoonReduce/predicate/stability",
++  "Ag108/MoonReduce/workspace/manifest",
++}
++
++// Values
++pub fn default_passes() -> Array[&@api.ReductionPass]
++
++pub fn pass_names() -> Array[String]
++
++// Errors
++
++// Types and methods
++pub(all) struct Candidate {
++  id : Int
++  snapshot : @manifest.Snapshot
++}
++
++pub(all) struct ResultSummary {
++  best : @manifest.Snapshot
++  status : @model.RunStatus
++  evaluations : Int
++  cache_hits : Int
++  baseline_passed : Int
++  final_passed : Int
++}
++
++pub struct Session {
++  // private fields
++}
++pub fn Session::baseline_statistics(Self) -> @stability.Statistics
++pub fn Session::checkpoint(Self, @manifest.Snapshot, String) -> Result[Json, String]
++pub fn Session::final_statistics(Self) -> @stability.Statistics
++pub fn Session::new(@manifest.Snapshot, Array[String], Array[String], Array[String], max_tests? : Int, repeat? : Int, quorum? : Int, consecutive? : Bool, final_repeat? : Int, final_quorum? : Int, command_cost? : Int, score? : String, pass_include? : Array[String], pass_exclude? : Array[String], extra_passes? : Array[&@api.ReductionPass]) -> Result[Self, String]
++pub fn Session::next_batch(Self) -> Array[Candidate]
++pub fn Session::phase(Self) -> String
++pub fn Session::record(Self, Int, Bool) -> Result[Unit, String]
++pub fn Session::record_result(Self, Int, Bool?, cost? : Int) -> Result[Unit, String]
++pub fn Session::restore(Json, @manifest.Snapshot, Array[String], Array[String], Array[String], String, max_tests? : Int, repeat? : Int, quorum? : Int, consecutive? : Bool, final_repeat? : Int, final_quorum? : Int, command_cost? : Int, score? : String, pass_include? : Array[String], pass_exclude? : Array[String], extra_passes? : Array[&@api.ReductionPass]) -> Result[Self, String]
++pub fn Session::result(Self) -> ResultSummary
++pub fn Session::stop(Self, @model.RunStatus) -> Unit
++
++// Type aliases
++
++// Traits
+diff --git a/reducer/score/pkg.generated.mbti b/reducer/score/pkg.generated.mbti
+new file mode 100644
+index 0000000..ebae7a0
+--- /dev/null
++++ b/reducer/score/pkg.generated.mbti
+@@ -0,0 +1,28 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/reducer/score"
++
++import {
++  "Ag108/MoonReduce/workspace/manifest",
++  "moonbitlang/core/debug",
++}
++
++// Values
++pub fn compare(String, Score, Score) -> Result[Int, String]
++
++pub fn measure(@manifest.Snapshot) -> Score
++
++// Errors
++
++// Types and methods
++pub(all) struct Score {
++  bytes : Int
++  tokens : Int
++  lines : Int
++  files : Int
++  nodes : Int
++  paths : String
++} derive(Eq, ToJson, @debug.Debug)
++
++// Type aliases
++
++// Traits
+diff --git a/workspace/glob/pkg.generated.mbti b/workspace/glob/pkg.generated.mbti
+new file mode 100644
+index 0000000..324f796
+--- /dev/null
++++ b/workspace/glob/pkg.generated.mbti
+@@ -0,0 +1,13 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/workspace/glob"
++
++// Values
++pub fn matches(String, String) -> Result[Bool, String]
++
++// Errors
++
++// Types and methods
++
++// Type aliases
++
++// Traits
+diff --git a/workspace/manifest/pkg.generated.mbti b/workspace/manifest/pkg.generated.mbti
+new file mode 100644
+index 0000000..6c2c4ab
+--- /dev/null
++++ b/workspace/manifest/pkg.generated.mbti
+@@ -0,0 +1,23 @@
++// Generated using `moon info`, DON'T EDIT IT
++package "Ag108/MoonReduce/workspace/manifest"
++
++// Values
++pub fn select(Snapshot, Array[String], Array[String], Array[String]) -> Result[Array[String], String]
++
++pub fn select_manifests(Snapshot, Array[String], Array[String], Array[String], include_root~ : Bool) -> Result[Array[String], String]
++
++// Errors
++
++// Types and methods
++pub struct Snapshot {
++  // private fields
++}
++pub fn Snapshot::files(Self) -> Array[(String, Bytes)]
++pub fn Snapshot::key(Self) -> String
++pub fn Snapshot::new(Array[(String, Bytes)]) -> Result[Self, String]
++pub fn Snapshot::remove(Self, String) -> Result[Self, String]
++pub fn Snapshot::replace(Self, String, Bytes) -> Result[Self, String]
++
++// Type aliases
++
++// Traits
+diff --git a/workspace/native/pkg.generated.mbti b/workspace/native/pkg.generated.mbti
+index bc03414..7147ebf 100644
+--- a/workspace/native/pkg.generated.mbti
++++ b/workspace/native/pkg.generated.mbti
+@@ -2,12 +2,15 @@
+ package "Ag108/MoonReduce/workspace/native"
+ 
+ import {
++  "Ag108/MoonReduce/workspace/manifest",
+   "moonbitlang/core/debug",
+ }
+ 
+ // Values
+ pub async fn prepare(String, String, String, Array[String]) -> Workspace
+ 
++pub async fn prepare_project(String, String, Array[String]) -> Workspace
++
+ // Errors
+ pub suberror WorkspaceError {
+   WorkspaceError(String)
+@@ -25,8 +28,11 @@ pub struct Workspace {
+ }
+ pub async fn Workspace::cleanup(Self, String) -> Unit
+ pub async fn Workspace::export_best(Self, String) -> Unit
++pub async fn Workspace::export_snapshot(Self, @manifest.Snapshot) -> Unit
+ pub async fn Workspace::materialize(Self, String) -> String
++pub async fn Workspace::materialize_snapshot(Self, @manifest.Snapshot) -> String
+ pub async fn Workspace::original_unchanged(Self) -> Bool
++pub fn Workspace::snapshot(Self) -> @manifest.Snapshot raise WorkspaceError
+ pub async fn Workspace::working_directory(Self, String, String) -> String
+ 
+ // Type aliases

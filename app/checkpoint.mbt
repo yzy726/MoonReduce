@@ -115,17 +115,36 @@ async fn toolchain_identity() -> String {
 
 ///|
 async fn save_checkpoint(path : String, document : Json) -> Unit {
+  write_atomic(path, document.stringify(), (file, text) => {
+    file.write_at(@source.encode(text), position=0L)
+  })
+}
+
+///|
+async fn write_atomic(
+  path : String,
+  text : String,
+  writer : async (@fs.File, String) -> Unit,
+) -> Unit {
   let temporary = path + ".tmp"
-  @fs.write_file(
+  let file = @fs.open(
     temporary,
-    document.stringify(),
+    mode=WriteOnly,
     create_mode=CreateNew,
     permission=384,
     sync=Full,
   )
+  let mut closed = false
   errdefer @async.protect_from_cancel(resume_on_cancel=false, () => {
+    if !closed {
+      file.close()
+    }
     @fs.remove(temporary)
   })
+  writer(file, text)
+  file.sync()
+  file.close()
+  closed = true
   @async.protect_from_cancel(resume_on_cancel=false, () => {
     @fs.rename(temporary, path, replace=true)
   })
@@ -149,6 +168,7 @@ async fn persist_project(
     "configuration": checkpoint_config(c),
     "toolchain": toolchain,
     "engine": engine,
+    "engine_sha256": @sha256.digest(@source.encode(engine.stringify())),
   }
   save_checkpoint(output + "/checkpoint.json", document)
 }
@@ -173,6 +193,23 @@ async fn resume_project(argv : Array[String]) -> Int {
     Err(e) => raise ProjectError(e)
   }
   let document = @json.parse(text)
+  match document {
+    { "engine": engine, "engine_sha256": String(hash), .. } =>
+      if @sha256.digest(@source.encode(engine.stringify())) != hash {
+        raise ProjectError("MR_CHECKPOINT_CHECKSUM: engine content changed")
+      }
+    _ => {
+      let absolute = @fs.realpath(argv[1]).replace_all(old="\\", new="/")
+      let parent = match absolute.rev_split_once("/") {
+        Some((parent, _)) => parent.to_owned()
+        None =>
+          raise ProjectError(
+            "MR_CHECKPOINT_CHECKSUM: missing integrity evidence",
+          )
+      }
+      verify_bundle(parent)
+    }
+  }
   let (configuration, engine, expected_toolchain) = match document {
     {
       "schema_version": 1,

@@ -67,6 +67,9 @@ async fn maintenance(argv : Array[String]) -> String {
     let empty : Array[Json] = []
     engine["cache"] = empty.to_json()
     envelope["engine"] = engine.to_json()
+    envelope["engine_sha256"] = @sha256.digest(
+      @source.encode(engine.to_json().stringify()),
+    ).to_json()
     let updated = envelope.to_json()
     let checksums = match
       @source.decode(read_bounded(root + "/checksums.txt", 1048576)) {

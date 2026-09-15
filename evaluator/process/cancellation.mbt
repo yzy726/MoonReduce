@@ -77,6 +77,7 @@ fn tree_cancel(error : Ref[String?]) -> @child.CancellationHandler {
           )
         }
       } catch {
+        ProcessError(message) => error.val = Some(message)
         e => error.val = Some("MR_EXEC_CLEANUP: " + e.to_string())
       }
     })

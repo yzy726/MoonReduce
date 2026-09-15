@@ -1,0 +1,175 @@
+passes/structured\body_test.mbt:2:test "body/delete direct statement" {
+passes/structured\body_test.mbt:11:test "body/statement pass excludes struct fields" {
+passes/structured\body_test.mbt:16:test "body/replace if with branch body" {
+passes/structured\body_test.mbt:25:test "body/delete match arm" {
+passes/structured\body_test.mbt:34:test "body/delete loop body statement" {
+passes/structured\body_test.mbt:43:test "body/simplify local binding value" {
+passes/structured\body_test.mbt:52:test "body/simplify expression literal" {
+passes/structured\body_test.mbt:61:test "body/if in string does not create branch" {
+passes/structured\body_test.mbt:66:test "body/match keyword inside comment ignored" {
+passes/structured\body_test.mbt:71:test "body/loop pass ignores ordinary nested block" {
+passes/structured\body_test.mbt:76:test "body/binding pass does not touch global let" {
+passes/structured\body_test.mbt:81:test "body/malformed branches fall back" {
+passes/structured\body_test.mbt:86:test "body/expression candidates strictly smaller" {
+passes/structured\body_test.mbt:94:test "body/Unicode statements remain valid" {
+passes/structured\body_test.mbt:103:test "body/match nested tuple commas not split" {
+passes/structured\cleanup_test.mbt:2:test "cleanup/type annotation" {
+passes/structured\cleanup_test.mbt:11:test "cleanup/generic argument" {
+passes/structured\cleanup_test.mbt:20:test "cleanup/namespace separator preserved" {
+passes/structured\cleanup_test.mbt:28:test "cleanup/doc comments" {
+passes/structured\cleanup_test.mbt:37:test "cleanup/attribute line" {
+passes/structured\cleanup_test.mbt:46:test "cleanup/test label" {
+passes/structured\cleanup_test.mbt:55:test "cleanup/identifier shortening" {
+passes/structured\cleanup_test.mbt:64:test "cleanup/numeric literal shortening" {
+passes/structured\cleanup_test.mbt:73:test "cleanup/string literal shortening" {
+passes/structured\cleanup_test.mbt:82:test "cleanup/keywords not shortened" {
+passes/structured\cleanup_test.mbt:87:test "cleanup/format disabled by default" {
+passes/structured\cleanup_test.mbt:92:test "cleanup/format explicit opt in" {
+passes/structured\cleanup_test.mbt:101:test "cleanup/format leaves string contents intact" {
+passes/structured\cleanup_test.mbt:107:test "cleanup/pass registry has sixteen distinct entries" {
+passes/structured\cleanup_test.mbt:118:test "cleanup/Unicode identifier shorter bytes" {
+reducer/ddmin\ddmin_test.mbt:2:test "property/partitions disjoint complete and deterministic" {
+reducer/ddmin\ddmin_test.mbt:19:test "edge/invalid groups produce no partitions" {
+passes/structured\invariants_test.mbt:2:test "invariants/import deterministic strict reduction" {
+passes/structured\invariants_test.mbt:18:test "invariants/function deterministic strict reduction" {
+passes/structured\invariants_test.mbt:34:test "invariants/type-declaration deterministic strict reduction" {
+passes/structured\invariants_test.mbt:53:test "invariants/test deterministic strict reduction" {
+passes/structured\invariants_test.mbt:69:test "invariants/parameter deterministic strict reduction" {
+passes/structured\invariants_test.mbt:85:test "invariants/field deterministic strict reduction" {
+passes/structured\invariants_test.mbt:101:test "invariants/statement deterministic strict reduction" {
+passes/structured\invariants_test.mbt:117:test "invariants/if-branch deterministic strict reduction" {
+passes/structured\invariants_test.mbt:133:test "invariants/match-arm deterministic strict reduction" {
+passes/structured\invariants_test.mbt:149:test "invariants/loop-body deterministic strict reduction" {
+passes/structured\invariants_test.mbt:165:test "invariants/binding deterministic strict reduction" {
+passes/structured\invariants_test.mbt:181:test "invariants/expression deterministic strict reduction" {
+passes/structured\invariants_test.mbt:197:test "invariants/type-annotation deterministic strict reduction" {
+passes/structured\invariants_test.mbt:216:test "invariants/metadata deterministic strict reduction" {
+passes/structured\invariants_test.mbt:232:test "invariants/identifier-literal deterministic strict reduction" {
+passes/structured\invariants_test.mbt:255:test "invariants/format deterministic strict reduction" {
+passes/structured\invariants_test.mbt:271:test "structured/all passes reject incomplete syntax" {
+passes/structured\invariants_test.mbt:278:test "structured/type declaration includes derive suffix" {
+passes/structured\invariants_test.mbt:287:test "structured/generic parameter removal" {
+passes/structured\declaration_test.mbt:2:test "structured/remove function" {
+passes/structured\declaration_test.mbt:11:test "structured/remove type declaration" {
+passes/structured\declaration_test.mbt:20:test "structured/remove test declaration" {
+passes/structured\declaration_test.mbt:27:test "structured/remove import block" {
+passes/structured\declaration_test.mbt:36:test "structured/delete parameter" {
+passes/structured\declaration_test.mbt:45:test "structured/delete field" {
+passes/structured\declaration_test.mbt:54:test "structured/malformed source yields no declaration edits" {
+passes/structured\declaration_test.mbt:59:test "structured/unknown pass yields no edits" {
+passes/structured\declaration_test.mbt:64:test "structured/parameter pass ignores call arguments" {
+passes/structured\declaration_test.mbt:69:test "structured/field pass ignores function blocks" {
+passes/structured\declaration_test.mbt:74:test "structured/Unicode deletion retains valid UTF8" {
+passes/structured\declaration_test.mbt:83:test "structured/declaration candidates are unique and smaller" {
+passes/structured\declaration_test.mbt:93:test "structured/visibility group is not a parameter" {
+passes/structured\declaration_test.mbt:99:test "structured/return tuple is not a parameter list" {
+passes/structured\declaration_test.mbt:107:test "structured/import keyword inside function is ignored" {
+app\app_test.mbt:2:test "valid/help documents four initial commands" {
+app\app_test.mbt:13:async test "e2e/real moon diagnostic reduced in isolated copies" {
+reducer/project\checkpoint_test.mbt:22:test "checkpoint restores candidate progression and cached rejection" {
+reducer/project\checkpoint_test.mbt:36:test "checkpoint refuses pending batches" {
+reducer/project\checkpoint_test.mbt:43:test "checkpoint validates original and context" {
+reducer/project\checkpoint_test.mbt:58:test "checkpoint preserves binary support files" {
+reducer/project\checkpoint_test.mbt:68:test "checkpoint rejects invalid document and changed selection" {
+reducer/project\checkpoint_test.mbt:94:test "checkpoint rejects incompatible schema and impossible counters" {
+reducer/project\checkpoint_test.mbt:121:test "checkpoint rejects protected file tampering" {
+reducer/project\checkpoint_test.mbt:132:test "checkpoint resumes budget exhaustion with enlarged budget" {
+reducer/project\checkpoint_test.mbt:153:test "checkpoint reruns completed final verification without cache" {
+reducer/project\checkpoint_test.mbt:178:test "checkpoint interrupted run reexecutes zero settled cached candidates" {
+reducer/engine\limits_test.mbt:2:test "valid/cache skips repeated reduction candidates only" {
+reducer/engine\limits_test.mbt:17:test "valid/test budget reserves final verification" {
+reducer/engine\limits_test.mbt:31:test "valid/cancel retains last verified candidate without claiming completion" {
+reducer/engine\limits_test.mbt:44:test "valid/time limit stops at current best" {
+reducer/engine\limits_test.mbt:52:test "invalid/zero budget never executes" {
+reducer/project\stability_test.mbt:2:test "project stability accepts configurable final four of five" {
+reducer/project\stability_test.mbt:24:test "project stability repeat reserves actual command budget" {
+reducer/project\stability_test.mbt:51:test "project stability tolerates one unstable baseline in three" {
+reducer/project\stability_test.mbt:62:test "project stability rejects inconsistent reply cost" {
+reducer/project\stability_test.mbt:70:test "project stability restores repeated accounting and rejects changed policy" {
+reducer/project\stability_test.mbt:96:test "project stability inconclusive evidence cannot shrink the project" {
+reducer/project\stability_test.mbt:108:test "project differential counts both commands in a trial" {
+reducer/project\controls_test.mbt:2:test "project pass controls reject unknown names and score" {
+reducer/project\controls_test.mbt:14:test "project pass exclusion disables file removal" {
+reducer/project\controls_test.mbt:27:test "project score can choose fewer tokens over fewer bytes" {
+reducer/engine\engine_test.mbt:2:test "valid/baseline reduction and three uncached final checks" {
+reducer/engine\engine_test.mbt:22:test "invalid/baseline mismatch and unstable baseline" {
+reducer/engine\engine_test.mbt:37:test "property/accepted history strictly decreases bytes" {
+reducer/engine\engine_test.mbt:52:test "invalid/final mismatch is never completed" {
+app\config_file_test.mbt:2:async test "regr_invalid_json_file_is_configuration_error" {
+app\config_file_test.mbt:10:async test "regr_missing_config_file_is_configuration_error" {
+app\config_file_test.mbt:16:async test "e2e maintenance argument errors return configuration exit code" {
+reducer/project\extension_test.mbt:21:test "project custom pass uses normal validation and final checks" {
+reducer/project\extension_test.mbt:45:test "project custom pass cannot remove protected support" {
+reducer/engine\properties_test.mbt:2:test "property/ten independent runs converge to identical content" {
+reducer/engine\properties_test.mbt:19:test "property/exhaustive monotone subset predicates reach required one-minimal lines" {
+reducer/engine\properties_test.mbt:42:test "property/repeated next is idempotent until verdict supplied" {
+reducer/engine\properties_test.mbt:52:test "property/failed final keeps previously accepted source" {
+reducer/engine\properties_test.mbt:63:test "property/budget commands never exceed configured limit" {
+reducer/engine\properties_test.mbt:78:test "property/cancellation during pending request preserves best" {
+evaluator/process\tree_test.mbt:2:async test "regr_timeout_reaps_owned_descendant_without_shell" {
+evaluator/process\tree_test.mbt:27:async test "e2e_cancellation_reaps_owned_descendant_without_shell" {
+reducer/project\package_test.mbt:2:test "project package candidate removes directory and its manifest" {
+reducer/project\package_test.mbt:17:test "project package candidate never removes protected support" {
+reducer/project\package_test.mbt:31:test "project opt-in manifest edits respect module whitelist" {
+evaluator/process\process_test.mbt:2:async test "e2e/real direct argv captures bounded output" {
+evaluator/process\process_test.mbt:11:async test "e2e/missing executable is an error not an interesting failure" {
+evaluator/process\process_test.mbt:27:async test "invalid/empty command does not panic" {
+reducer/project\engine_test.mbt:24:test "project engine/two baseline attempts before candidates" {
+reducer/project\engine_test.mbt:34:test "project engine/baseline mismatch stops" {
+reducer/project\engine_test.mbt:42:test "project engine/record requires issued id" {
+reducer/project\engine_test.mbt:48:test "project engine/pending batch is stable" {
+reducer/project\engine_test.mbt:57:test "project engine/final validation bypasses cache three times" {
+reducer/project\engine_test.mbt:67:test "project engine/reject budget below baseline and finals" {
+reducer/project\engine_test.mbt:78:test "project engine/reserves final attempts under budget" {
+reducer/project\engine_test.mbt:88:test "project engine/protected file never removed" {
+reducer/project\engine_test.mbt:105:test "project engine/out of order batch answers choose same best" {
+reducer/project\engine_test.mbt:124:test "project engine/final mismatch cannot report success" {
+reducer/project\engine_test.mbt:135:test "project engine/cancel preserves original before acceptance" {
+reducer/project\engine_test.mbt:144:test "project engine/published request cannot mutate internal batch" {
+app\checkpoint_wbtest.mbt:2:async test "checkpoint atomic replacement leaves no partial file" {
+app\checkpoint_wbtest.mbt:12:async test "checkpoint occupied temporary path preserves both files" {
+app\checkpoint_wbtest.mbt:29:async test "checkpoint partial write failure preserves prior checkpoint" {
+app\checkpoint_wbtest.mbt:48:async test "checkpoint cancellation while writing cleans partial temporary" {
+app\interruption_e2e_test.mbt:11:async test "e2e_timeout_preserves_original_and_final_verification" {
+app\interruption_e2e_test.mbt:26:async test "e2e_cancel_preserves_original_and_exports_interrupted_report" {
+app\failure_e2e_test.mbt:55:async test "e2e/baseline mismatch preserves original and exports uncertified result" {
+app\failure_e2e_test.mbt:66:async test "e2e/spawn failure preserves original and writes explicit error" {
+app\failure_e2e_test.mbt:83:async test "e2e/execution budget reserves final checks and preserves original" {
+app\failure_e2e_test.mbt:95:async test "e2e/check stops after baseline without certifying a reduction" {
+app\project_test.mbt:48:async test "project/e2e CLI reduces multiple files and preserves support" {
+app\project_test.mbt:84:async test "project/e2e worker counts choose identical snapshots" {
+app\project_test.mbt:95:async test "project/e2e missing command records failure without modifying input" {
+app\project_test.mbt:112:async test "project/e2e resume preserves best and revalidates finals" {
+app\project_test.mbt:139:async test "project/e2e resume refuses changed original" {
+app\project_test.mbt:160:async test "project/e2e repeated predicates count commands and final quorum" {
+app\project_test.mbt:182:async test "project/e2e repeated destructive commands use fresh copies" {
+app\project_test.mbt:204:async test "project/e2e resume retains repeated predicate policy" {
+app\project_test.mbt:231:async test "project/e2e advanced regex rejects unrelated output" {
+app\project_test.mbt:240:async test "project/e2e malformed wrapper is inconclusive" {
+app\project_test.mbt:252:async test "project/e2e differential runs both commands within budget" {
+app\project_test.mbt:271:async test "project/e2e equal differential results reject baseline" {
+app\project_test.mbt:283:async test "project/e2e valid wrapper preserves interesting candidates" {
+app\project_test.mbt:300:async test "project/e2e diagnostic and test fingerprint remain present" {
+app\project_test.mbt:320:async test "project/e2e strategy controls retain requested workspaces" {
+app\project_test.mbt:341:async test "project/e2e deletes unused package directory only in copies" {
+app\project_test.mbt:357:async test "project/e2e opt-in manifest edit appears in diff" {
+app\project_test.mbt:377:async test "project/e2e evidence bundle has checksums and redacted environment" {
+app\project_test.mbt:407:async test "project/e2e evidence rejects missing extra and traversal entries" {
+app\project_test.mbt:447:async test "project/e2e replay verifies fresh copies without original input" {
+app\project_test.mbt:461:async test "project/e2e replay refuses corrupt evidence before executing" {
+app\project_test.mbt:477:async test "project/e2e real flaky predicate records four of five successes" {
+app\project_test.mbt:513:async test "project/e2e cancellation persists checkpoint and resumes to final validation" {
+app\project_test.mbt:567:async test "project/e2e resume rejects modified cache before creating output" {
+app\project_test.mbt:607:async test "project/e2e cancellation counts an active worker" {
+app\maintenance_wbtest.mbt:2:async test "maintenance config validates without executing commands" {
+app\maintenance_wbtest.mbt:25:async test "maintenance rejects missing explicit cache clean run" {
+app\maintenance_wbtest.mbt:36:async test "maintenance cache clean preserves candidate and sealed replay state" {
+workspace/native\cleanup_test.mbt:2:async test "e2e/cleanup only removes owned evaluation copies" {
+workspace/native\cleanup_test.mbt:22:async test "invalid/cleanup rejects altered owner marker" {
+workspace/native\project_test.mbt:2:async test "project/e2e materializes multiple replacements and file deletion" {
+workspace/native\project_test.mbt:34:async test "project/e2e copies remain independent" {
+workspace/native\project_test.mbt:50:async test "project/e2e exports entire selected snapshot" {
+workspace/native\project_test.mbt:68:async test "project/e2e ignored glob omits files from every copy" {
+workspace/native\project_test.mbt:88:async test "regr_project_materialize_failure_cleans_owned_copy" {
+workspace/native\workspace_test.mbt:2:async test "e2e/workspace isolates candidates and exports original support files" {
+workspace/native\workspace_test.mbt:25:async test "e2e/workspace rejects output over original and target traversal" {

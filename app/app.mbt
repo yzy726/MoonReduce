@@ -10,7 +10,7 @@ pub(all) struct Run {
 /// CLI reference for the initial commands and options.
 pub fn help() -> String {
   let text =
-    #|MoonReduce 0.1.0 — trusted-project testcase reduction
+    #|MoonReduce 1.0.0 — trusted-project testcase reduction
     #|moonreduce check [options] -- executable arg ...
     #|moonreduce reduce [options] -- executable arg ...
     #|moonreduce resume checkpoint.json [--output DIR] [--max-tests N]
@@ -150,7 +150,7 @@ pub async fn execute(c : @config.Config) -> Run {
         error = Some("MR_BUDGET_CANCELLED")
       } else {
         s.stop(ExecutionFailed)
-        error = Some("MR_EXEC_FAILURE: " + e.to_string())
+        error = Some("MR_EXEC_FAILURE: " + execution_error(e))
       }
   }
   @async.protect_from_cancel(resume_on_cancel=false, () => {
@@ -189,7 +189,7 @@ pub async fn execute(c : @config.Config) -> Run {
 
 ///|
 /// CLI dispatcher; returns the specified exit code after artifact writes complete.
-pub async fn run(argv : Array[String]) -> Int {
+async fn run_inner(argv : Array[String]) -> Int {
   if [Some("diff"), Some("config"), Some("cache")].contains(argv.get(0)) {
     @stdio.stdout.write(maintenance(argv))
     return 0
@@ -265,5 +265,28 @@ pub async fn run(argv : Array[String]) -> Int {
       }
       r.result.status.exit_code()
     }
+  }
+}
+
+///|
+/// CLI dispatcher. Configuration failures consistently return exit code 1.
+pub async fn run(argv : Array[String]) -> Int {
+  run_inner(argv) catch {
+    ProjectError(message) =>
+      if message.has_prefix("MR_CFG_") {
+        @stdio.stderr.write(message + "\n")
+        1
+      } else {
+        raise ProjectError(message)
+      }
+    e => raise e
+  }
+}
+
+///|
+fn execution_error(error : Error) -> String {
+  match error {
+    @process.ProcessError(message) => message
+    _ => error.to_string()
   }
 }

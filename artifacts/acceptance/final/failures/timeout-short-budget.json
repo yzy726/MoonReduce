@@ -1,0 +1,141 @@
+{
+  "schema_version": 2,
+  "mode": "project",
+  "status": "BaselineFailed",
+  "completed": false,
+  "jobs": 1,
+  "score_strategy": "bytes",
+  "pass_include": [],
+  "pass_exclude": [],
+  "workdirs_retained": false,
+  "original_score": {
+    "bytes": 1076,
+    "tokens": 197,
+    "lines": 25,
+    "files": 3,
+    "nodes": 29,
+    "paths": "moon.mod\u0000moon.pkg\u0000repro.mbt"
+  },
+  "reduced_score": {
+    "bytes": 1076,
+    "tokens": 197,
+    "lines": 25,
+    "files": 3,
+    "nodes": 29,
+    "paths": "moon.mod\u0000moon.pkg\u0000repro.mbt"
+  },
+  "commands_per_trial": 1,
+  "predicate_spec": {
+    "schema_version": 1,
+    "stdout_regex": [],
+    "stderr_regex": [],
+    "crash": "",
+    "diagnostic_codes": [],
+    "test_names": [],
+    "normalize": false,
+    "differential": "",
+    "wrapper": false,
+    "timeout_ms": 2000,
+    "timeout_tolerance_ms": 0
+  },
+  "repeat": 1,
+  "quorum": 1,
+  "final_repeat": 3,
+  "final_quorum": 3,
+  "probabilistic": false,
+  "baseline_statistics": {
+    "attempts": 1,
+    "resolved": 1,
+    "passed": 0,
+    "rate": 0,
+    "lower": 0,
+    "upper": 0.7934506856227626
+  },
+  "final_statistics": {
+    "attempts": 0,
+    "resolved": 0,
+    "passed": 0,
+    "rate": 0,
+    "lower": 0,
+    "upper": 1
+  },
+  "evaluations": 1,
+  "attempted_commands": 1,
+  "cache_hits": 0,
+  "baseline_passed": 0,
+  "final_passed": 0,
+  "original_unchanged": true,
+  "original_files": [
+    {
+      "path": "moon.mod",
+      "bytes": 86,
+      "fnv1a": "14361f0f73cf3abc",
+      "sha256": "6a496d6fb694cbcd234cc91eeee648359fbca967c48ecc8b432143dd5b0137ea"
+    },
+    {
+      "path": "moon.pkg",
+      "bytes": 29,
+      "fnv1a": "34844b877c0fef81",
+      "sha256": "4119ad8c3735ceb7bfe3fb4d8102c1eec33c0f05b74ed0831d75830434d7caff"
+    },
+    {
+      "path": "repro.mbt",
+      "bytes": 961,
+      "fnv1a": "8d6ea716b0407b77",
+      "sha256": "cb9e1a70c03c5f957ba2de861a9b35bd01cb7e564e47acbec66f65d1690732a9"
+    }
+  ],
+  "reduced_files": [
+    {
+      "path": "moon.mod",
+      "bytes": 86,
+      "fnv1a": "14361f0f73cf3abc",
+      "sha256": "6a496d6fb694cbcd234cc91eeee648359fbca967c48ecc8b432143dd5b0137ea"
+    },
+    {
+      "path": "moon.pkg",
+      "bytes": 29,
+      "fnv1a": "34844b877c0fef81",
+      "sha256": "4119ad8c3735ceb7bfe3fb4d8102c1eec33c0f05b74ed0831d75830434d7caff"
+    },
+    {
+      "path": "repro.mbt",
+      "bytes": 961,
+      "fnv1a": "8d6ea716b0407b77",
+      "sha256": "cb9e1a70c03c5f957ba2de861a9b35bd01cb7e564e47acbec66f65d1690732a9"
+    }
+  ],
+  "evidence": [
+    {
+      "schema_version": 2,
+      "id": 1,
+      "phase": "baseline",
+      "matched": [
+        false
+      ],
+      "runs": [
+        {
+          "trial": 1,
+          "matched": [
+            false
+          ],
+          "exit_code": -1,
+          "timed_out": true,
+          "duration_ms": "3026"
+        }
+      ],
+      "statistics": {
+        "attempts": 1,
+        "resolved": 1,
+        "passed": 0,
+        "rate": 0,
+        "lower": 0,
+        "upper": 0.7934506856227626
+      },
+      "exit_code": -1,
+      "timed_out": true,
+      "duration_ms": "3026"
+    }
+  ],
+  "elapsed_ms": "3060"
+}

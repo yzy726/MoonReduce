@@ -27,3 +27,37 @@ JSON configuration keys use underscores: `stdout_contains`, `stderr_contains`,
 Output-rule values are arrays of strings. `environment` maps names to strings.
 CLI options override JSON defaults; unknown keys and duplicate scalar CLI options
 are rejected. Repeatable CLI rules replace the corresponding JSON array.
+
+## Project predicates (schema 1)
+
+Project mode adds repeatable `--stdout-regex`, `--stderr-regex`,
+`--diagnostic-code` and `--test-name`. All configured rules combine with the legacy
+exit/output rules. A MoonBit diagnostic `[4014]` is extracted as `4014`; E/W-prefixed
+codes preserve their prefix. Test names are quoted labels following `test`.
+
+The regex engine supports literals, Unicode, `.`, absolute `^`/`$`, groups,
+alternation, character classes/ranges, `*`, `+`, `?`, and common character-class
+escapes. Counted repetition, lookaround, backreferences and inline flags are
+rejected. Pattern length, nesting, NFA states, input length and execution steps
+are bounded. Exhaustion is unresolved rather than a negative cache entry.
+`--ignore-case` applies to legacy substring rules; regex remains case sensitive.
+
+`--normalize` applies copy-root, CRLF, location-number, ANSI CSI and long hex-address
+normalization. It deliberately does not erase arbitrary diagnostics. Crash
+classification distinguishes timeout, memory, abort, arithmetic, illegal-instruction,
+signal and panic outcomes using platform exit/signal conventions and observations.
+`--timeout-tolerance 10ms` treats near-boundary observations as inconclusive.
+
+`--reference ARG` repeats for every reference argv element. Select comparison with
+`--differential stdout|stderr|exit|any`; supplying a reference defaults to any.
+The primary and reference commands run in separate copies and both consume budget.
+Truncated compared streams or a missing reference are unresolved.
+
+`--wrapper --expect 0` accepts stdout containing a JSON object with
+`{"schema_version":1,"interesting":true}` or false. Invalid JSON/version, timeout,
+nonzero status or truncated wrapper output is unresolved. Wrapper commands remain
+trusted executable input, not dynamically loaded plugins.
+
+Use `--repeat N --quorum K`, optional `--consecutive`, and
+`--final-repeat N --final-quorum K` for instability. See FLAKY_FAILURES.md for rate
+and confidence interpretation. Final repeat is at least three.

@@ -173,3 +173,51 @@ test "checkpoint reruns completed final verification without cache" {
   assert_eq(r.result().evaluations, before + 3)
   assert_eq(r.result().final_passed, 3)
 }
+
+///|
+test "checkpoint interrupted run reexecutes zero settled cached candidates" {
+  let original = @manifest.Snapshot::new([
+    ("a.mbt", b"KEEP a b c d e f g h i j k l m n o p q r s t u v w x y z"),
+  ]).unwrap()
+  let s = @project.Session::new(original, [], [], [], max_tests=1000).unwrap()
+  let known : Array[String] = []
+  while known.length() < 20 {
+    let batch = s.next_batch()
+    assert_true(!batch.is_empty())
+    let phase = s.phase()
+    for c in batch {
+      if phase == "reducing" {
+        known.push(c.snapshot.key())
+      }
+      s.record(c.id, phase != "reducing").unwrap()
+    }
+  }
+  s.stop(Cancelled)
+  let document = s.checkpoint(original, "fixed-probe-v1").unwrap()
+  let restored = @project.Session::restore(
+    document,
+    original,
+    [],
+    [],
+    [],
+    "fixed-probe-v1",
+    max_tests=1000,
+  ).unwrap()
+  let mut repeated = 0
+  while true {
+    let batch = restored.next_batch()
+    if batch.is_empty() {
+      break
+    }
+    let phase = restored.phase()
+    for c in batch {
+      if phase == "reducing" && known.contains(c.snapshot.key()) {
+        repeated += 1
+      }
+      restored.record(c.id, phase != "reducing").unwrap()
+    }
+  }
+  assert_true(known.length() >= 20)
+  assert_eq(repeated, 0)
+  assert_eq(restored.result().final_passed, 3)
+}

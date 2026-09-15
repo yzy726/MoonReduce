@@ -386,6 +386,12 @@ async test "project/e2e evidence bundle has checksums and redacted environment" 
   let environment = @fs.read_file(c.output + "/environment.json").text()
   assert_true(!environment.contains("private-value-123"))
   assert_true(environment.contains("schema_version"))
+  let platform = if @env.get_env_var("OS") == Some("Windows_NT") {
+    "windows"
+  } else {
+    "posix"
+  }
+  assert_true(environment.contains(platform))
   assert_eq(@app.verify_bundle(c.output), ())
   @fs.write_file(c.output + "/reduced/keep.mbt", "tampered")
   let rejected = try {
@@ -501,4 +507,135 @@ async test "project/e2e real flaky predicate records four of five successes" {
     ]),
     0,
   )
+}
+
+///|
+async test "project/e2e cancellation persists checkpoint and resumes to final validation" {
+  let base = project_fixture(1)
+  let c = { ..base, budget: { ..base.budget, max_tests: 150 } }
+  @async.with_task_group(group => {
+    let task = group.spawn(() => @app.execute_project(c), allow_failure=true)
+    let mut reached = false
+    for _ in 0..<1000 {
+      if @fs.exists(c.output + "/checkpoint.json") {
+        let document = @json.parse(
+          @fs.read_file(c.output + "/checkpoint.json").text(),
+        )
+        if document is { "engine": { "evaluations": Number(n, ..), .. }, .. } &&
+          n >= 10.0 {
+          reached = true
+          break
+        }
+      }
+      @async.sleep(5)
+    }
+    assert_true(reached)
+    task.cancel()
+    ignore(task.wait()) catch {
+      _ => ()
+    }
+  })
+  assert_true(@fs.exists(c.output + "/checkpoint.json"))
+  assert_true(
+    @fs.read_file(c.output + "/report.json").text().contains("Cancelled"),
+  )
+  let cancelled_report = @json.parse(
+    @fs.read_file(c.output + "/report.json").text(),
+  )
+  assert_true(
+    cancelled_report is { "cancelled_tasks": Number(n, ..), .. } && n >= 0.0,
+  )
+  let resumed = c.output + "-resume"
+  assert_eq(
+    @app.run([
+      "resume",
+      c.output + "/checkpoint.json",
+      "--output",
+      resumed,
+      "--max-tests",
+      "500",
+      "--quiet",
+    ]),
+    0,
+  )
+  let report = @fs.read_file(resumed + "/report.json").text()
+  assert_true(report.contains("\"final_passed\": 3"))
+  assert_true(report.contains("\"original_unchanged\": true"))
+}
+
+///|
+async test "project/e2e resume rejects modified cache before creating output" {
+  let c = project_fixture(1)
+  let _ = @app.execute_project(c)
+  let document = @json.parse(
+    @fs.read_file(c.output + "/checkpoint.json").text(),
+  )
+  match document {
+    Object(envelope) =>
+      match envelope.get("engine") {
+        Some(Object(engine)) => {
+          let empty : Array[Json] = []
+          engine["cache"] = empty.to_json()
+          envelope["engine"] = engine.to_json()
+          @fs.write_file(
+            c.output + "/checkpoint.json",
+            envelope.to_json().stringify(),
+          )
+        }
+        _ => fail("missing engine")
+      }
+    _ => fail("missing envelope")
+  }
+  let out = c.output + "-tampered"
+  let rejected = try {
+    let _ = @app.run([
+      "resume",
+      c.output + "/checkpoint.json",
+      "--output",
+      out,
+      "--quiet",
+    ])
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(rejected)
+  assert_true(!@fs.exists(out))
+}
+
+///|
+async test "project/e2e cancellation counts an active worker" {
+  let base = project_fixture(1)
+  let c = {
+    ..base,
+    predicate: {
+      ..base.predicate,
+      command: [probe_path(), "heartbeat", "keep.mbt"],
+      failure: Timeout,
+      stdout_rules: [],
+      timeout_ms: 5000,
+    },
+  }
+  @async.with_task_group(group => {
+    let task = group.spawn(() => @app.execute_project(c), allow_failure=true)
+    let marker = c.output + "/.moonreduce/work/run-1/keep.mbt"
+    let mut started = false
+    for _ in 0..<1000 {
+      let observed = try @fs.read_file(marker).text() == "0" catch {
+        _ => false
+      }
+      if observed {
+        started = true
+        break
+      }
+      @async.sleep(5)
+    }
+    assert_true(started)
+    task.cancel()
+    ignore(task.wait()) catch {
+      _ => ()
+    }
+  })
+  let report = @json.parse(@fs.read_file(c.output + "/report.json").text())
+  assert_true(report is { "cancelled_tasks": 1, .. })
 }

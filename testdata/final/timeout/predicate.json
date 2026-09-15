@@ -1,0 +1,22 @@
+{
+  "target": "repro.mbt",
+  "command": [
+    "moon",
+    "run",
+    ".",
+    "--target",
+    "native"
+  ],
+  "expect": "timeout",
+  "stdout_contains": [
+    "MR_TARGET_TIMEOUT"
+  ],
+  "max_tests": 2500,
+  "timeout": "10s",
+  "max_time": "600s",
+  "project": true,
+  "schema_version": 1,
+  "pass_include": [
+    "text:line-block"
+  ]
+}

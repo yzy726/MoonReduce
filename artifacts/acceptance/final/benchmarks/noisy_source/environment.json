@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "moonreduce_version": "0.1.0",
+  "toolchain": "moon 0.1.20260824 (dae026a 2026-08-24) ~\\.moon\\bin\\moon.exe\nmoonc v0.10.10+f8a486b6f (2026-08-21) ~\\.moon\\bin\\moonc.exe\nmoonrun 0.1.20260824 (dae026a 2026-08-24) ~\\.moon\\bin\\moonrun.exe\n\nFeature flags enabled: rr_moon_mod,rr_moon_pkg\n",
+  "environment_override_names": [],
+  "environment_values_recorded": false,
+  "inherits_parent_environment": true,
+  "hash_algorithm": "sha256"
+}

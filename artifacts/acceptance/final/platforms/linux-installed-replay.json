@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "decision": "Interesting",
+  "statistics": {
+    "attempts": 3,
+    "resolved": 3,
+    "passed": 3,
+    "rate": 1,
+    "lower": 0.4385029682449546,
+    "upper": 1
+  },
+  "runs": [
+    {
+      "trial": 1,
+      "matched": [
+        true
+      ],
+      "exit_code": 255,
+      "timed_out": false
+    },
+    {
+      "trial": 2,
+      "matched": [
+        true
+      ],
+      "exit_code": 255,
+      "timed_out": false
+    },
+    {
+      "trial": 3,
+      "matched": [
+        true
+      ],
+      "exit_code": 255,
+      "timed_out": false
+    }
+  ],
+  "cache_used": false,
+  "original_unchanged": true,
+  "toolchain": "moon 0.1.20260824 (dae026a 2026-08-24) /tmp/moonreduce-final.mzlohi/toolchain/bin/moon\nmoonc v0.10.10+f8a486b6f (2026-08-21) /tmp/moonreduce-final.mzlohi/toolchain/bin/moonc\nmoonrun 0.1.20260824 (dae026a 2026-08-24) /tmp/moonreduce-final.mzlohi/toolchain/bin/moonrun\n\nFeature flags enabled: rr_moon_mod,rr_moon_pkg\n"
+}

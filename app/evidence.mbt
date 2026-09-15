@@ -58,8 +58,13 @@ async fn seal_bundle(
   names.sort()
   let environment : Json = {
     "schema_version": 1,
-    "moonreduce_version": "0.1.0",
+    "moonreduce_version": "1.0.0",
     "toolchain": toolchain,
+    "platform": if output.has_prefix("/") && !output.has_prefix("//") {
+      "posix"
+    } else {
+      "windows"
+    },
     "environment_override_names": names.to_json(),
     "environment_values_recorded": false,
     "inherits_parent_environment": true,
