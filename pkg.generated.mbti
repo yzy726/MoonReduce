@@ -1,12 +1,56 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "Ag108/MoonReduce"
 
+import {
+  "Ag108/MoonReduce/passes/api",
+  "Ag108/MoonReduce/predicate/stability",
+  "Ag108/MoonReduce/reducer/project",
+  "Ag108/MoonReduce/workspace/manifest",
+}
+
 // Values
+pub fn check(@manifest.Snapshot, &CandidateEvaluator, config? : ReduceConfig, sink? : &EventSink) -> Result[@stability.Statistics, String]
+
+pub fn default_config() -> ReduceConfig
+
+pub fn default_passes() -> Array[&@api.ReductionPass]
+
+pub fn reduce(@manifest.Snapshot, &CandidateEvaluator, config? : ReduceConfig, sink? : &EventSink) -> Result[@project.ResultSummary, String]
 
 // Errors
 
 // Types and methods
+pub(all) struct Event {
+  schema_version : Int
+  candidate_id : Int
+  phase : String
+  trial : Int
+  decision : @stability.Decision
+} derive(ToJson)
+
+pub(all) struct ReduceConfig {
+  max_tests : Int
+  repeat : Int
+  quorum : Int
+  consecutive : Bool
+  final_repeat : Int
+  final_quorum : Int
+  score : String
+  includes : Array[String]
+  protects : Array[String]
+  ignores : Array[String]
+  pass_include : Array[String]
+  pass_exclude : Array[String]
+  extra_passes : Array[&@api.ReductionPass]
+}
 
 // Type aliases
 
 // Traits
+pub(open) trait CandidateEvaluator {
+  fn evaluate(Self, @manifest.Snapshot) -> Result[@stability.Decision, String]
+}
+
+pub(open) trait EventSink {
+  fn emit(Self, Event) -> Unit
+}
