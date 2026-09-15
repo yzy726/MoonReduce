@@ -17,6 +17,9 @@ pub fn help() -> String {
     #|moonreduce passes
     #|
     #|--workspace DIR         input project (default .)
+    #|--project              reduce selected files as one project
+    #|--include GLOB         selected source pattern (repeatable)
+    #|--jobs N               project worker count, default 1
     #|--target FILE.mbt       one workspace-relative UTF8 source
     #|--output DIR            new output directory outside the original workspace
     #|--config FILE           JSON defaults; CLI overrides values
@@ -206,7 +209,9 @@ pub async fn run(argv : Array[String]) -> Int {
       0
     }
     "passes" => {
-      @stdio.stdout.write((@text.names() + @token.names()).join("\n") + "\n")
+      @stdio.stdout.write(
+        (@text.names() + @token.names() + @structured.names()).join("\n") + "\n",
+      )
       0
     }
     "explain" => {
@@ -216,6 +221,13 @@ pub async fn run(argv : Array[String]) -> Int {
       0
     }
     _ => {
+      if c.project {
+        let r = execute_project(c)
+        if r.error is Some(e) {
+          @stdio.stderr.write(e + "\n")
+        }
+        return r.result.status.exit_code()
+      }
       let r = execute(c)
       if !c.quiet && !c.json_events {
         @stdio.stdout.write("Artifacts: " + r.output + "\n")

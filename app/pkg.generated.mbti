@@ -4,10 +4,13 @@ package "Ag108/MoonReduce/app"
 import {
   "Ag108/MoonReduce/config",
   "Ag108/MoonReduce/reducer/engine",
+  "Ag108/MoonReduce/reducer/project",
 }
 
 // Values
 pub async fn execute(@config.Config) -> Run
+
+pub async fn execute_project(@config.Config) -> ProjectRun
 
 pub fn help() -> String
 
@@ -16,6 +19,12 @@ pub async fn run(Array[String]) -> Int
 // Errors
 
 // Types and methods
+pub(all) struct ProjectRun {
+  result : @project.ResultSummary
+  output : String
+  error : String?
+}
+
 pub(all) struct Run {
   result : @engine.ReductionResult
   output : String
