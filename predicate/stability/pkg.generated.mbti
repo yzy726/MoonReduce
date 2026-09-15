@@ -1,0 +1,39 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/predicate/stability"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn summarize(Array[Bool?]) -> Statistics
+
+// Errors
+
+// Types and methods
+pub(all) enum Decision {
+  Interesting
+  Uninteresting
+  Unresolved
+} derive(Eq, ToJson, @debug.Debug)
+
+pub struct Policy {
+  repeat : Int
+  quorum : Int
+  consecutive : Bool
+}
+pub fn Policy::decide(Self, Array[Bool?]) -> Decision
+pub fn Policy::new(Int, Int, consecutive? : Bool) -> Result[Self, String]
+
+pub(all) struct Statistics {
+  attempts : Int
+  resolved : Int
+  passed : Int
+  rate : Double
+  lower : Double
+  upper : Double
+} derive(ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits
