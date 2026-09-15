@@ -1,0 +1,28 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/reducer/score"
+
+import {
+  "Ag108/MoonReduce/workspace/manifest",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn compare(String, Score, Score) -> Result[Int, String]
+
+pub fn measure(@manifest.Snapshot) -> Score
+
+// Errors
+
+// Types and methods
+pub(all) struct Score {
+  bytes : Int
+  tokens : Int
+  lines : Int
+  files : Int
+  nodes : Int
+  paths : String
+} derive(Eq, ToJson, @debug.Debug)
+
+// Type aliases
+
+// Traits
