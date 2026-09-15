@@ -24,8 +24,9 @@ pub fn normalize(
         i += 1
       }
     } else {
-      out.write_string(s[i:i + 1].to_owned())
-      i += 1
+      let width = if s[i] >= 0xD800 && s[i] <= 0xDBFF { 2 } else { 1 }
+      out.write_string(s[i:i + width].to_owned())
+      i += width
     }
   }
   out.to_string()

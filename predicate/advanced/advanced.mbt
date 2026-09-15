@@ -155,7 +155,12 @@ pub fn test_names(text : String) -> Array[String] {
   let names : Array[String] = []
   let mut i = 0
   while i + 5 < text.length() {
-    if text[i:i + 5] == "test " && (i == 0 || !word(text[i - 1])) {
+    if text[i] == 116 &&
+      text[i + 1] == 101 &&
+      text[i + 2] == 115 &&
+      text[i + 3] == 116 &&
+      text[i + 4] == 32 &&
+      (i == 0 || !word(text[i - 1])) {
       i += 5
       while i < text.length() && text[i] == 32 {
         i += 1
@@ -203,7 +208,7 @@ pub fn normalize(text : String, workspace : String) -> String {
       }
       continue
     }
-    if i + 2 < text.length() && text[i:i + 2] == "0x" {
+    if i + 2 < text.length() && text[i] == 48 && text[i + 1] == 120 {
       let mut end = i + 2
       while end < text.length() && hex(text[end]) {
         end += 1
@@ -214,10 +219,11 @@ pub fn normalize(text : String, workspace : String) -> String {
         continue
       }
     }
+    let width = if text[i] >= 0xD800 && text[i] <= 0xDBFF { 2 } else { 1 }
     if text[i] >= 32 || text[i] == 10 || text[i] == 9 {
-      output.write_string(text[i:i + 1].to_owned())
+      output.write_string(text[i:i + width].to_owned())
     }
-    i += 1
+    i += width
   }
   output.to_string()
 }

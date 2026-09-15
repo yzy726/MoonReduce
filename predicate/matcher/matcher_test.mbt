@@ -77,3 +77,11 @@ test "edge/negative rules reject truncated evidence" {
   let e = { ..observation(1, false, "x", ""), stdout_truncated: true }
   assert_false(@matcher.matches(p, e, ""))
 }
+
+///|
+test "regr_normalization_preserves_supplementary_unicode" {
+  assert_eq(
+    @matcher.normalize("😀 a.mbt:12:3", "", true),
+    "😀 a.mbt:<n>:<n>",
+  )
+}
