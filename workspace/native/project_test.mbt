@@ -83,3 +83,27 @@ async test "project/e2e ignored glob omits files from every copy" {
   assert_true(w.original_unchanged())
   w.cleanup(dir)
 }
+
+///|
+async test "regr_project_materialize_failure_cleans_owned_copy" {
+  let root = @fs.tmpdir(prefix="moonreduce-project-failure-")
+  let input = root + "/input"
+  @fs.mkdir(input)
+  @fs.write_file(input + "/a.mbt", "KEEP", create_mode=CreateNew)
+  let w = @native.prepare_project(input, root + "/out", [])
+  let invalid = match @manifest.Snapshot::new([("unknown.mbt", b"x")]) {
+    Ok(s) => s
+    Err(e) => fail(e)
+  }
+  let rejected = try {
+    ignore(w.materialize_snapshot(invalid))
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(rejected)
+  assert_true(!@fs.exists(root + "/out/.moonreduce/work/run-1"))
+  assert_true(w.original_unchanged())
+  let next = w.materialize_snapshot(w.snapshot())
+  w.cleanup(next)
+}
