@@ -51,7 +51,15 @@ async fn collect(
       continue
     }
     let rel = if relative == "" { name } else { relative + "/" + name }
-    if ignored.contains(rel) {
+    let mut omitted = false
+    for rule in ignored {
+      match @glob.matches(rule, rel) {
+        Ok(true) => omitted = true
+        Ok(false) => ()
+        Err(e) => raise WorkspaceError(e)
+      }
+    }
+    if omitted {
       continue
     }
     match @source.validate_path(rel) {
