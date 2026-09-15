@@ -1,4 +1,5 @@
 import {
+  "Ag108/MoonReduce/evidence/sha256",
   "Ag108/MoonReduce/reducer/score",
   "Ag108/MoonReduce/predicate/advanced",
   "Ag108/MoonReduce/predicate/stability",

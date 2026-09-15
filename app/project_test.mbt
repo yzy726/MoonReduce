@@ -372,3 +372,67 @@ async test "project/e2e opt-in manifest edit appears in diff" {
     @fs.read_file(base.output + "/reduction.diff").text().contains("moon.mod"),
   )
 }
+
+///|
+async test "project/e2e evidence bundle has checksums and redacted environment" {
+  let base = project_fixture(1)
+  let env : Map[String, String] = { "MR_TEST_SECRET": "private-value-123" }
+  let c = { ..base, predicate: { ..base.predicate, environment: env } }
+  let result = @app.execute_project(c)
+  assert_eq(result.result.final_passed, 3)
+  let checksums = @fs.read_file(c.output + "/checksums.txt").text()
+  assert_true(checksums.contains("  checkpoint.json\n"))
+  assert_true(checksums.contains("  reduced/keep.mbt\n"))
+  let environment = @fs.read_file(c.output + "/environment.json").text()
+  assert_true(!environment.contains("private-value-123"))
+  assert_true(environment.contains("schema_version"))
+  assert_eq(@app.verify_bundle(c.output), ())
+  @fs.write_file(c.output + "/reduced/keep.mbt", "tampered")
+  let rejected = try {
+    @app.verify_bundle(c.output)
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(rejected)
+}
+
+///|
+async test "project/e2e evidence rejects missing extra and traversal entries" {
+  let c = project_fixture(1)
+  let _ = @app.execute_project(c)
+  let checksums = @fs.read_file(c.output + "/checksums.txt").text()
+  @fs.write_file(
+    c.output + "/reduced/extra.txt",
+    "extra",
+    create_mode=CreateNew,
+  )
+  let extra = try {
+    @app.verify_bundle(c.output)
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(extra)
+  @fs.remove(c.output + "/reduced/extra.txt")
+  @fs.write_file(c.output + "/checksums.txt", "")
+  let missing = try {
+    @app.verify_bundle(c.output)
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(missing)
+  @fs.write_file(
+    c.output + "/checksums.txt",
+    checksums +
+    "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ../outside\n",
+  )
+  let traversal = try {
+    @app.verify_bundle(c.output)
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(traversal)
+}
