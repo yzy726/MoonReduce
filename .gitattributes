@@ -1,1 +1,8 @@
 .githooks/* text eol=lf
+*.mbt text eol=lf
+*.mbti text eol=lf
+moon.mod text eol=lf
+moon.pkg text eol=lf
+*.sh text eol=lf
+testdata/final/** -text whitespace=cr-at-eol
+artifacts/acceptance/final/** -text whitespace=cr-at-eol
