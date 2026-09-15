@@ -115,17 +115,36 @@ async fn toolchain_identity() -> String {
 
 ///|
 async fn save_checkpoint(path : String, document : Json) -> Unit {
+  write_atomic(path, document.stringify(), (file, text) => {
+    file.write_at(@source.encode(text), position=0L)
+  })
+}
+
+///|
+async fn write_atomic(
+  path : String,
+  text : String,
+  writer : async (@fs.File, String) -> Unit,
+) -> Unit {
   let temporary = path + ".tmp"
-  @fs.write_file(
+  let file = @fs.open(
     temporary,
-    document.stringify(),
+    mode=WriteOnly,
     create_mode=CreateNew,
     permission=384,
     sync=Full,
   )
+  let mut closed = false
   errdefer @async.protect_from_cancel(resume_on_cancel=false, () => {
+    if !closed {
+      file.close()
+    }
     @fs.remove(temporary)
   })
+  writer(file, text)
+  file.sync()
+  file.close()
+  closed = true
   @async.protect_from_cancel(resume_on_cancel=false, () => {
     @fs.rename(temporary, path, replace=true)
   })
