@@ -2,11 +2,14 @@
 package "Ag108/MoonReduce/workspace/native"
 
 import {
+  "Ag108/MoonReduce/workspace/manifest",
   "moonbitlang/core/debug",
 }
 
 // Values
 pub async fn prepare(String, String, String, Array[String]) -> Workspace
+
+pub async fn prepare_project(String, String, Array[String]) -> Workspace
 
 // Errors
 pub suberror WorkspaceError {
@@ -25,8 +28,11 @@ pub struct Workspace {
 }
 pub async fn Workspace::cleanup(Self, String) -> Unit
 pub async fn Workspace::export_best(Self, String) -> Unit
+pub async fn Workspace::export_snapshot(Self, @manifest.Snapshot) -> Unit
 pub async fn Workspace::materialize(Self, String) -> String
+pub async fn Workspace::materialize_snapshot(Self, @manifest.Snapshot) -> String
 pub async fn Workspace::original_unchanged(Self) -> Bool
+pub fn Workspace::snapshot(Self) -> @manifest.Snapshot raise WorkspaceError
 pub async fn Workspace::working_directory(Self, String, String) -> String
 
 // Type aliases
