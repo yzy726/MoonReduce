@@ -8,6 +8,7 @@ import {
 }
 
 // Values
+pub fn pass_names() -> Array[String]
 
 // Errors
 
@@ -32,12 +33,12 @@ pub struct Session {
 pub fn Session::baseline_statistics(Self) -> @stability.Statistics
 pub fn Session::checkpoint(Self, @manifest.Snapshot, String) -> Result[Json, String]
 pub fn Session::final_statistics(Self) -> @stability.Statistics
-pub fn Session::new(@manifest.Snapshot, Array[String], Array[String], Array[String], max_tests? : Int, repeat? : Int, quorum? : Int, consecutive? : Bool, final_repeat? : Int, final_quorum? : Int, command_cost? : Int) -> Result[Self, String]
+pub fn Session::new(@manifest.Snapshot, Array[String], Array[String], Array[String], max_tests? : Int, repeat? : Int, quorum? : Int, consecutive? : Bool, final_repeat? : Int, final_quorum? : Int, command_cost? : Int, score? : String, pass_include? : Array[String], pass_exclude? : Array[String]) -> Result[Self, String]
 pub fn Session::next_batch(Self) -> Array[Candidate]
 pub fn Session::phase(Self) -> String
 pub fn Session::record(Self, Int, Bool) -> Result[Unit, String]
 pub fn Session::record_result(Self, Int, Bool?, cost? : Int) -> Result[Unit, String]
-pub fn Session::restore(Json, @manifest.Snapshot, Array[String], Array[String], Array[String], String, max_tests? : Int, repeat? : Int, quorum? : Int, consecutive? : Bool, final_repeat? : Int, final_quorum? : Int, command_cost? : Int) -> Result[Self, String]
+pub fn Session::restore(Json, @manifest.Snapshot, Array[String], Array[String], Array[String], String, max_tests? : Int, repeat? : Int, quorum? : Int, consecutive? : Bool, final_repeat? : Int, final_quorum? : Int, command_cost? : Int, score? : String, pass_include? : Array[String], pass_exclude? : Array[String]) -> Result[Self, String]
 pub fn Session::result(Self) -> ResultSummary
 pub fn Session::stop(Self, @model.RunStatus) -> Unit
 

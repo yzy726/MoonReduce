@@ -6,6 +6,8 @@ priv struct SavedFile {
 
 ///|
 priv struct Checkpoint {
+  score_mode : String
+  names : Array[String]
   policies : Array[Int]
   consecutive : Bool
   baseline_trials : Array[Bool?]
@@ -39,6 +41,8 @@ pub fn Session::checkpoint(
     return Err("MR_CHECKPOINT_PENDING: settle batch before saving")
   }
   let saved : Checkpoint = {
+    score_mode: self.score_mode,
+    names: self.names.copy(),
     policies: [
       self.candidate_policy.repeat,
       self.candidate_policy.quorum,
@@ -48,8 +52,8 @@ pub fn Session::checkpoint(
     ],
     consecutive: self.candidate_policy.consecutive,
     baseline_trials: self.baseline_trials.copy(),
-    schema_version: 3,
-    engine_version: "project-v3",
+    schema_version: 4,
+    engine_version: "project-v4",
     original_key: original.key(),
     context,
     targets: self.targets.copy(),
@@ -87,11 +91,14 @@ pub fn Session::restore(
   final_repeat? : Int = 3,
   final_quorum? : Int = 3,
   command_cost? : Int = 1,
+  score? : String = "bytes",
+  pass_include? : Array[String] = [],
+  pass_exclude? : Array[String] = [],
 ) -> Result[Session, String] {
   let saved : Checkpoint = @json.from_json(document) catch {
     _ => return Err("MR_CHECKPOINT_FORMAT: malformed checkpoint")
   }
-  if saved.schema_version != 3 || saved.engine_version != "project-v3" {
+  if saved.schema_version != 4 || saved.engine_version != "project-v4" {
     return Err("MR_CHECKPOINT_VERSION: incompatible checkpoint")
   }
   if saved.original_key != original.key() || saved.context != context {
@@ -112,6 +119,9 @@ pub fn Session::restore(
       final_repeat~,
       final_quorum~,
       command_cost~,
+      score~,
+      pass_include~,
+      pass_exclude~,
     ) {
     Ok(s) => s
     Err(e) => return Err(e)
@@ -120,6 +130,9 @@ pub fn Session::restore(
     [repeat, quorum, final_repeat, final_quorum, command_cost] ||
     saved.consecutive != consecutive {
     return Err("MR_CHECKPOINT_CONTEXT: stability policy changed")
+  }
+  if saved.score_mode != score || saved.names != session.names {
+    return Err("MR_CHECKPOINT_CONTEXT: score or passes changed")
   }
   if saved.targets != session.targets {
     return Err("MR_CHECKPOINT_CONTEXT: selection changed")
@@ -185,7 +198,7 @@ pub fn Session::restore(
       return Err("MR_CHECKPOINT_PROTECTED: protected content changed")
     }
   }
-  if best.key() != original.key() && !better(best, original) {
+  if best.key() != original.key() && !better(score, best, original) {
     return Err("MR_CHECKPOINT_SCORE: snapshot is not reduced")
   }
   session.best = best
