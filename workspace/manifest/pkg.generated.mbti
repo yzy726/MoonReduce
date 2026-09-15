@@ -4,6 +4,8 @@ package "Ag108/MoonReduce/workspace/manifest"
 // Values
 pub fn select(Snapshot, Array[String], Array[String], Array[String]) -> Result[Array[String], String]
 
+pub fn select_manifests(Snapshot, Array[String], Array[String], Array[String], include_root~ : Bool) -> Result[Array[String], String]
+
 // Errors
 
 // Types and methods

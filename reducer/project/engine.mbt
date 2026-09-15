@@ -111,12 +111,25 @@ pub fn Session::new(
   }
   let names = available.filter(name => {
     (if pass_include.is_empty() {
-      name != "struct:format"
+      name != "struct:format" && name != "manifest"
     } else {
       pass_include.contains(name)
     }) &&
     !pass_exclude.contains(name)
   })
+  if names.contains("package") || names.contains("manifest") {
+    match
+      @manifest.select_manifests(
+        original,
+        includes,
+        protects,
+        ignores,
+        include_root=names.contains("manifest"),
+      ) {
+      Ok(paths) => targets.append(paths)
+      Err(e) => return Err(e)
+    }
+  }
   Ok({
     best: original,
     targets,
@@ -147,7 +160,7 @@ pub fn Session::new(
 
 ///|
 pub fn pass_names() -> Array[String] {
-  let names = ["file"]
+  let names = ["package", "file", "manifest"]
   names.append(@structured.names().map(n => "struct:" + n))
   names.append(@text.names().map(n => "text:" + n))
   names.append(@token.names().map(n => "token:" + n))
@@ -169,7 +182,19 @@ fn candidates(
   snapshot : @manifest.Snapshot,
   targets : Array[String],
 ) -> Iter[@manifest.Snapshot] {
-  let files = snapshot.files().filter(f => targets.contains(f.0))
+  if name == "package" {
+    return package_candidates(snapshot, targets)
+  }
+  let files = snapshot
+    .files()
+    .filter(f => {
+      targets.contains(f.0) &&
+      (if name == "manifest" {
+        !f.0.has_suffix(".mbt")
+      } else {
+        f.0.has_suffix(".mbt")
+      })
+    })
   files
   .iter()
   .flat_map(file => {
@@ -183,7 +208,10 @@ fn candidates(
         Ok(s) => s
         Err(_) => ""
       }
-      let proposals = if name.has_prefix("struct:") {
+      let proposals = if name == "manifest" {
+        let parts = file.0.split("/").to_array()
+        @manifest_pass.propose(parts[parts.length() - 1].to_owned(), source).iter()
+      } else if name.has_prefix("struct:") {
         @structured.propose_iter(
           name[7:].to_owned(),
           source,
@@ -428,4 +456,38 @@ pub fn Session::baseline_statistics(self : Session) -> @stability.Statistics {
 /// Final success rate; restored sessions re-collect this evidence uncached.
 pub fn Session::final_statistics(self : Session) -> @stability.Statistics {
   @stability.summarize(self.final_trials)
+}
+
+///|
+fn package_candidates(
+  snapshot : @manifest.Snapshot,
+  targets : Array[String],
+) -> Iter[@manifest.Snapshot] {
+  let files = snapshot.files()
+  let directories : Array[String] = []
+  for file in files {
+    if !targets.contains(file.0) || !file.0.has_suffix(".mbt") {
+      continue
+    }
+    let parts = file.0.split("/").map(s => s.to_owned()).to_array()
+    ignore(parts.pop())
+    while !parts.is_empty() {
+      let dir = parts.join("/") + "/"
+      if !directories.contains(dir) {
+        directories.push(dir)
+      }
+      ignore(parts.pop())
+    }
+  }
+  directories
+  .iter()
+  .filter_map(dir => {
+    if files.iter().any(f => f.0.has_prefix(dir) && !targets.contains(f.0)) {
+      return None
+    }
+    match @manifest.Snapshot::new(files.filter(f => !f.0.has_prefix(dir))) {
+      Ok(s) => Some(s)
+      Err(_) => None
+    }
+  })
 }

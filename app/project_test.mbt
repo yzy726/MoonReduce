@@ -336,3 +336,39 @@ async test "project/e2e strategy controls retain requested workspaces" {
     .contains("\"score_strategy\": \"tokens\""),
   )
 }
+
+///|
+async test "project/e2e deletes unused package directory only in copies" {
+  let base = project_fixture(1)
+  @fs.mkdir(base.workspace + "/unused")
+  @fs.write_file(base.workspace + "/unused/moon.pkg", "", create_mode=CreateNew)
+  @fs.write_file(
+    base.workspace + "/unused/a.mbt",
+    "noise",
+    create_mode=CreateNew,
+  )
+  let result = @app.execute_project({ ..base, pass_include: ["package"] })
+  assert_eq(result.result.final_passed, 3)
+  assert_true(!@fs.exists(base.output + "/reduced/unused"))
+  assert_true(@fs.exists(base.workspace + "/unused/a.mbt"))
+}
+
+///|
+async test "project/e2e opt-in manifest edit appears in diff" {
+  let base = project_fixture(1)
+  @fs.write_file(
+    base.workspace + "/moon.mod",
+    "name = \"a/b\"\ndescription = \"noise\"\n",
+    create_mode=CreateNew,
+  )
+  let result = @app.execute_project({ ..base, pass_include: ["manifest"] })
+  assert_eq(result.result.final_passed, 3)
+  assert_true(
+    @fs.read_file(base.output + "/reduced/moon.mod")
+    .text()
+    .contains("name = \"a/b\""),
+  )
+  assert_true(
+    @fs.read_file(base.output + "/reduction.diff").text().contains("moon.mod"),
+  )
+}

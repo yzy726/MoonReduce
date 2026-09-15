@@ -76,3 +76,34 @@ pub fn select(
   }
   Ok(selected)
 }
+
+///|
+/// Select manifest metadata for package deletion or explicitly enabled edits.
+/// Root metadata is eligible only when include_root is true. Includes and all
+/// default/user protection rules apply before any path becomes mutable.
+pub fn select_manifests(
+  snapshot : Snapshot,
+  includes : Array[String],
+  protects : Array[String],
+  ignores : Array[String],
+  include_root~ : Bool,
+) -> Result[Array[String], String] {
+  match select(snapshot, includes, protects, ignores) {
+    Err(e) => return Err(e)
+    Ok(_) => ()
+  }
+  let result : Array[String] = []
+  for entry in snapshot.entries {
+    let path = entry.0
+    let supported = path.has_suffix("/moon.pkg") ||
+      (include_root && (path == "moon.pkg" || path == "moon.mod"))
+    if supported &&
+      !protected_by_default(path) &&
+      (includes.is_empty() || any_rule(includes, path, false)) &&
+      !any_rule(protects, path, true) &&
+      !any_rule(ignores, path, true) {
+      result.push(path)
+    }
+  }
+  Ok(result)
+}

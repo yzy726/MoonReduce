@@ -357,7 +357,10 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
     let diff = StringBuilder()
     let reduced = result.best.files()
     for file in original.files() {
-      if !file.0.has_suffix(".mbt") {
+      if !file.0.has_suffix(".mbt") &&
+        file.0 != "moon.mod" &&
+        file.0 != "moon.pkg" &&
+        !file.0.has_suffix("/moon.pkg") {
         continue
       }
       let before = match @source.decode(file.1) {
