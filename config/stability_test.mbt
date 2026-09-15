@@ -43,3 +43,17 @@ test "stability config rejects impossible policies and insufficient budget" {
     )
   }
 }
+
+///|
+test "stability config requires at least three final executions" {
+  assert_true(
+    @config.parse(
+      [
+        "reduce", "--project", "--output", "out", "--final-repeat", "2", "--final-quorum",
+        "2", "--", "tool",
+      ],
+      None,
+    )
+    is Err(_),
+  )
+}

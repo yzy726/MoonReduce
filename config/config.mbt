@@ -212,7 +212,8 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
   let final_repeat = integer(m, "final_repeat", 3)
   let final_quorum = integer(m, "final_quorum", final_repeat)
   let consecutive = bool_value(m, "consecutive")
-  if repeat > 100 ||
+  if final_repeat < 3 ||
+    repeat > 100 ||
     quorum > repeat ||
     final_repeat > 100 ||
     final_quorum > final_repeat {

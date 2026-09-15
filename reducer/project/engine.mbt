@@ -74,6 +74,11 @@ pub fn Session::new(
     Ok(p) => p
     Err(e) => return Err(e)
   }
+  if final_repeat < 3 {
+    return Err(
+      "MR_CFG_STABILITY: final verification needs at least three executions",
+    )
+  }
   let final_policy = match
     @stability.Policy::new(final_repeat, final_quorum, consecutive~) {
     Ok(p) => p
