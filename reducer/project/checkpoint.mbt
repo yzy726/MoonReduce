@@ -44,11 +44,12 @@ pub fn Session::checkpoint(
       self.candidate_policy.quorum,
       self.final_policy.repeat,
       self.final_policy.quorum,
+      self.command_cost,
     ],
     consecutive: self.candidate_policy.consecutive,
     baseline_trials: self.baseline_trials.copy(),
-    schema_version: 2,
-    engine_version: "project-v2",
+    schema_version: 3,
+    engine_version: "project-v3",
     original_key: original.key(),
     context,
     targets: self.targets.copy(),
@@ -85,11 +86,12 @@ pub fn Session::restore(
   consecutive? : Bool = false,
   final_repeat? : Int = 3,
   final_quorum? : Int = 3,
+  command_cost? : Int = 1,
 ) -> Result[Session, String] {
   let saved : Checkpoint = @json.from_json(document) catch {
     _ => return Err("MR_CHECKPOINT_FORMAT: malformed checkpoint")
   }
-  if saved.schema_version != 2 || saved.engine_version != "project-v2" {
+  if saved.schema_version != 3 || saved.engine_version != "project-v3" {
     return Err("MR_CHECKPOINT_VERSION: incompatible checkpoint")
   }
   if saved.original_key != original.key() || saved.context != context {
@@ -109,11 +111,13 @@ pub fn Session::restore(
       consecutive~,
       final_repeat~,
       final_quorum~,
+      command_cost~,
     ) {
     Ok(s) => s
     Err(e) => return Err(e)
   }
-  if saved.policies != [repeat, quorum, final_repeat, final_quorum] ||
+  if saved.policies !=
+    [repeat, quorum, final_repeat, final_quorum, command_cost] ||
     saved.consecutive != consecutive {
     return Err("MR_CHECKPOINT_CONTEXT: stability policy changed")
   }
@@ -125,7 +129,7 @@ pub fn Session::restore(
     saved.pass_index < 0 ||
     saved.pass_index > session.names.length() ||
     saved.evaluations < 0 ||
-    saved.evaluations > max_tests - final_repeat ||
+    saved.evaluations > max_tests - final_repeat * command_cost ||
     saved.sequence < 0 ||
     saved.sequence > 100000000 ||
     saved.hits < 0 ||
@@ -146,7 +150,8 @@ pub fn Session::restore(
     Interesting
   if !baseline_complete &&
     max_tests <
-    saved.evaluations + session.baseline_policy.repeat + final_repeat {
+    saved.evaluations +
+    (session.baseline_policy.repeat + final_repeat) * command_cost {
     return Err("MR_CHECKPOINT_STATE: insufficient baseline retry budget")
   }
   let files : Array[(String, Bytes)] = []
