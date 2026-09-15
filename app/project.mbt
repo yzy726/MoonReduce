@@ -19,6 +19,7 @@ fn project_summary(snapshot : @manifest.Snapshot) -> Json {
       "path": file.0,
       "bytes": file.1.length(),
       "fnv1a": @source.digest(file.1),
+      "sha256": @sha256.digest(file.1),
     }
     item
   })
@@ -383,6 +384,7 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
     if error is Some(message) {
       save(w.output + "/error.txt", message)
     }
+    seal_bundle(w.output, c, toolchain)
     { result, output: w.output, error }
   })
 }

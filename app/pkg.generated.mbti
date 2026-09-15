@@ -16,6 +16,8 @@ pub fn help() -> String
 
 pub async fn run(Array[String]) -> Int
 
+pub async fn verify_bundle(String) -> Unit
+
 // Errors
 
 // Types and methods
