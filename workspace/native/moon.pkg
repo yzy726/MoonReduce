@@ -2,6 +2,7 @@ import {
   "moonbitlang/async/fs",
   "moonbitlang/async/io",
   "Ag108/MoonReduce/source",
+  "Ag108/MoonReduce/workspace/manifest",
 }
 
 supported_targets = "-all+native"
