@@ -550,3 +550,43 @@ async test "project/e2e cancellation persists checkpoint and resumes to final va
   assert_true(report.contains("\"final_passed\": 3"))
   assert_true(report.contains("\"original_unchanged\": true"))
 }
+
+///|
+async test "project/e2e resume rejects modified cache before creating output" {
+  let c = project_fixture(1)
+  let _ = @app.execute_project(c)
+  let document = @json.parse(
+    @fs.read_file(c.output + "/checkpoint.json").text(),
+  )
+  match document {
+    Object(envelope) =>
+      match envelope.get("engine") {
+        Some(Object(engine)) => {
+          let empty : Array[Json] = []
+          engine["cache"] = empty.to_json()
+          envelope["engine"] = engine.to_json()
+          @fs.write_file(
+            c.output + "/checkpoint.json",
+            envelope.to_json().stringify(),
+          )
+        }
+        _ => fail("missing engine")
+      }
+    _ => fail("missing envelope")
+  }
+  let out = c.output + "-tampered"
+  let rejected = try {
+    let _ = @app.run([
+      "resume",
+      c.output + "/checkpoint.json",
+      "--output",
+      out,
+      "--quiet",
+    ])
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(rejected)
+  assert_true(!@fs.exists(out))
+}

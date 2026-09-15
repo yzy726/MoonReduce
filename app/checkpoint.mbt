@@ -168,6 +168,7 @@ async fn persist_project(
     "configuration": checkpoint_config(c),
     "toolchain": toolchain,
     "engine": engine,
+    "engine_sha256": @sha256.digest(@source.encode(engine.stringify())),
   }
   save_checkpoint(output + "/checkpoint.json", document)
 }
@@ -192,6 +193,23 @@ async fn resume_project(argv : Array[String]) -> Int {
     Err(e) => raise ProjectError(e)
   }
   let document = @json.parse(text)
+  match document {
+    { "engine": engine, "engine_sha256": String(hash), .. } =>
+      if @sha256.digest(@source.encode(engine.stringify())) != hash {
+        raise ProjectError("MR_CHECKPOINT_CHECKSUM: engine content changed")
+      }
+    _ => {
+      let absolute = @fs.realpath(argv[1]).replace_all(old="\\", new="/")
+      let parent = match absolute.rev_split_once("/") {
+        Some((parent, _)) => parent.to_owned()
+        None =>
+          raise ProjectError(
+            "MR_CHECKPOINT_CHECKSUM: missing integrity evidence",
+          )
+      }
+      verify_bundle(parent)
+    }
+  }
   let (configuration, engine, expected_toolchain) = match document {
     {
       "schema_version": 1,
