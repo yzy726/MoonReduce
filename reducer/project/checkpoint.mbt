@@ -6,6 +6,9 @@ priv struct SavedFile {
 
 ///|
 priv struct Checkpoint {
+  policies : Array[Int]
+  consecutive : Bool
+  baseline_trials : Array[Bool?]
   schema_version : Int
   engine_version : String
   original_key : String
@@ -36,8 +39,16 @@ pub fn Session::checkpoint(
     return Err("MR_CHECKPOINT_PENDING: settle batch before saving")
   }
   let saved : Checkpoint = {
-    schema_version: 1,
-    engine_version: "project-v1",
+    policies: [
+      self.candidate_policy.repeat,
+      self.candidate_policy.quorum,
+      self.final_policy.repeat,
+      self.final_policy.quorum,
+    ],
+    consecutive: self.candidate_policy.consecutive,
+    baseline_trials: self.baseline_trials.copy(),
+    schema_version: 2,
+    engine_version: "project-v2",
     original_key: original.key(),
     context,
     targets: self.targets.copy(),
@@ -69,11 +80,16 @@ pub fn Session::restore(
   ignores : Array[String],
   context : String,
   max_tests? : Int = 2500,
+  repeat? : Int = 1,
+  quorum? : Int = 1,
+  consecutive? : Bool = false,
+  final_repeat? : Int = 3,
+  final_quorum? : Int = 3,
 ) -> Result[Session, String] {
   let saved : Checkpoint = @json.from_json(document) catch {
     _ => return Err("MR_CHECKPOINT_FORMAT: malformed checkpoint")
   }
-  if saved.schema_version != 1 || saved.engine_version != "project-v1" {
+  if saved.schema_version != 2 || saved.engine_version != "project-v2" {
     return Err("MR_CHECKPOINT_VERSION: incompatible checkpoint")
   }
   if saved.original_key != original.key() || saved.context != context {
@@ -82,9 +98,24 @@ pub fn Session::restore(
     )
   }
   let session = match
-    Session::new(original, includes, protects, ignores, max_tests~) {
+    Session::new(
+      original,
+      includes,
+      protects,
+      ignores,
+      max_tests~,
+      repeat~,
+      quorum~,
+      consecutive~,
+      final_repeat~,
+      final_quorum~,
+    ) {
     Ok(s) => s
     Err(e) => return Err(e)
+  }
+  if saved.policies != [repeat, quorum, final_repeat, final_quorum] ||
+    saved.consecutive != consecutive {
+    return Err("MR_CHECKPOINT_CONTEXT: stability policy changed")
   }
   if saved.targets != session.targets {
     return Err("MR_CHECKPOINT_CONTEXT: selection changed")
@@ -94,20 +125,29 @@ pub fn Session::restore(
     saved.pass_index < 0 ||
     saved.pass_index > session.names.length() ||
     saved.evaluations < 0 ||
-    saved.evaluations > max_tests - 3 ||
-    saved.sequence < saved.evaluations ||
+    saved.evaluations > max_tests - final_repeat ||
+    saved.sequence < 0 ||
     saved.sequence > 100000000 ||
     saved.hits < 0 ||
     saved.baseline < 0 ||
-    saved.baseline > 2 ||
+    saved.baseline > session.baseline_policy.repeat ||
     saved.finals < 0 ||
-    saved.finals > 3 ||
+    saved.finals > final_repeat ||
     saved.cache.length() > saved.evaluations ||
     saved.files.length() > 1000 {
     return Err("MR_CHECKPOINT_STATE: invalid state or insufficient budget")
   }
-  if saved.state > 0 && saved.baseline != 2 && saved.state != 3 {
-    return Err("MR_CHECKPOINT_STATE: missing baseline")
+  if saved.baseline_trials.length() > session.baseline_policy.repeat ||
+    saved.baseline_trials.filter(v => v == Some(true)).length() !=
+    saved.baseline {
+    return Err("MR_CHECKPOINT_STATE: invalid baseline evidence")
+  }
+  let baseline_complete = session.baseline_policy.decide(saved.baseline_trials) ==
+    Interesting
+  if !baseline_complete &&
+    max_tests <
+    saved.evaluations + session.baseline_policy.repeat + final_repeat {
+    return Err("MR_CHECKPOINT_STATE: insufficient baseline retry budget")
   }
   let files : Array[(String, Bytes)] = []
   let mut size = 0
@@ -151,7 +191,7 @@ pub fn Session::restore(
   session.baseline = saved.baseline
   session.finals = 0
   // Interrupted baseline is repeated; completed baseline is preserved.
-  session.state = if saved.baseline < 2 {
+  session.state = if !baseline_complete {
     0
   } else if saved.state == 2 {
     2
@@ -163,6 +203,8 @@ pub fn Session::restore(
   }
   if session.state == 0 {
     session.baseline = 0
+  } else {
+    session.baseline_trials.append(saved.baseline_trials)
   }
   for entry in saved.cache {
     if session.cache.contains(entry.0) {

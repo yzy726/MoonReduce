@@ -22,13 +22,18 @@ pub struct Session {
   priv mut best : @manifest.Snapshot
   priv targets : Array[String]
   priv max_tests : Int
+  priv candidate_policy : @stability.Policy
+  priv baseline_policy : @stability.Policy
+  priv final_policy : @stability.Policy
+  priv baseline_trials : Array[Bool?]
+  priv final_trials : Array[Bool?]
   priv mut state : Int
   priv mut pass_index : Int
   priv names : Array[String]
   priv mut queue : Iter[@manifest.Snapshot]
   priv mut ready : Bool
   priv pending : Array[Candidate]
-  priv answers : Map[Int, Bool]
+  priv answers : Map[Int, Bool?]
   priv cache : Map[String, Bool]
   priv mut sequence : Int
   priv mut evaluations : Int
@@ -45,9 +50,37 @@ pub fn Session::new(
   protects : Array[String],
   ignores : Array[String],
   max_tests? : Int = 2500,
+  repeat? : Int = 1,
+  quorum? : Int = 1,
+  consecutive? : Bool = false,
+  final_repeat? : Int = 3,
+  final_quorum? : Int = 3,
 ) -> Result[Session, String] {
-  if max_tests < 5 {
-    return Err("MR_CFG_BUDGET: at least five attempts required")
+  let candidate_policy = match
+    @stability.Policy::new(repeat, quorum, consecutive~) {
+    Ok(p) => p
+    Err(e) => return Err(e)
+  }
+  let baseline_policy = match
+    @stability.Policy::new(
+      repeat.max(2),
+      if repeat == 1 {
+        2
+      } else {
+        quorum
+      },
+      consecutive~,
+    ) {
+    Ok(p) => p
+    Err(e) => return Err(e)
+  }
+  let final_policy = match
+    @stability.Policy::new(final_repeat, final_quorum, consecutive~) {
+    Ok(p) => p
+    Err(e) => return Err(e)
+  }
+  if max_tests < baseline_policy.repeat + final_repeat {
+    return Err("MR_CFG_BUDGET: insufficient baseline and final budget")
   }
   let targets = match @manifest.select(original, includes, protects, ignores) {
     Ok(t) => t
@@ -63,6 +96,11 @@ pub fn Session::new(
     best: original,
     targets,
     max_tests,
+    candidate_policy,
+    baseline_policy,
+    final_policy,
+    baseline_trials: [],
+    final_trials: [],
     names,
     state: 0,
     pass_index: 0,
@@ -165,7 +203,8 @@ pub fn Session::next_batch(self : Session) -> Array[Candidate] {
     return self.pending.copy()
   }
   while self.state == 1 {
-    if self.evaluations >= self.max_tests - 3 {
+    if self.evaluations + self.candidate_policy.repeat >
+      self.max_tests - self.final_policy.repeat {
       self.status = BudgetExhausted
       self.state = 2
       break
@@ -182,7 +221,10 @@ pub fn Session::next_batch(self : Session) -> Array[Candidate] {
       )
       self.ready = true
     }
-    let width = (4).min(self.max_tests - 3 - self.evaluations)
+    let width = (4).min(
+      (self.max_tests - self.final_policy.repeat - self.evaluations) /
+      self.candidate_policy.repeat,
+    )
     while self.pending.length() < width {
       let candidate = match self.queue.next() {
         Some(s) => s
@@ -223,51 +265,69 @@ pub fn Session::next_batch(self : Session) -> Array[Candidate] {
 ///|
 /// Reject unknown/duplicate replies. A batch's completion order never decides
 /// its winner; the smallest score wins, then the first stable candidate id.
-pub fn Session::record(
+pub fn Session::record_result(
   self : Session,
   id : Int,
-  matched : Bool,
+  matched : Bool?,
+  cost? : Int = 1,
 ) -> Result[Unit, String] {
+  let expected_cost = if self.state == 1 {
+    self.candidate_policy.repeat
+  } else {
+    1
+  }
+  if cost != expected_cost {
+    return Err("MR_ENGINE_COST: inconsistent command count")
+  }
   if self.state == 3 ||
     !self.pending.iter().any(c => c.id == id) ||
     self.answers.contains(id) {
     return Err("MR_ENGINE_REPLY: unknown or duplicate candidate")
   }
   self.answers[id] = matched
-  self.evaluations += 1
+  self.evaluations += cost
   if self.answers.length() < self.pending.length() {
     return Ok(())
   }
-  if self.state == 0 {
-    if matched {
-      self.baseline += 1
-      if self.baseline == 2 {
-        self.state = 1
-      }
-    } else {
-      self.status = if self.baseline == 0 {
-        BaselineFailed
+  if self.state == 0 || self.state == 2 {
+    let baseline = self.state == 0
+    let policy = if baseline { self.baseline_policy } else { self.final_policy }
+    let trials = if baseline { self.baseline_trials } else { self.final_trials }
+    trials.push(matched)
+    if matched == Some(true) {
+      if baseline {
+        self.baseline += 1
       } else {
-        BaselineUnstable
+        self.finals += 1
       }
-      self.state = 3
     }
-  } else if self.state == 2 {
-    if matched {
-      self.finals += 1
-      if self.finals == 3 {
+    let padded = trials.copy()
+    while padded.length() < policy.repeat {
+      padded.push(None)
+    }
+    let decision = policy.decide(padded)
+    if decision == Uninteresting || trials.length() == policy.repeat {
+      if decision == Interesting {
+        self.state = if baseline { 1 } else { 3 }
+      } else {
+        self.status = if !baseline {
+          FinalFailed
+        } else if self.baseline == 0 {
+          BaselineFailed
+        } else {
+          BaselineUnstable
+        }
         self.state = 3
       }
-    } else {
-      self.status = FinalFailed
-      self.state = 3
     }
   } else {
     let mut chosen : @manifest.Snapshot? = None
     for c in self.pending {
-      let result = self.answers.get(c.id).unwrap_or(false)
-      self.cache[c.snapshot.key()] = result
-      if result && better(c.snapshot, self.best) {
+      let result = self.answers.get(c.id).unwrap_or(None)
+      if result is Some(value) {
+        self.cache[c.snapshot.key()] = value
+      }
+      if result == Some(true) && better(c.snapshot, self.best) {
         match chosen {
           None => chosen = Some(c.snapshot)
           Some(previous) if better(c.snapshot, previous) =>
@@ -304,4 +364,19 @@ pub fn Session::result(self : Session) -> ResultSummary {
     baseline_passed: self.baseline,
     final_passed: self.finals,
   }
+}
+
+///|
+/// Compatibility adapter for deterministic evaluators. In repeated mode the
+/// caller is responsible for evaluating the configured number of commands.
+pub fn Session::record(
+  self : Session,
+  id : Int,
+  matched : Bool,
+) -> Result[Unit, String] {
+  self.record_result(
+    id,
+    Some(matched),
+    cost=if self.state == 1 { self.candidate_policy.repeat } else { 1 },
+  )
 }
