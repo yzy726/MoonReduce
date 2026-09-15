@@ -436,3 +436,33 @@ async test "project/e2e evidence rejects missing extra and traversal entries" {
   }
   assert_true(traversal)
 }
+
+///|
+async test "project/e2e replay verifies fresh copies without original input" {
+  let c = project_fixture(1)
+  let _ = @app.execute_project(c)
+  @fs.write_file(c.workspace + "/keep.mbt", "original intentionally changed")
+  let saved = @fs.read_file(c.output + "/reduced/keep.mbt").text()
+  let out = c.output + "-replay"
+  assert_eq(@app.run(["replay", c.output + "/report.json", "--output", out]), 0)
+  let report = @fs.read_file(out + "/replay.json").text()
+  assert_true(report.contains("Interesting"))
+  assert_true(report.contains("\"attempts\": 3"))
+  assert_eq(@fs.read_file(c.output + "/reduced/keep.mbt").text(), saved)
+}
+
+///|
+async test "project/e2e replay refuses corrupt evidence before executing" {
+  let c = project_fixture(1)
+  let _ = @app.execute_project(c)
+  @fs.write_file(c.output + "/report.json", "{}")
+  let out = c.output + "-blocked"
+  let rejected = try {
+    let _ = @app.run(["replay", c.output + "/report.json", "--output", out])
+    false
+  } catch {
+    _ => true
+  }
+  assert_true(rejected)
+  assert_true(!@fs.exists(out))
+}
