@@ -21,6 +21,7 @@ pub(all) struct ResultSummary {
 pub struct Session {
   priv mut best : @manifest.Snapshot
   priv targets : Array[String]
+  priv score_mode : String
   priv command_cost : Int
   priv max_tests : Int
   priv candidate_policy : @stability.Policy
@@ -57,6 +58,9 @@ pub fn Session::new(
   final_repeat? : Int = 3,
   final_quorum? : Int = 3,
   command_cost? : Int = 1,
+  score? : String = "bytes",
+  pass_include? : Array[String] = [],
+  pass_exclude? : Array[String] = [],
 ) -> Result[Session, String] {
   if command_cost < 1 || command_cost > 2 {
     return Err("MR_CFG_COST: expected one or two commands")
@@ -96,17 +100,29 @@ pub fn Session::new(
     Ok(t) => t
     Err(e) => return Err(e)
   }
-  let names = ["file"]
-  names.append(
-    @structured.names().filter(n => n != "format").map(n => "struct:" + n),
-  )
-  names.append(@text.names().map(n => "text:" + n))
-  names.append(@token.names().map(n => "token:" + n))
+  if !["bytes", "tokens", "lines"].contains(score) {
+    return Err("MR_CFG_SCORE: invalid strategy")
+  }
+  let available = pass_names()
+  for name in pass_include + pass_exclude {
+    if !available.contains(name) {
+      return Err("MR_CFG_PASS: unknown pass " + name)
+    }
+  }
+  let names = available.filter(name => {
+    (if pass_include.is_empty() {
+      name != "struct:format"
+    } else {
+      pass_include.contains(name)
+    }) &&
+    !pass_exclude.contains(name)
+  })
   Ok({
     best: original,
     targets,
     max_tests,
     command_cost,
+    score_mode: score,
     candidate_policy,
     baseline_policy,
     final_policy,
@@ -130,20 +146,21 @@ pub fn Session::new(
 }
 
 ///|
-fn score(snapshot : @manifest.Snapshot) -> (Int, Int) {
-  let files = snapshot.files()
-  let mut size = 0
-  for file in files {
-    size += file.1.length()
-  }
-  (size, files.length())
+pub fn pass_names() -> Array[String] {
+  let names = ["file"]
+  names.append(@structured.names().map(n => "struct:" + n))
+  names.append(@text.names().map(n => "text:" + n))
+  names.append(@token.names().map(n => "token:" + n))
+  names
 }
 
 ///|
-fn better(a : @manifest.Snapshot, b : @manifest.Snapshot) -> Bool {
-  let sa = score(a)
-  let sb = score(b)
-  sa.0 < sb.0 || (sa.0 == sb.0 && sa.1 < sb.1)
+fn better(
+  strategy : String,
+  a : @manifest.Snapshot,
+  b : @manifest.Snapshot,
+) -> Bool {
+  @score.compare(strategy, @score.measure(a), @score.measure(b)) == Ok(-1)
 }
 
 ///|
@@ -167,7 +184,11 @@ fn candidates(
         Err(_) => ""
       }
       let proposals = if name.has_prefix("struct:") {
-        @structured.propose_iter(name[7:].to_owned(), source)
+        @structured.propose_iter(
+          name[7:].to_owned(),
+          source,
+          allow_format=name == "struct:format",
+        )
       } else if name.has_prefix("text:") {
         @text.propose_iter(name[5:].to_owned(), source)
       } else {
@@ -245,7 +266,7 @@ pub fn Session::next_batch(self : Session) -> Array[Candidate] {
         Some(s) => s
         None => break
       }
-      if !better(candidate, self.best) {
+      if !better(self.score_mode, candidate, self.best) {
         continue
       }
       let key = candidate.key()
@@ -342,10 +363,10 @@ pub fn Session::record_result(
       if result is Some(value) {
         self.cache[c.snapshot.key()] = value
       }
-      if result == Some(true) && better(c.snapshot, self.best) {
+      if result == Some(true) && better(self.score_mode, c.snapshot, self.best) {
         match chosen {
           None => chosen = Some(c.snapshot)
-          Some(previous) if better(c.snapshot, previous) =>
+          Some(previous) if better(self.score_mode, c.snapshot, previous) =>
             chosen = Some(c.snapshot)
           _ => ()
         }
