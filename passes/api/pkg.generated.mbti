@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Ag108/MoonReduce/passes/api"
+
+import {
+  "Ag108/MoonReduce/workspace/manifest",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub(open) trait ReductionPass {
+  fn name(Self) -> String
+  fn propose(Self, @manifest.Snapshot, Array[String]) -> Iter[@manifest.Snapshot]
+}

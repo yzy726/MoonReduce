@@ -32,6 +32,7 @@ pub struct Session {
   priv mut state : Int
   priv mut pass_index : Int
   priv names : Array[String]
+  priv extensions : Map[String, &@pass_api.ReductionPass]
   priv mut queue : Iter[@manifest.Snapshot]
   priv mut ready : Bool
   priv pending : Array[Candidate]
@@ -61,6 +62,7 @@ pub fn Session::new(
   score? : String = "bytes",
   pass_include? : Array[String] = [],
   pass_exclude? : Array[String] = [],
+  extra_passes? : Array[&@pass_api.ReductionPass] = [],
 ) -> Result[Session, String] {
   if command_cost < 1 || command_cost > 2 {
     return Err("MR_CFG_COST: expected one or two commands")
@@ -104,6 +106,17 @@ pub fn Session::new(
     return Err("MR_CFG_SCORE: invalid strategy")
   }
   let available = pass_names()
+  let extensions : Map[String, &@pass_api.ReductionPass] = Map([])
+  for pass in extra_passes {
+    let name = pass.name()
+    if name.is_empty() || name.length() > 128 || extensions.contains(name) {
+      return Err("MR_CFG_PASS: invalid or duplicate extension name")
+    }
+    extensions[name] = pass
+    if !available.contains(name) {
+      available.push(name)
+    }
+  }
   for name in pass_include + pass_exclude {
     if !available.contains(name) {
       return Err("MR_CFG_PASS: unknown pass " + name)
@@ -132,6 +145,7 @@ pub fn Session::new(
   }
   Ok({
     best: original,
+    extensions,
     targets,
     max_tests,
     command_cost,
@@ -274,11 +288,14 @@ pub fn Session::next_batch(self : Session) -> Array[Candidate] {
       break
     }
     if !self.ready {
-      self.queue = candidates(
-        self.names[self.pass_index],
-        self.best,
-        self.targets,
-      )
+      let name = self.names[self.pass_index]
+      self.queue = match self.extensions.get(name) {
+        Some(pass) =>
+          pass
+          .propose(self.best, self.targets.copy())
+          .filter(s => allowed_edit(self.best, s, self.targets))
+        None => candidates(name, self.best, self.targets)
+      }
       self.ready = true
     }
     let width = (4).min(
@@ -490,4 +507,44 @@ fn package_candidates(
       Err(_) => None
     }
   })
+}
+
+///|
+fn allowed_edit(
+  before : @manifest.Snapshot,
+  after : @manifest.Snapshot,
+  targets : Array[String],
+) -> Bool {
+  let original = before.files()
+  let proposed = after.files()
+  proposed.iter().all(f => original.iter().any(o => o.0 == f.0)) &&
+  original.iter().all(f => targets.contains(f.0) || proposed.contains(f))
+}
+
+///|
+priv struct BuiltinPass {
+  pass_name : String
+}
+
+///|
+impl @pass_api.ReductionPass for BuiltinPass with fn name(self) {
+  self.pass_name
+}
+
+///|
+impl @pass_api.ReductionPass for BuiltinPass with fn propose(
+  self,
+  snapshot,
+  targets,
+) {
+  candidates(self.pass_name, snapshot, targets)
+}
+
+///|
+/// Default pure passes in deterministic order; formatting and manifest edits are
+/// excluded unless explicitly enabled. Callers can compose these with extensions.
+pub fn default_passes() -> Array[&@pass_api.ReductionPass] {
+  pass_names()
+  .filter(n => n != "struct:format" && n != "manifest")
+  .map(n => BuiltinPass::{ pass_name: n })
 }
