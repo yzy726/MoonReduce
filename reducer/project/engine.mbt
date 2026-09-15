@@ -21,6 +21,7 @@ pub(all) struct ResultSummary {
 pub struct Session {
   priv mut best : @manifest.Snapshot
   priv targets : Array[String]
+  priv command_cost : Int
   priv max_tests : Int
   priv candidate_policy : @stability.Policy
   priv baseline_policy : @stability.Policy
@@ -55,7 +56,11 @@ pub fn Session::new(
   consecutive? : Bool = false,
   final_repeat? : Int = 3,
   final_quorum? : Int = 3,
+  command_cost? : Int = 1,
 ) -> Result[Session, String] {
+  if command_cost < 1 || command_cost > 2 {
+    return Err("MR_CFG_COST: expected one or two commands")
+  }
   let candidate_policy = match
     @stability.Policy::new(repeat, quorum, consecutive~) {
     Ok(p) => p
@@ -84,7 +89,7 @@ pub fn Session::new(
     Ok(p) => p
     Err(e) => return Err(e)
   }
-  if max_tests < baseline_policy.repeat + final_repeat {
+  if max_tests < (baseline_policy.repeat + final_repeat) * command_cost {
     return Err("MR_CFG_BUDGET: insufficient baseline and final budget")
   }
   let targets = match @manifest.select(original, includes, protects, ignores) {
@@ -101,6 +106,7 @@ pub fn Session::new(
     best: original,
     targets,
     max_tests,
+    command_cost,
     candidate_policy,
     baseline_policy,
     final_policy,
@@ -208,8 +214,8 @@ pub fn Session::next_batch(self : Session) -> Array[Candidate] {
     return self.pending.copy()
   }
   while self.state == 1 {
-    if self.evaluations + self.candidate_policy.repeat >
-      self.max_tests - self.final_policy.repeat {
+    if self.evaluations + self.candidate_policy.repeat * self.command_cost >
+      self.max_tests - self.final_policy.repeat * self.command_cost {
       self.status = BudgetExhausted
       self.state = 2
       break
@@ -227,8 +233,12 @@ pub fn Session::next_batch(self : Session) -> Array[Candidate] {
       self.ready = true
     }
     let width = (4).min(
-      (self.max_tests - self.final_policy.repeat - self.evaluations) /
-      self.candidate_policy.repeat,
+      (
+        self.max_tests -
+        self.final_policy.repeat * self.command_cost -
+        self.evaluations
+      ) /
+      (self.candidate_policy.repeat * self.command_cost),
     )
     while self.pending.length() < width {
       let candidate = match self.queue.next() {
@@ -277,9 +287,9 @@ pub fn Session::record_result(
   cost? : Int = 1,
 ) -> Result[Unit, String] {
   let expected_cost = if self.state == 1 {
-    self.candidate_policy.repeat
+    self.candidate_policy.repeat * self.command_cost
   } else {
-    1
+    self.command_cost
   }
   if cost != expected_cost {
     return Err("MR_ENGINE_COST: inconsistent command count")
@@ -382,7 +392,8 @@ pub fn Session::record(
   self.record_result(
     id,
     Some(matched),
-    cost=if self.state == 1 { self.candidate_policy.repeat } else { 1 },
+    cost=(if self.state == 1 { self.candidate_policy.repeat } else { 1 }) *
+      self.command_cost,
   )
 }
 

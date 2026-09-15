@@ -103,3 +103,27 @@ test "project stability inconclusive evidence cannot shrink the project" {
   }
   assert_eq(s.result().best.key(), original.key())
 }
+
+///|
+test "project differential counts both commands in a trial" {
+  let original = @manifest.Snapshot::new([]).unwrap()
+  let s = @project.Session::new(
+    original,
+    [],
+    [],
+    [],
+    command_cost=2,
+    max_tests=10,
+  ).unwrap()
+  while !s.next_batch().is_empty() {
+    for c in s.next_batch() {
+      s.record_result(c.id, Some(true), cost=2).unwrap()
+    }
+  }
+  assert_eq(s.result().evaluations, 10)
+  assert_eq(s.result().final_passed, 3)
+  assert_true(
+    @project.Session::new(original, [], [], [], command_cost=2, max_tests=9)
+    is Err(_),
+  )
+}
