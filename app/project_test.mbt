@@ -386,6 +386,12 @@ async test "project/e2e evidence bundle has checksums and redacted environment" 
   let environment = @fs.read_file(c.output + "/environment.json").text()
   assert_true(!environment.contains("private-value-123"))
   assert_true(environment.contains("schema_version"))
+  let platform = if @env.get_env_var("OS") == Some("Windows_NT") {
+    "windows"
+  } else {
+    "posix"
+  }
+  assert_true(environment.contains(platform))
   assert_eq(@app.verify_bundle(c.output), ())
   @fs.write_file(c.output + "/reduced/keep.mbt", "tampered")
   let rejected = try {
