@@ -315,3 +315,24 @@ async test "project/e2e diagnostic and test fingerprint remain present" {
   let result = @app.execute_project(c)
   assert_eq(result.result.final_passed, 3)
 }
+
+///|
+async test "project/e2e strategy controls retain requested workspaces" {
+  let base = project_fixture(1)
+  let c = {
+    ..base,
+    score: "tokens",
+    pass_include: ["file"],
+    pass_exclude: ["file"],
+    keep_workdir: true,
+  }
+  let result = @app.execute_project(c)
+  assert_eq(result.result.evaluations, 5)
+  assert_true(@fs.exists(c.output + "/.moonreduce/work/run-1"))
+  assert_true(@fs.exists(c.output + "/reduced/noise.mbt"))
+  assert_true(
+    @fs.read_file(c.output + "/report.json")
+    .text()
+    .contains("\"score_strategy\": \"tokens\""),
+  )
+}

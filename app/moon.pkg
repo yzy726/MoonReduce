@@ -1,4 +1,5 @@
 import {
+  "Ag108/MoonReduce/reducer/score",
   "Ag108/MoonReduce/predicate/advanced",
   "Ag108/MoonReduce/predicate/stability",
   "moonbitlang/async",
@@ -8,7 +9,6 @@ import {
   "Ag108/MoonReduce/config",
   "Ag108/MoonReduce/reducer/project",
   "Ag108/MoonReduce/workspace/manifest",
-  "Ag108/MoonReduce/passes/structured",
   "Ag108/MoonReduce/model",
   "Ag108/MoonReduce/source",
   "Ag108/MoonReduce/workspace/native" @workspace,

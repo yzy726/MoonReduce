@@ -55,6 +55,9 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         final_repeat=c.final_repeat,
         final_quorum=c.final_quorum,
         command_cost~,
+        score=c.score,
+        pass_include=c.pass_include,
+        pass_exclude=c.pass_exclude,
       )
     } else {
       @project.Session::new(
@@ -69,6 +72,9 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         final_repeat=c.final_repeat,
         final_quorum=c.final_quorum,
         command_cost~,
+        score=c.score,
+        pass_include=c.pass_include,
+        pass_exclude=c.pass_exclude,
       )
     }) {
     Ok(s) => s
@@ -245,7 +251,9 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
         }
       }
       for dir in live {
-        w.cleanup(dir)
+        if !c.keep_workdir {
+          w.cleanup(dir)
+        }
       }
       live.clear()
       persist_project(c, session, original, w.output, context, toolchain)
@@ -268,6 +276,9 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
   }
   @async.protect_from_cancel(resume_on_cancel=false, () => {
     for dir in live {
+      if c.keep_workdir {
+        continue
+      }
       w.cleanup(dir) catch {
         e => {
           session.stop(ExecutionFailed)
@@ -290,6 +301,12 @@ pub async fn execute_project(c : @config.Config, restore? : Json) -> ProjectRun 
       "completed": result.status == Completed &&
       result.final_passed >= c.final_quorum,
       "jobs": c.jobs,
+      "score_strategy": c.score,
+      "pass_include": c.pass_include.to_json(),
+      "pass_exclude": c.pass_exclude.to_json(),
+      "workdirs_retained": c.keep_workdir,
+      "original_score": @score.measure(original).to_json(),
+      "reduced_score": @score.measure(result.best).to_json(),
       "commands_per_trial": command_cost,
       "predicate_spec": c.advanced.to_json(),
       "repeat": c.repeat,

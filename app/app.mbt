@@ -21,6 +21,9 @@ pub fn help() -> String {
     #|--project              reduce selected files as one project
     #|--include GLOB         selected source pattern (repeatable)
     #|--jobs N               project worker count, default 1
+    #|--score bytes|tokens|lines
+    #|--pass-include NAME / --pass-exclude NAME (repeatable)
+    #|--keep-workdir         retain candidate copies for inspection
     #|--repeat N / --quorum K  project candidate repeats and acceptance threshold
     #|--consecutive          require consecutive successes
     #|--final-repeat N / --final-quorum K  final verification (default 3/3)
@@ -222,7 +225,8 @@ pub async fn run(argv : Array[String]) -> Int {
     }
     "passes" => {
       @stdio.stdout.write(
-        (@text.names() + @token.names() + @structured.names()).join("\n") + "\n",
+        (@text.names() + @token.names() + @project.pass_names()).join("\n") +
+        "\n",
       )
       0
     }

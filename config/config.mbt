@@ -3,6 +3,10 @@
 pub(all) struct Config {
   project : Bool
   includes : Array[String]
+  score : String
+  pass_include : Array[String]
+  pass_exclude : Array[String]
+  keep_workdir : Bool
   jobs : Int
   repeat : Int
   quorum : Int
@@ -124,7 +128,8 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     "json_events", "environment", "ignore", "protect", "project", "include", "jobs",
     "repeat", "quorum", "consecutive", "final_repeat", "final_quorum", "stdout_regex",
     "stderr_regex", "diagnostic_code", "test_name", "normalize", "crash", "wrapper",
-    "reference", "differential", "timeout_tolerance", "schema_version",
+    "reference", "differential", "timeout_tolerance", "schema_version", "score",
+    "pass_include", "pass_exclude", "keep_workdir",
   ]
   for key, _ in m {
     if !known.contains(key) {
@@ -176,7 +181,7 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     let array_option = [
       "stdout_contains", "stderr_contains", "stdout_not_contains", "stderr_not_contains",
       "ignore", "protect", "include", "stdout_regex", "stderr_regex", "diagnostic_code",
-      "test_name", "reference",
+      "test_name", "reference", "pass_include", "pass_exclude",
     ].contains(key)
     if seen.contains(key) && !array_option {
       raise ConfigError("MR_CFG_DUPLICATE: " + arg)
@@ -185,7 +190,7 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     seen[key] = true
     if [
         "quiet", "verbose", "json_events", "ignore_case", "strip_locations", "project",
-        "consecutive", "normalize", "wrapper",
+        "consecutive", "normalize", "wrapper", "keep_workdir",
       ].contains(key) {
       m[key] = true
       i += 1
@@ -210,6 +215,27 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     i += 2
   }
   let project = bool_value(m, "project")
+  let score = string_value(m, "score", "bytes")
+  let pass_include = strings(m, "pass_include")
+  let pass_exclude = strings(m, "pass_exclude")
+  let keep_workdir = bool_value(m, "keep_workdir")
+  if !["bytes", "tokens", "lines"].contains(score) {
+    raise ConfigError("MR_CFG_SCORE: expected bytes, tokens or lines")
+  }
+  for name in pass_include + pass_exclude {
+    if !@project.pass_names().contains(name) {
+      raise ConfigError("MR_CFG_PASS: unknown pass " + name)
+    }
+  }
+  if !project &&
+    (
+      score != "bytes" ||
+      !pass_include.is_empty() ||
+      !pass_exclude.is_empty() ||
+      keep_workdir
+    ) {
+    raise ConfigError("MR_CFG_PROJECT: strategy options require --project")
+  }
   let includes = strings(m, "include")
   let jobs = integer(m, "jobs", 1)
   let repeat = integer(m, "repeat", 1)
@@ -403,6 +429,10 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
   }
   {
     project,
+    score,
+    pass_include,
+    pass_exclude,
+    keep_workdir,
     includes,
     jobs,
     repeat,
