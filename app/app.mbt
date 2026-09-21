@@ -10,7 +10,7 @@ pub(all) struct Run {
 /// CLI reference for the initial commands and options.
 pub fn help() -> String {
   let text =
-    #|MoonReduce 1.0.0 — trusted-project testcase reduction
+    #|MoonReduce 0.2.0 — trusted-project testcase reduction
     #|moonreduce check [options] -- executable arg ...
     #|moonreduce reduce [options] -- executable arg ...
     #|moonreduce resume checkpoint.json [--output DIR] [--max-tests N]

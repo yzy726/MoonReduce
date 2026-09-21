@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 — local final acceptance candidate
+## 0.2.0 — local final acceptance candidate
 
 - Multi-file/package reduction, protected glob selection and opt-in manifest edits.
 - Lightweight syntax tree and sixteen structured pass families.

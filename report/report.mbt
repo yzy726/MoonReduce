@@ -46,7 +46,7 @@ pub fn render_json(
   {
     "schema_version": 1,
     "tool": "MoonReduce",
-    "version": "1.0.0",
+    "version": "0.2.0",
     "status": r.status.to_json(),
     "exit_code": r.status.exit_code(),
     "completed": r.status == Completed && r.final_passed == 3 && unchanged,
@@ -75,7 +75,7 @@ pub fn markdown(
   unchanged : Bool,
 ) -> String {
   let out = StringBuilder()
-  out.write_string("# MoonReduce 1.0.0\n\n")
+  out.write_string("# MoonReduce 0.2.0\n\n")
   out.write_string(
     "Target: `" + c.target.replace_all(old="`", new="\\`") + "`\n\n",
   )
@@ -148,7 +148,7 @@ pub fn unified_diff(
 ///|
 /// Reproduction is recorded as argv JSON, avoiding platform-specific shell quoting.
 pub fn reproduce(c : @config.Config) -> String {
-  "MoonReduce 1.0.0 reproduction\n\n" +
+  "MoonReduce 0.2.0 reproduction\n\n" +
   "Working directory: reduced/" +
   c.predicate.cwd +
   "\n" +

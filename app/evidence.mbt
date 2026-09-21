@@ -58,7 +58,7 @@ async fn seal_bundle(
   names.sort()
   let environment : Json = {
     "schema_version": 1,
-    "moonreduce_version": "1.0.0",
+    "moonreduce_version": "0.2.0",
     "toolchain": toolchain,
     "platform": if output.has_prefix("/") && !output.has_prefix("//") {
       "posix"
