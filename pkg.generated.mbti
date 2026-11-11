@@ -6,6 +6,7 @@ import {
   "Ag108/MoonReduce/predicate/stability",
   "Ag108/MoonReduce/reducer/project",
   "Ag108/MoonReduce/workspace/manifest",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -20,21 +21,23 @@ pub fn reduce(@manifest.Snapshot, &CandidateEvaluator, config? : ReduceConfig, s
 // Errors
 
 // Types and methods
+#derive(@json.ToJson)
 pub(all) struct Event {
-  schema_version : Int
-  candidate_id : Int
+  schema_version : Int32
+  candidate_id : Int32
   phase : String
-  trial : Int
+  trial : Int32
   decision : @stability.Decision
-} derive(ToJson)
+}
+pub fn Event::to_json(Self) -> @json.Json
 
 pub(all) struct ReduceConfig {
-  max_tests : Int
-  repeat : Int
-  quorum : Int
+  max_tests : Int32
+  repeat : Int32
+  quorum : Int32
   consecutive : Bool
-  final_repeat : Int
-  final_quorum : Int
+  final_repeat : Int32
+  final_quorum : Int32
   score : String
   includes : Array[String]
   protects : Array[String]

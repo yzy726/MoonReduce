@@ -14,8 +14,8 @@ fn cleanup_edits(
   tree : @moon_syntax.ReductionTree,
   bytes : Bytes,
   allow_format : Bool,
-) -> Array[(Int, Int, String)] {
-  let edits : Array[(Int, Int, String)] = []
+) -> Array[(Int32, Int32, String)] {
+  let edits : Array[(Int32, Int32, String)] = []
   let sig = tree.tokens.filter(t => {
     !["space", "doc", "line-comment", "block-comment"].contains(t.kind)
   })

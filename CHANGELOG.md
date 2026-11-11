@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0 - 2026-11-11
+
+- Support MoonBit 0.10.20, update the async dependency and cancellation cleanup calls.
+- Migrate deprecated syntax, preserve existing trait methods and synchronize CLI/report versions.
+
 ## 0.2.0 — local final acceptance candidate
 
 - Multi-file/package reduction, protected glob selection and opt-in manifest edits.

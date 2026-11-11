@@ -2,7 +2,7 @@
 package "Ag108/MoonReduce/source"
 
 // Values
-pub fn apply_edit(Bytes, Int, Int, Bytes) -> Result[Bytes, String]
+pub fn apply_edit(Bytes, Int32, Int32, Bytes) -> Result[Bytes, String]
 
 pub fn decode(Bytes) -> Result[String, String]
 

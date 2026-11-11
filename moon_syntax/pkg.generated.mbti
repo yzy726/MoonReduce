@@ -3,6 +3,7 @@ package "Ag108/MoonReduce/moon_syntax"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -15,33 +16,53 @@ pub fn segments(ReductionTree, Group, String) -> Array[Node]
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct Group {
   kind : String
-  start : Int
-  end : Int
-  inner_start : Int
-  inner_end : Int
-  depth : Int
-} derive(Eq, ToJson, @debug.Debug)
+  start : Int32
+  end : Int32
+  inner_start : Int32
+  inner_end : Int32
+  depth : Int32
+}
+pub fn Group::equal(Self, Self) -> Bool
+pub fn Group::not_equal(Self, Self) -> Bool
+pub fn Group::to_json(Self) -> @json.Json
+pub fn Group::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct Node {
   kind : String
-  start : Int
-  end : Int
-} derive(Eq, ToJson, @debug.Debug)
+  start : Int32
+  end : Int32
+}
+pub fn Node::equal(Self, Self) -> Bool
+pub fn Node::not_equal(Self, Self) -> Bool
+pub fn Node::to_json(Self) -> @json.Json
+pub fn Node::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct ReductionTree {
   tokens : Array[Token]
   groups : Array[Group]
   diagnostics : Array[String]
-} derive(Eq, ToJson, @debug.Debug)
+}
+pub fn ReductionTree::equal(Self, Self) -> Bool
+pub fn ReductionTree::not_equal(Self, Self) -> Bool
+pub fn ReductionTree::to_json(Self) -> @json.Json
+pub fn ReductionTree::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct Token {
   kind : String
   text : String
-  start : Int
-  end : Int
-} derive(Eq, ToJson, @debug.Debug)
+  start : Int32
+  end : Int32
+}
+pub fn Token::equal(Self, Self) -> Bool
+pub fn Token::not_equal(Self, Self) -> Bool
+pub fn Token::to_json(Self) -> @json.Json
+pub fn Token::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

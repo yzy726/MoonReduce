@@ -12,9 +12,11 @@ pub async fn prepare(String, String, String, Array[String]) -> Workspace
 pub async fn prepare_project(String, String, Array[String]) -> Workspace
 
 // Errors
+#derive(@debug.Debug)
 pub suberror WorkspaceError {
   WorkspaceError(String)
-} derive(@debug.Debug)
+}
+pub fn WorkspaceError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
 pub struct Workspace {
@@ -23,7 +25,7 @@ pub struct Workspace {
   target : String
   original : String
   ignored : Array[String]
-  mut sequence : Int
+  mut sequence : Int32
   // private fields
 }
 pub async fn Workspace::cleanup(Self, String) -> Unit

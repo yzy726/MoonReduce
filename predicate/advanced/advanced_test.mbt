@@ -1,5 +1,5 @@
 ///|
-fn observed(code : Int, out : String, err : String) -> @model.Evaluation {
+fn observed(code : Int32, out : String, err : String) -> @model.Evaluation {
   {
     exit_code: code,
     timed_out: false,
@@ -31,7 +31,7 @@ test "advanced regex streams are conjunctive" {
 ///|
 test "advanced regex invalid settings are rejected" {
   assert_true(
-    { ..@advanced.defaults(), stdout_regex: ["("] }.validate() is Err(_),
+    { ..@advanced.defaults(), stdout_regex: ["("], }.validate() is Err(_),
   )
 }
 
@@ -46,7 +46,7 @@ test "advanced crash classes normalize Windows and POSIX" {
 ///|
 test "advanced timeout is not a crash" {
   assert_eq(
-    @advanced.crash_class({ ..observed(-1, "", ""), timed_out: true }),
+    @advanced.crash_class({ ..observed(-1, "", ""), timed_out: true, }),
     "timeout",
   )
 }
@@ -107,7 +107,7 @@ test "advanced normalized output removes ANSI address and location" {
 
 ///|
 test "advanced differential output compares independent roots" {
-  let s = { ..@advanced.defaults(), differential: "stdout", normalize: true }
+  let s = { ..@advanced.defaults(), differential: "stdout", normalize: true, }
   assert_eq(
     @advanced.matches(
       s,
@@ -132,12 +132,12 @@ test "advanced differential output compares independent roots" {
 
 ///|
 test "advanced differential missing or truncated evidence is inconclusive" {
-  let s = { ..@advanced.defaults(), differential: "stdout" }
+  let s = { ..@advanced.defaults(), differential: "stdout", }
   assert_eq(@advanced.matches(s, observed(0, "a", ""), None, "", ""), None)
   assert_eq(
     @advanced.matches(
       s,
-      { ..observed(0, "a", ""), stdout_truncated: true },
+      { ..observed(0, "a", ""), stdout_truncated: true, },
       Some(observed(0, "b", "")),
       "",
       "",
@@ -148,7 +148,7 @@ test "advanced differential missing or truncated evidence is inconclusive" {
 
 ///|
 test "advanced differential exit status" {
-  let s = { ..@advanced.defaults(), differential: "exit" }
+  let s = { ..@advanced.defaults(), differential: "exit", }
   assert_eq(
     @advanced.matches(s, observed(1, "", ""), Some(observed(0, "", "")), "", ""),
     Some(true),
@@ -157,7 +157,7 @@ test "advanced differential exit status" {
 
 ///|
 test "advanced wrapper protocol validates schema and tri-state" {
-  let s = { ..@advanced.defaults(), wrapper: true }
+  let s = { ..@advanced.defaults(), wrapper: true, }
   assert_eq(
     @advanced.matches(
       s,
@@ -186,11 +186,11 @@ test "advanced wrapper protocol validates schema and tri-state" {
 
 ///|
 test "advanced timeout boundary is inconclusive" {
-  let s = { ..@advanced.defaults(), timeout_ms: 100, timeout_tolerance_ms: 10 }
+  let s = { ..@advanced.defaults(), timeout_ms: 100, timeout_tolerance_ms: 10, }
   assert_eq(
     @advanced.matches(
       s,
-      { ..observed(0, "", ""), duration_ms: 95L },
+      { ..observed(0, "", ""), duration_ms: 95L, },
       None,
       "",
       "",
@@ -200,7 +200,7 @@ test "advanced timeout boundary is inconclusive" {
   assert_eq(
     @advanced.matches(
       s,
-      { ..observed(0, "", ""), duration_ms: 80L },
+      { ..observed(0, "", ""), duration_ms: 80L, },
       None,
       "",
       "",
@@ -211,12 +211,14 @@ test "advanced timeout boundary is inconclusive" {
 
 ///|
 test "advanced schema round trip and version rejection" {
-  let s = { ..@advanced.defaults(), stdout_regex: ["KEEP"], normalize: true }
+  let s = { ..@advanced.defaults(), stdout_regex: ["KEEP"], normalize: true, }
   assert_eq(
-    @advanced.Spec::from_json(s.to_json()).unwrap().to_json(),
-    s.to_json(),
+    @json.ToJson::to_json(
+      @advanced.Spec::from_json(@json.ToJson::to_json(s)).unwrap(),
+    ),
+    @json.ToJson::to_json(s),
   )
-  assert_true({ ..s, schema_version: 2 }.validate() is Err(_))
+  assert_true({ ..s, schema_version: 2, }.validate() is Err(_))
   assert_true(@advanced.Spec::from_json(null) is Err(_))
 }
 
@@ -229,8 +231,8 @@ test "advanced numeric compiler diagnostic extraction" {
 test "advanced truncated anchored regex is inconclusive" {
   assert_eq(
     @advanced.matches(
-      { ..@advanced.defaults(), stdout_regex: ["^x$"] },
-      { ..observed(0, "x", ""), stdout_truncated: true },
+      { ..@advanced.defaults(), stdout_regex: ["^x$"], },
+      { ..observed(0, "x", ""), stdout_truncated: true, },
       None,
       "",
       "",
@@ -241,7 +243,7 @@ test "advanced truncated anchored regex is inconclusive" {
 
 ///|
 test "advanced wrapper rejects version and incomplete output" {
-  let s = { ..@advanced.defaults(), wrapper: true }
+  let s = { ..@advanced.defaults(), wrapper: true, }
   assert_eq(
     @advanced.matches(
       s,
@@ -269,7 +271,7 @@ test "advanced wrapper rejects version and incomplete output" {
 
 ///|
 test "advanced any crash excludes ordinary nonzero" {
-  let s = { ..@advanced.defaults(), crash: "any" }
+  let s = { ..@advanced.defaults(), crash: "any", }
   assert_eq(
     @advanced.matches(s, observed(1, "", "ordinary error"), None, "", ""),
     Some(false),
@@ -287,11 +289,11 @@ test "advanced normalization preserves Unicode and small hex constants" {
 
 ///|
 test "advanced differential timeouts are inconclusive" {
-  let s = { ..@advanced.defaults(), differential: "exit" }
+  let s = { ..@advanced.defaults(), differential: "exit", }
   assert_eq(
     @advanced.matches(
       s,
-      { ..observed(-1, "", ""), timed_out: true },
+      { ..observed(-1, "", ""), timed_out: true, },
       Some(observed(0, "", "")),
       "",
       "",
@@ -302,7 +304,7 @@ test "advanced differential timeouts are inconclusive" {
 
 ///|
 test "advanced invalid tolerance cannot silently accept" {
-  let s = { ..@advanced.defaults(), timeout_tolerance_ms: 10000 }
+  let s = { ..@advanced.defaults(), timeout_tolerance_ms: 10000, }
   assert_true(s.validate() is Err(_))
   assert_eq(@advanced.matches(s, observed(0, "", ""), None, "", ""), None)
 }

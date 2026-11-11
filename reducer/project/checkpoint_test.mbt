@@ -84,7 +84,7 @@ fn altered(document : Json, key : String, value : Json) -> Json {
     Object(fields) => {
       let fields = fields.copy()
       fields[key] = value
-      fields.to_json()
+      @json.ToJson::to_json(fields)
     }
     _ => document
   }
@@ -105,7 +105,7 @@ test "checkpoint rejects incompatible schema and impossible counters" {
     ] {
     assert_true(
       @project.Session::restore(
-        altered(saved, item.0, item.1.to_json()),
+        altered(saved, item.0, @json.ToJson::to_json(item.1)),
         original,
         [],
         [],

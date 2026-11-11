@@ -23,7 +23,7 @@ fn executable_group(
 }
 
 ///|
-fn byte_text(bytes : Bytes, start : Int, end : Int) -> String {
+fn byte_text(bytes : Bytes, start : Int32, end : Int32) -> String {
   let slice = Bytes::from_array(
     FixedArray::makei(end - start, i => bytes[start + i]),
   )
@@ -38,8 +38,8 @@ fn body_edits(
   name : String,
   tree : @moon_syntax.ReductionTree,
   bytes : Bytes,
-) -> Array[(Int, Int, String)] {
-  let edits : Array[(Int, Int, String)] = []
+) -> Array[(Int32, Int32, String)] {
+  let edits : Array[(Int32, Int32, String)] = []
   for group in tree.groups {
     if group.kind != "{" || !executable_group(tree, group) {
       continue

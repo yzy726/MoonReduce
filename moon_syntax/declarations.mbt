@@ -1,10 +1,11 @@
 ///|
 /// Conservative syntax range usable as an independently predicate-tested edit.
+#derive(Debug, Eq, ToJson)
 pub(all) struct Node {
   kind : String
-  start : Int
-  end : Int
-} derive(Debug, Eq, ToJson)
+  start : Int32
+  end : Int32
+}
 
 ///|
 fn significant(token : Token) -> Bool {
@@ -19,8 +20,8 @@ pub fn declarations(tree : ReductionTree) -> Array[Node] {
   if !tree.diagnostics.is_empty() {
     return []
   }
-  let starts : Array[(String, Int)] = []
-  let mut prefix : Int? = None
+  let starts : Array[(String, Int32)] = []
+  let mut prefix : Int32? = None
   for token in tree.tokens {
     if !significant(token) {
       continue
@@ -70,3 +71,12 @@ pub fn declarations(tree : ReductionTree) -> Array[Node] {
   }
   nodes
 }
+
+///|
+pub extend Node with @debug.Debug::{to_repr}
+
+///|
+pub extend Node with @json.ToJson::{to_json}
+
+///|
+pub extend Node with Eq::{not_equal, equal}

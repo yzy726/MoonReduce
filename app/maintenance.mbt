@@ -62,15 +62,15 @@ async fn maintenance(argv : Array[String]) -> String {
     _ => raise ProjectError("MR_CHECKPOINT_FORMAT: missing envelope")
   }
   let count = entries.length()
-  let size = @source.encode(entries.to_json().stringify()).length()
+  let size = @source.encode(@json.ToJson::to_json(entries).stringify()).length()
   if clean {
     let empty : Array[Json] = []
-    engine["cache"] = empty.to_json()
-    envelope["engine"] = engine.to_json()
-    envelope["engine_sha256"] = @sha256.digest(
-      @source.encode(engine.to_json().stringify()),
-    ).to_json()
-    let updated = envelope.to_json()
+    engine["cache"] = @json.ToJson::to_json(empty)
+    envelope["engine"] = @json.ToJson::to_json(engine)
+    envelope["engine_sha256"] = @json.ToJson::to_json(
+      @sha256.digest(@source.encode(@json.ToJson::to_json(engine).stringify())),
+    )
+    let updated = @json.ToJson::to_json(envelope)
     let checksums = match
       @source.decode(read_bounded(root + "/checksums.txt", 1048576)) {
       Ok(s) => s
@@ -85,7 +85,7 @@ async fn maintenance(argv : Array[String]) -> String {
         lines.push(line.to_owned())
       }
     }
-    @async.protect_from_cancel(resume_on_cancel=false, () => {
+    @async.protect_from_cancel(() => {
       save_checkpoint(root + "/checkpoint.json", updated)
       @fs.write_file(root + "/checksums.txt", lines.join("\n"), sync=Full)
     })

@@ -1,53 +1,55 @@
 ///|
 /// Per-pass counters use the same order as the deterministic registry.
+#derive(Debug, Eq, ToJson)
 pub(all) struct PassStats {
   name : String
-  attempts : Int
-  accepted : Int
-  removed_bytes : Int
-} derive(Debug, Eq, ToJson)
+  attempts : Int32
+  accepted : Int32
+  removed_bytes : Int32
+}
 
 ///|
 /// Immutable result snapshot; best is retained even when final verification fails.
+#derive(Debug, ToJson)
 pub(all) struct ReductionResult {
   status : @model.RunStatus
   original : String
   best : String
-  evaluations : Int
-  cache_hits : Int
-  baseline_passed : Int
-  final_passed : Int
-  accepted_sizes : Array[Int]
+  evaluations : Int32
+  cache_hits : Int32
+  baseline_passed : Int32
+  final_passed : Int32
+  accepted_sizes : Array[Int32]
   passes : Array[PassStats]
-} derive(Debug, ToJson)
+}
 
 ///|
 /// Pure request/response machine. The native driver owns time and process IO.
 pub struct Session {
   original : String
   mut best : String
-  mut phase : Int
+  mut phase : Int32
   mut pending : String?
-  mut evaluations : Int
-  mut baseline : Int
-  mut finals : Int
+  mut evaluations : Int32
+  mut baseline : Int32
+  mut finals : Int32
   mut status : @model.RunStatus
-  mut pass_index : Int
-  mut groups : Int
+  mut pass_index : Int32
+  mut groups : Int32
   mut queue : Iter[String]
   mut queue_ready : Bool
-  sizes : Array[Int]
+  sizes : Array[Int32]
   stats : Array[PassStats]
   budget : @model.Budget
   cache : Map[String, Bool]
-  mut hits : Int
+  mut hits : Int32
 }
 
 ///|
 /// Construct a baseline-first session. No command is executed by this package.
 pub fn Session::new(
   original : String,
-  budget? : @model.Budget = @model.default_budget(),
+  budget~ : @model.Budget = @model.default_budget(),
 ) -> Session {
   let names = ["ddmin"]
   names.append(@text.names())
@@ -231,3 +233,18 @@ pub fn Session::result(self : Session) -> ReductionResult {
     passes: self.stats.copy(),
   }
 }
+
+///|
+pub extend PassStats with @debug.Debug::{to_repr}
+
+///|
+pub extend PassStats with @json.ToJson::{to_json}
+
+///|
+pub extend PassStats with Eq::{not_equal, equal}
+
+///|
+pub extend ReductionResult with @debug.Debug::{to_repr}
+
+///|
+pub extend ReductionResult with @json.ToJson::{to_json}

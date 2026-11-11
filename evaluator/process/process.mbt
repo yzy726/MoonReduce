@@ -1,8 +1,9 @@
 ///|
 /// Expected adapter failures are distinct from an executed command's nonzero exit.
+#derive(Debug)
 pub suberror ProcessError {
   ProcessError(String)
-} derive(Debug)
+}
 
 ///|
 priv struct Capture {
@@ -14,7 +15,7 @@ priv struct Capture {
 async fn drain(
   reader : @child.ReadFromProcess,
   capture : Capture,
-  limit : Int,
+  limit : Int32,
 ) -> Unit {
   while reader.read_some(max_len=8192) is Some(chunk) {
     let keep = (limit - capture.bytes.length()).max(0).min(chunk.length())
@@ -42,8 +43,8 @@ pub async fn run(
     raise ProcessError("MR_EXEC_LIMIT: invalid limits")
   }
   let start = @async.now()
-  let out = Capture::{ bytes: [], truncated: false }
-  let err = Capture::{ bytes: [], truncated: false }
+  let out = Capture::{ bytes: [], truncated: false, }
+  let err = Capture::{ bytes: [], truncated: false, }
   let (read_out, write_out) = @child.read_from_process()
   defer read_out.close()
   let (read_err, write_err) = @child.read_from_process()
@@ -81,3 +82,6 @@ pub async fn run(
     duration_ms: @async.now() - start,
   }
 }
+
+///|
+pub extend ProcessError with @debug.Debug::{to_repr}

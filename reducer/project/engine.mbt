@@ -1,7 +1,7 @@
 ///|
 /// Snapshot request with a stable run-local sequence number.
 pub(all) struct Candidate {
-  id : Int
+  id : Int32
   snapshot : @manifest.Snapshot
 }
 
@@ -9,10 +9,10 @@ pub(all) struct Candidate {
 pub(all) struct ResultSummary {
   best : @manifest.Snapshot
   status : @model.RunStatus
-  evaluations : Int
-  cache_hits : Int
-  baseline_passed : Int
-  final_passed : Int
+  evaluations : Int32
+  cache_hits : Int32
+  baseline_passed : Int32
+  final_passed : Int32
 }
 
 ///|
@@ -22,27 +22,27 @@ pub struct Session {
   priv mut best : @manifest.Snapshot
   priv targets : Array[String]
   priv score_mode : String
-  priv command_cost : Int
-  priv max_tests : Int
+  priv command_cost : Int32
+  priv max_tests : Int32
   priv candidate_policy : @stability.Policy
   priv baseline_policy : @stability.Policy
   priv final_policy : @stability.Policy
   priv baseline_trials : Array[Bool?]
   priv final_trials : Array[Bool?]
-  priv mut state : Int
-  priv mut pass_index : Int
+  priv mut state : Int32
+  priv mut pass_index : Int32
   priv names : Array[String]
   priv extensions : Map[String, &@pass_api.ReductionPass]
   priv mut queue : Iter[@manifest.Snapshot]
   priv mut ready : Bool
   priv pending : Array[Candidate]
-  priv answers : Map[Int, Bool?]
+  priv answers : Map[Int32, Bool?]
   priv cache : Map[String, Bool]
-  priv mut sequence : Int
-  priv mut evaluations : Int
-  priv mut hits : Int
-  priv mut baseline : Int
-  priv mut finals : Int
+  priv mut sequence : Int32
+  priv mut evaluations : Int32
+  priv mut hits : Int32
+  priv mut baseline : Int32
+  priv mut finals : Int32
   priv mut status : @model.RunStatus
 }
 
@@ -52,17 +52,17 @@ pub fn Session::new(
   includes : Array[String],
   protects : Array[String],
   ignores : Array[String],
-  max_tests? : Int = 2500,
-  repeat? : Int = 1,
-  quorum? : Int = 1,
-  consecutive? : Bool = false,
-  final_repeat? : Int = 3,
-  final_quorum? : Int = 3,
-  command_cost? : Int = 1,
-  score? : String = "bytes",
-  pass_include? : Array[String] = [],
-  pass_exclude? : Array[String] = [],
-  extra_passes? : Array[&@pass_api.ReductionPass] = [],
+  max_tests~ : Int32 = 2500,
+  repeat~ : Int32 = 1,
+  quorum~ : Int32 = 1,
+  consecutive~ : Bool = false,
+  final_repeat~ : Int32 = 3,
+  final_quorum~ : Int32 = 3,
+  command_cost~ : Int32 = 1,
+  score~ : String = "bytes",
+  pass_include~ : Array[String] = [],
+  pass_exclude~ : Array[String] = [],
+  extra_passes~ : Array[&@pass_api.ReductionPass] = [],
 ) -> Result[Session, String] {
   if command_cost < 1 || command_cost > 2 {
     return Err("MR_CFG_COST: expected one or two commands")
@@ -259,7 +259,7 @@ pub fn Session::phase(self : Session) -> String {
 ///|
 fn Session::issue(self : Session, snapshot : @manifest.Snapshot) -> Unit {
   self.sequence += 1
-  self.pending.push({ id: self.sequence, snapshot })
+  self.pending.push({ id: self.sequence, snapshot, })
 }
 
 ///|
@@ -348,9 +348,9 @@ pub fn Session::next_batch(self : Session) -> Array[Candidate] {
 /// its winner; the smallest score wins, then the first stable candidate id.
 pub fn Session::record_result(
   self : Session,
-  id : Int,
+  id : Int32,
   matched : Bool?,
-  cost? : Int = 1,
+  cost~ : Int32 = 1,
 ) -> Result[Unit, String] {
   let expected_cost = if self.state == 1 {
     self.candidate_policy.repeat * self.command_cost
@@ -452,7 +452,7 @@ pub fn Session::result(self : Session) -> ResultSummary {
 /// caller is responsible for evaluating the configured number of commands.
 pub fn Session::record(
   self : Session,
-  id : Int,
+  id : Int32,
   matched : Bool,
 ) -> Result[Unit, String] {
   self.record_result(
@@ -546,5 +546,5 @@ impl @pass_api.ReductionPass for BuiltinPass with fn propose(
 pub fn default_passes() -> Array[&@pass_api.ReductionPass] {
   pass_names()
   .filter(n => n != "struct:format" && n != "manifest")
-  .map(n => BuiltinPass::{ pass_name: n })
+  .map(n => BuiltinPass::{ pass_name: n, })
 }

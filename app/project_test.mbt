@@ -1,5 +1,5 @@
 ///|
-async fn project_fixture(jobs : Int) -> @config.Config {
+async fn project_fixture(jobs : Int32) -> @config.Config {
   let root = @fs.tmpdir(prefix="moonreduce-project-e2e-")
   let input = root + "/input"
   @fs.mkdir(input)
@@ -96,7 +96,10 @@ async test "project/e2e missing command records failure without modifying input"
   let c = project_fixture(1)
   let c = {
     ..c,
-    predicate: { ..c.predicate, command: ["moonreduce-command-does-not-exist"] },
+    predicate: {
+      ..c.predicate,
+      command: ["moonreduce-command-does-not-exist"],
+    },
   }
   let r = @app.execute_project(c)
   assert_eq(r.result.status, ExecutionFailed)
@@ -111,7 +114,7 @@ async test "project/e2e missing command records failure without modifying input"
 ///|
 async test "project/e2e resume preserves best and revalidates finals" {
   let c = project_fixture(1)
-  let limited = { ..c, budget: { ..c.budget, max_tests: 5 } }
+  let limited = { ..c, budget: { ..c.budget, max_tests: 5, }, }
   let first = @app.execute_project(limited)
   assert_eq(first.result.status, BudgetExhausted)
   assert_true(@fs.exists(c.output + "/checkpoint.json"))
@@ -138,7 +141,7 @@ async test "project/e2e resume preserves best and revalidates finals" {
 ///|
 async test "project/e2e resume refuses changed original" {
   let c = project_fixture(1)
-  ignore(@app.execute_project({ ..c, budget: { ..c.budget, max_tests: 5 } }))
+  ignore(@app.execute_project({ ..c, budget: { ..c.budget, max_tests: 5, }, }))
   @fs.write_file(c.workspace + "/noise.mbt", "changed")
   let rejected = try {
     let code = @app.run([
@@ -165,7 +168,7 @@ async test "project/e2e repeated predicates count commands and final quorum" {
     quorum: 2,
     final_repeat: 5,
     final_quorum: 4,
-    budget: { ..base.budget, max_tests: 30 },
+    budget: { ..base.budget, max_tests: 30, },
   }
   let result = @app.execute_project(c)
   assert_true(result.error is None)
@@ -189,7 +192,7 @@ async test "project/e2e repeated destructive commands use fresh copies" {
       ..base.predicate,
       command: [probe_path(), "consume", "keep.mbt"],
     },
-    budget: { ..base.budget, max_tests: 30 },
+    budget: { ..base.budget, max_tests: 30, },
   }
   let result = @app.execute_project(c)
   assert_true(result.error is None)
@@ -209,7 +212,7 @@ async test "project/e2e resume retains repeated predicate policy" {
     quorum: 2,
     final_repeat: 5,
     final_quorum: 4,
-    budget: { ..base.budget, max_tests: 8 },
+    budget: { ..base.budget, max_tests: 8, },
   }
   ignore(@app.execute_project(c))
   let code = @app.run([
@@ -230,7 +233,10 @@ async test "project/e2e resume retains repeated predicate policy" {
 ///|
 async test "project/e2e advanced regex rejects unrelated output" {
   let base = project_fixture(1)
-  let c = { ..base, advanced: { ..base.advanced, stdout_regex: ["UNRELATED"] } }
+  let c = {
+    ..base,
+    advanced: { ..base.advanced, stdout_regex: ["UNRELATED"], },
+  }
   let result = @app.execute_project(c)
   assert_eq(result.result.baseline_passed, 0)
   assert_eq(result.result.status, BaselineFailed)
@@ -241,7 +247,7 @@ async test "project/e2e malformed wrapper is inconclusive" {
   let base = project_fixture(1)
   let result = @app.execute_project({
     ..base,
-    advanced: { ..base.advanced, wrapper: true },
+    advanced: { ..base.advanced, wrapper: true, },
   })
   assert_eq(result.result.baseline_passed, 0)
   let report = @fs.read_file(base.output + "/report.json").text()
@@ -254,8 +260,8 @@ async test "project/e2e differential runs both commands within budget" {
   let c = {
     ..base,
     reference: [probe_path(), "silent", "keep.mbt"],
-    advanced: { ..base.advanced, differential: "stdout" },
-    budget: { ..base.budget, max_tests: 30 },
+    advanced: { ..base.advanced, differential: "stdout", },
+    budget: { ..base.budget, max_tests: 30, },
   }
   let result = @app.execute_project(c)
   assert_true(result.error is None)
@@ -273,7 +279,7 @@ async test "project/e2e equal differential results reject baseline" {
   let c = {
     ..base,
     reference: base.predicate.command.copy(),
-    advanced: { ..base.advanced, differential: "stdout" },
+    advanced: { ..base.advanced, differential: "stdout", },
   }
   let result = @app.execute_project(c)
   assert_eq(result.result.baseline_passed, 0)
@@ -289,7 +295,7 @@ async test "project/e2e valid wrapper preserves interesting candidates" {
       command: [probe_path(), "wrapper", "keep.mbt"],
       stdout_rules: [],
     },
-    advanced: { ..base.advanced, wrapper: true },
+    advanced: { ..base.advanced, wrapper: true, },
   }
   let result = @app.execute_project(c)
   assert_eq(result.result.final_passed, 3)
@@ -347,7 +353,7 @@ async test "project/e2e deletes unused package directory only in copies" {
     "noise",
     create_mode=CreateNew,
   )
-  let result = @app.execute_project({ ..base, pass_include: ["package"] })
+  let result = @app.execute_project({ ..base, pass_include: ["package"], })
   assert_eq(result.result.final_passed, 3)
   assert_true(!@fs.exists(base.output + "/reduced/unused"))
   assert_true(@fs.exists(base.workspace + "/unused/a.mbt"))
@@ -361,7 +367,7 @@ async test "project/e2e opt-in manifest edit appears in diff" {
     "name = \"a/b\"\ndescription = \"noise\"\n",
     create_mode=CreateNew,
   )
-  let result = @app.execute_project({ ..base, pass_include: ["manifest"] })
+  let result = @app.execute_project({ ..base, pass_include: ["manifest"], })
   assert_eq(result.result.final_passed, 3)
   assert_true(
     @fs.read_file(base.output + "/reduced/moon.mod")
@@ -377,7 +383,7 @@ async test "project/e2e opt-in manifest edit appears in diff" {
 async test "project/e2e evidence bundle has checksums and redacted environment" {
   let base = project_fixture(1)
   let env : Map[String, String] = { "MR_TEST_SECRET": "private-value-123" }
-  let c = { ..base, predicate: { ..base.predicate, environment: env } }
+  let c = { ..base, predicate: { ..base.predicate, environment: env, }, }
   let result = @app.execute_project(c)
   assert_eq(result.result.final_passed, 3)
   let checksums = @fs.read_file(c.output + "/checksums.txt").text()
@@ -485,7 +491,7 @@ async test "project/e2e real flaky predicate records four of five successes" {
     quorum: 4,
     final_repeat: 5,
     final_quorum: 4,
-    budget: { ..base.budget, max_tests: 200 },
+    budget: { ..base.budget, max_tests: 200, },
     predicate: {
       ..base.predicate,
       command: [probe_path(), "flaky", "keep.mbt"],
@@ -512,7 +518,7 @@ async test "project/e2e real flaky predicate records four of five successes" {
 ///|
 async test "project/e2e cancellation persists checkpoint and resumes to final validation" {
   let base = project_fixture(1)
-  let c = { ..base, budget: { ..base.budget, max_tests: 150 } }
+  let c = { ..base, budget: { ..base.budget, max_tests: 150, }, }
   @async.with_task_group(group => {
     let task = group.spawn(() => @app.execute_project(c), allow_failure=true)
     let mut reached = false
@@ -575,11 +581,11 @@ async test "project/e2e resume rejects modified cache before creating output" {
       match envelope.get("engine") {
         Some(Object(engine)) => {
           let empty : Array[Json] = []
-          engine["cache"] = empty.to_json()
-          envelope["engine"] = engine.to_json()
+          engine["cache"] = @json.ToJson::to_json(empty)
+          envelope["engine"] = @json.ToJson::to_json(engine)
           @fs.write_file(
             c.output + "/checkpoint.json",
-            envelope.to_json().stringify(),
+            @json.ToJson::to_json(envelope).stringify(),
           )
         }
         _ => fail("missing engine")

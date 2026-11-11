@@ -4,16 +4,17 @@ package "Ag108/MoonReduce/report"
 import {
   "Ag108/MoonReduce/config",
   "Ag108/MoonReduce/reducer/engine",
+  "moonbitlang/core/json",
 }
 
 // Values
-pub fn config_summary(@config.Config) -> Json
+pub fn config_summary(@config.Config) -> @json.Json
 
 pub fn markdown(@config.Config, @engine.ReductionResult, Int64, Bool) -> String
 
-pub fn metrics(String) -> Json
+pub fn metrics(String) -> @json.Json
 
-pub fn render_json(@config.Config, @engine.ReductionResult, Int64, Bool, evidence? : Array[Json], attempted_commands? : Int?) -> Json
+pub fn render_json(@config.Config, @engine.ReductionResult, Int64, Bool, evidence? : Array[@json.Json], attempted_commands? : Int32?) -> @json.Json
 
 pub fn reproduce(@config.Config) -> String
 

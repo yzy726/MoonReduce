@@ -2,7 +2,7 @@
 package "Ag108/MoonReduce/reducer/ddmin"
 
 // Values
-pub fn partitions(Int, Int) -> Array[(Int, Int)]
+pub fn partitions(Int32, Int32) -> Array[(Int32, Int32)]
 
 // Errors
 

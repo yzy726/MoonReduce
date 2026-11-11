@@ -14,8 +14,9 @@ async test "e2e_timeout_preserves_original_and_final_verification" {
     [probe_path(), "heartbeat", "heartbeat.txt"],
     "timeout",
   )
-  let c = { ..c, predicate: { ..c.predicate, timeout_ms: 300 } }
+  let c = { ..c, predicate: { ..c.predicate, timeout_ms: 300, }, }
   let r = @app.execute(c)
+  assert_eq(r.error, None)
   assert_eq(r.result.status, BudgetExhausted)
   assert_eq(r.result.baseline_passed, 2)
   assert_eq(r.result.final_passed, 3)

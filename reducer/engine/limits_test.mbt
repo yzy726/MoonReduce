@@ -42,7 +42,7 @@ test "valid/cancel retains last verified candidate without claiming completion" 
 
 ///|
 test "valid/time limit stops at current best" {
-  let s = @engine.Session::new("a", budget={ max_tests: 100, max_time_ms: 10L })
+  let s = @engine.Session::new("a", budget={ max_tests: 100, max_time_ms: 10L, })
   s.elapsed(11L)
   assert_eq(s.next(), None)
   assert_eq(s.result().status, BudgetExhausted)
@@ -50,7 +50,7 @@ test "valid/time limit stops at current best" {
 
 ///|
 test "invalid/zero budget never executes" {
-  let s = @engine.Session::new("a", budget={ max_tests: 0, max_time_ms: 10L })
+  let s = @engine.Session::new("a", budget={ max_tests: 0, max_time_ms: 10L, })
   assert_eq(s.next(), None)
   assert_eq(s.result().status, BudgetExhausted)
 }

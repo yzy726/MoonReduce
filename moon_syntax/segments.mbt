@@ -14,7 +14,7 @@ fn direct_tokens(tree : ReductionTree, group : Group) -> Array[Token] {
       }
     }
     if child is Some(g) {
-      result.push({ kind: "group", text: g.kind, start: g.start, end: g.end })
+      result.push({ kind: "group", text: g.kind, start: g.start, end: g.end, })
       skip = g.end
     } else {
       result.push(token)
@@ -64,7 +64,7 @@ pub fn segments(
   }
   let tokens = direct_tokens(tree, group)
   let result : Array[Node] = []
-  let mut start : Int? = None
+  let mut start : Int32? = None
   let mut previous : Token? = None
   let mut kind = "expression"
   for i in 0..<tokens.length() {
@@ -119,7 +119,7 @@ pub fn segments(
     }
   }
   if start is Some(s) && previous is Some(p) {
-    result.push({ kind, start: s, end: p.end })
+    result.push({ kind, start: s, end: p.end, })
   }
   result
 }

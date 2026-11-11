@@ -3,6 +3,7 @@ package "Ag108/MoonReduce/model"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -13,45 +14,69 @@ pub fn default_predicate(Array[String]) -> PredicateSpec
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct Budget {
-  max_tests : Int
+  max_tests : Int32
   max_time_ms : Int64
-} derive(Eq, ToJson, @debug.Debug)
+}
+pub fn Budget::equal(Self, Self) -> Bool
+pub fn Budget::not_equal(Self, Self) -> Bool
+pub fn Budget::to_json(Self) -> @json.Json
+pub fn Budget::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct Evaluation {
-  exit_code : Int
+  exit_code : Int32
   timed_out : Bool
   stdout : String
   stderr : String
   stdout_truncated : Bool
   stderr_truncated : Bool
   duration_ms : Int64
-} derive(Eq, ToJson, @debug.Debug)
+}
+pub fn Evaluation::equal(Self, Self) -> Bool
+pub fn Evaluation::not_equal(Self, Self) -> Bool
+pub fn Evaluation::to_json(Self) -> @json.Json
+pub fn Evaluation::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) enum FailureKind {
-  ExitCode(Int)
+  ExitCode(Int32)
   NonZero
   Timeout
-} derive(Eq, ToJson, @debug.Debug)
+}
+pub fn FailureKind::equal(Self, Self) -> Bool
+pub fn FailureKind::not_equal(Self, Self) -> Bool
+pub fn FailureKind::to_json(Self) -> @json.Json
+pub fn FailureKind::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct OutputRule {
   text : String
   negate : Bool
   ignore_case : Bool
-} derive(Eq, ToJson, @debug.Debug)
+}
+pub fn OutputRule::equal(Self, Self) -> Bool
+pub fn OutputRule::not_equal(Self, Self) -> Bool
+pub fn OutputRule::to_json(Self) -> @json.Json
+pub fn OutputRule::to_repr(Self) -> @debug.Repr
 
+#derive(@debug.Debug, @json.ToJson)
 pub(all) struct PredicateSpec {
   command : Array[String]
   cwd : String
   failure : FailureKind
   stdout_rules : Array[OutputRule]
   stderr_rules : Array[OutputRule]
-  timeout_ms : Int
-  output_limit : Int
+  timeout_ms : Int32
+  output_limit : Int32
   strip_locations : Bool
   environment : Map[String, String]
-} derive(ToJson, @debug.Debug)
+}
+pub fn PredicateSpec::to_json(Self) -> @json.Json
+pub fn PredicateSpec::to_repr(Self) -> @debug.Repr
 
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) enum RunStatus {
   Completed
   BaselineFailed
@@ -60,8 +85,12 @@ pub(all) enum RunStatus {
   Cancelled
   ExecutionFailed
   FinalFailed
-} derive(Eq, ToJson, @debug.Debug)
-pub fn RunStatus::exit_code(Self) -> Int
+}
+pub fn RunStatus::equal(Self, Self) -> Bool
+pub fn RunStatus::exit_code(Self) -> Int32
+pub fn RunStatus::not_equal(Self, Self) -> Bool
+pub fn RunStatus::to_json(Self) -> @json.Json
+pub fn RunStatus::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

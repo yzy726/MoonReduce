@@ -1,7 +1,7 @@
 ///|
 fn session(
   files : Array[(String, Bytes)],
-  budget? : Int = 100,
+  budget~ : Int32 = 100,
 ) -> @project.Session raise {
   let snapshot = match @manifest.Snapshot::new(files) {
     Ok(s) => s

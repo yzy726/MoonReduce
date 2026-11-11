@@ -11,11 +11,11 @@
 
 name = "Ag108/MoonReduce"
 
-version = "0.2.0"
+version = "0.3.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "https://github.com/yzy726/MoonReduce"
 
 license = "Apache-2.0"
 
@@ -26,5 +26,5 @@ preferred_target = "native"
 description = "Deterministic failure-preserving testcase reduction for MoonBit projects"
 
 import {
-  "moonbitlang/async@0.20.4",
+  "moonbitlang/async@0.22.9",
 }

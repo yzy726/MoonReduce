@@ -1,4 +1,9 @@
 import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+import {
   "Ag108/MoonReduce/model",
   "Ag108/MoonReduce/source",
   "Ag108/MoonReduce/passes/text",

@@ -25,8 +25,9 @@ pub fn test_names(String) -> Array[String]
 // Errors
 
 // Types and methods
+#derive(@debug.Debug, @json.FromJson, @json.ToJson)
 pub(all) struct Spec {
-  schema_version : Int
+  schema_version : Int32
   stdout_regex : Array[String]
   stderr_regex : Array[String]
   crash : String
@@ -35,10 +36,12 @@ pub(all) struct Spec {
   normalize : Bool
   differential : String
   wrapper : Bool
-  timeout_ms : Int
-  timeout_tolerance_ms : Int
-} derive(ToJson, @debug.Debug, @json.FromJson)
-pub fn Spec::from_json(Json) -> Result[Self, String]
+  timeout_ms : Int32
+  timeout_tolerance_ms : Int32
+}
+pub fn Spec::from_json(@json.Json) -> Result[Self, String]
+pub fn Spec::to_json(Self) -> @json.Json
+pub fn Spec::to_repr(Self) -> @debug.Repr
 pub fn Spec::validate(Self) -> Result[Unit, String]
 
 // Type aliases

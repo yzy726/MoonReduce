@@ -19,7 +19,7 @@ pub fn significant(s : String) -> Array[Token] {
 /// Conservative deterministic proposals; every candidate still needs the predicate.
 pub fn propose_iter(name : String, s : String) -> Iter[String] {
   let ts = significant(s)
-  let edits : Array[(Int, Int, String)] = []
+  let edits : Array[(Int32, Int32, String)] = []
   match name {
     "token" =>
       for t in ts {

@@ -10,7 +10,7 @@ pub(all) struct Run {
 /// CLI reference for the initial commands and options.
 pub fn help() -> String {
   let text =
-    #|MoonReduce 0.2.0 — trusted-project testcase reduction
+    #|MoonReduce 0.3.0 — trusted-project testcase reduction
     #|moonreduce check [options] -- executable arg ...
     #|moonreduce reduce [options] -- executable arg ...
     #|moonreduce resume checkpoint.json [--output DIR] [--max-tests N]
@@ -83,77 +83,79 @@ pub async fn execute(c : @config.Config) -> Run {
   let mut events_size = 0
   let mut attempted_commands = 0
   let mut error : String? = None
-  try {
-    while true {
-      s.elapsed(@async.now() - start)
-      guard s.next() is Some(candidate) else { break }
-      let phase = s.phase_name()
-      let dir = w.materialize(candidate)
-      let cwd = w.working_directory(dir, c.predicate.cwd)
-      let remaining = c.budget.max_time_ms - (@async.now() - start)
-      if remaining <= 0L {
-        s.elapsed(c.budget.max_time_ms)
-        break
+  let completed = @async.handle_cancellation(() => {
+    try {
+      while true {
+        s.elapsed(@async.now() - start)
+        guard s.next() is Some(candidate) else { break }
+        let phase = s.phase_name()
+        let dir = w.materialize(candidate)
+        let cwd = w.working_directory(dir, c.predicate.cwd)
+        let remaining = c.budget.max_time_ms - (@async.now() - start)
+        if remaining <= 0L {
+          s.elapsed(c.budget.max_time_ms)
+          break
+        }
+        let spec = {
+          ..c.predicate,
+          timeout_ms: c.predicate.timeout_ms.min(remaining.to_int()),
+        }
+        attempted_commands += 1
+        let e = @process.run(spec, cwd)
+        if @async.now() - start >= c.budget.max_time_ms {
+          s.elapsed(c.budget.max_time_ms)
+          break
+        }
+        let matched = @matcher.matches(c.predicate, e, dir)
+        s.record(matched)
+        w.cleanup(dir)
+        let event : Json = {
+          "schema_version": 1,
+          "phase": phase,
+          "matched": matched,
+          "candidate_hash": @source.digest(@source.encode(candidate)),
+          "bytes": @source.encode(candidate).length(),
+          "exit_code": e.exit_code,
+          "timed_out": e.timed_out,
+          "duration_ms": e.duration_ms,
+          "stdout_hash": @source.digest(@source.encode(e.stdout)),
+          "stderr_hash": @source.digest(@source.encode(e.stderr)),
+          "stdout_truncated": e.stdout_truncated,
+          "stderr_truncated": e.stderr_truncated,
+        }
+        if phase != "reducing" {
+          evidence.push(event)
+        }
+        let line = event.stringify() + "\n"
+        if events_size + line.length() <= 4194304 {
+          events.write_string(line)
+          events_size += line.length()
+        }
+        if c.json_events {
+          @stdio.stdout.write(line)
+        } else if !c.quiet && (c.verbose || s.result().evaluations % 10 == 0) {
+          let r = s.result()
+          @stdio.stderr.write(
+            "\{phase}: best=\{@source.encode(r.best).length()} bytes, commands=\{r.evaluations}/\{c.budget.max_tests}, cache=\{r.cache_hits}\n",
+          )
+        }
+        if c.action == "check" && s.result().baseline_passed == 2 {
+          s.stop(Completed)
+          break
+        }
       }
-      let spec = {
-        ..c.predicate,
-        timeout_ms: c.predicate.timeout_ms.min(remaining.to_int()),
-      }
-      attempted_commands += 1
-      let e = @process.run(spec, cwd)
-      if @async.now() - start >= c.budget.max_time_ms {
-        s.elapsed(c.budget.max_time_ms)
-        break
-      }
-      let matched = @matcher.matches(c.predicate, e, dir)
-      s.record(matched)
-      w.cleanup(dir)
-      let event : Json = {
-        "schema_version": 1,
-        "phase": phase,
-        "matched": matched,
-        "candidate_hash": @source.digest(@source.encode(candidate)),
-        "bytes": @source.encode(candidate).length(),
-        "exit_code": e.exit_code,
-        "timed_out": e.timed_out,
-        "duration_ms": e.duration_ms,
-        "stdout_hash": @source.digest(@source.encode(e.stdout)),
-        "stderr_hash": @source.digest(@source.encode(e.stderr)),
-        "stdout_truncated": e.stdout_truncated,
-        "stderr_truncated": e.stderr_truncated,
-      }
-      if phase != "reducing" {
-        evidence.push(event)
-      }
-      let line = event.stringify() + "\n"
-      if events_size + line.length() <= 4194304 {
-        events.write_string(line)
-        events_size += line.length()
-      }
-      if c.json_events {
-        @stdio.stdout.write(line)
-      } else if !c.quiet && (c.verbose || s.result().evaluations % 10 == 0) {
-        let r = s.result()
-        @stdio.stderr.write(
-          "\{phase}: best=\{@source.encode(r.best).length()} bytes, commands=\{r.evaluations}/\{c.budget.max_tests}, cache=\{r.cache_hits}\n",
-        )
-      }
-      if c.action == "check" && s.result().baseline_passed == 2 {
-        s.stop(Completed)
-        break
-      }
-    }
-  } catch {
-    e =>
-      if @async.is_cancellation_error(e) {
-        s.cancel()
-        error = Some("MR_BUDGET_CANCELLED")
-      } else {
+    } catch {
+      e => {
         s.stop(ExecutionFailed)
         error = Some("MR_EXEC_FAILURE: " + execution_error(e))
       }
+    }
+  })
+  if completed is None {
+    s.cancel()
+    error = Some("MR_BUDGET_CANCELLED")
   }
-  @async.protect_from_cancel(resume_on_cancel=false, () => {
+  @async.protect_from_cancel(() => {
     let unchanged = w.original_unchanged()
     if !unchanged {
       s.stop(ExecutionFailed)
@@ -183,13 +185,13 @@ pub async fn execute(c : @config.Config) -> Run {
     if error is Some(message) {
       save(w.output + "/error.txt", message)
     }
-    { result: r, output: w.output, error }
+    { result: r, output: w.output, error, }
   })
 }
 
 ///|
 /// CLI dispatcher; returns the specified exit code after artifact writes complete.
-async fn run_inner(argv : Array[String]) -> Int {
+async fn run_inner(argv : Array[String]) -> Int32 {
   if [Some("diff"), Some("config"), Some("cache")].contains(argv.get(0)) {
     @stdio.stdout.write(maintenance(argv))
     return 0
@@ -208,10 +210,7 @@ async fn run_inner(argv : Array[String]) -> Int {
     }
     if argv[i] == "--config" && i + 1 < argv.length() {
       let parsed = @json.parse(@fs.read_file(argv[i + 1]).text()) catch {
-        e => {
-          if @async.is_cancellation_error(e) {
-            raise e
-          }
+        _ => {
           @stdio.stderr.write(
             "MR_CFG_FILE: cannot read or parse configuration JSON\n",
           )
@@ -270,7 +269,7 @@ async fn run_inner(argv : Array[String]) -> Int {
 
 ///|
 /// CLI dispatcher. Configuration failures consistently return exit code 1.
-pub async fn run(argv : Array[String]) -> Int {
+pub async fn run(argv : Array[String]) -> Int32 {
   run_inner(argv) catch {
     ProjectError(message) =>
       if message.has_prefix("MR_CFG_") {

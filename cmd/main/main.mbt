@@ -1,5 +1,5 @@
 ///|
-extern "C" fn exit_process(code : Int) -> Unit = "exit"
+extern "C" fn exit_process(code : Int32) -> Unit = "exit"
 
 ///|
 async fn main {

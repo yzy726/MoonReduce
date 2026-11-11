@@ -4,24 +4,30 @@ package "Ag108/MoonReduce/reducer/score"
 import {
   "Ag108/MoonReduce/workspace/manifest",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
-pub fn compare(String, Score, Score) -> Result[Int, String]
+pub fn compare(String, Score, Score) -> Result[Int32, String]
 
 pub fn measure(@manifest.Snapshot) -> Score
 
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct Score {
-  bytes : Int
-  tokens : Int
-  lines : Int
-  files : Int
-  nodes : Int
+  bytes : Int32
+  tokens : Int32
+  lines : Int32
+  files : Int32
+  nodes : Int32
   paths : String
-} derive(Eq, ToJson, @debug.Debug)
+}
+pub fn Score::equal(Self, Self) -> Bool
+pub fn Score::not_equal(Self, Self) -> Bool
+pub fn Score::to_json(Self) -> @json.Json
+pub fn Score::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

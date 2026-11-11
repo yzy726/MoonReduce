@@ -72,9 +72,7 @@ pub async fn Workspace::materialize_snapshot(
     create_mode=CreateNew,
   )
   self.owned[dir] = true
-  errdefer @async.protect_from_cancel(resume_on_cancel=false, () => {
-    self.cleanup(dir)
-  })
+  errdefer @async.protect_from_cancel(() => self.cleanup(dir))
   self.write_snapshot(dir, snapshot)
   dir
 }

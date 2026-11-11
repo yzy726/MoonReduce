@@ -7,7 +7,7 @@ fn evidence_files() -> Array[String] {
 }
 
 ///|
-async fn read_bounded(path : String, limit : Int) -> Bytes {
+async fn read_bounded(path : String, limit : Int32) -> Bytes {
   if @fs.kind(path, follow_symlink=false) != Regular {
     raise ProjectError("MR_EVIDENCE_PATH: expected regular file")
   }
@@ -58,14 +58,14 @@ async fn seal_bundle(
   names.sort()
   let environment : Json = {
     "schema_version": 1,
-    "moonreduce_version": "0.2.0",
+    "moonreduce_version": "0.3.0",
     "toolchain": toolchain,
     "platform": if output.has_prefix("/") && !output.has_prefix("//") {
       "posix"
     } else {
       "windows"
     },
-    "environment_override_names": names.to_json(),
+    "environment_override_names": @json.ToJson::to_json(names),
     "environment_values_recorded": false,
     "inherits_parent_environment": true,
     "hash_algorithm": "sha256",

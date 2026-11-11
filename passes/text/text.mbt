@@ -9,7 +9,7 @@ pub fn names() -> Array[String] {
 
 ///|
 /// Exact line spans, including the newline; no synthetic trailing empty line.
-pub fn lines(s : String) -> Array[(Int, Int)] {
+pub fn lines(s : String) -> Array[(Int32, Int32)] {
   let result = []
   let mut start = 0
   for i in 0..<s.length() {
@@ -27,7 +27,7 @@ pub fn lines(s : String) -> Array[(Int, Int)] {
 ///|
 /// Deterministic deletion proposals. Strings/comments use the tolerant lexer.
 pub fn propose_iter(name : String, s : String) -> Iter[String] {
-  let spans : Array[(Int, Int)] = []
+  let spans : Array[(Int32, Int32)] = []
   let ls = lines(s)
   match name {
     "line" => spans.append(ls)

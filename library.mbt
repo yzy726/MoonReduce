@@ -7,13 +7,14 @@ pub(open) trait CandidateEvaluator {
 
 ///|
 /// Immutable versioned observation delivered in deterministic candidate order.
+#derive(ToJson)
 pub(all) struct Event {
-  schema_version : Int
-  candidate_id : Int
+  schema_version : Int32
+  candidate_id : Int32
   phase : String
-  trial : Int
+  trial : Int32
   decision : @stability.Decision
-} derive(ToJson)
+}
 
 ///|
 /// Event delivery is synchronous; sinks may record evidence or update a UI.
@@ -32,12 +33,12 @@ impl EventSink for NoEvents with fn emit(_, _) {
 ///|
 /// Pure reduction options. Native CLI time/process controls belong to app.Config.
 pub(all) struct ReduceConfig {
-  max_tests : Int
-  repeat : Int
-  quorum : Int
+  max_tests : Int32
+  repeat : Int32
+  quorum : Int32
   consecutive : Bool
-  final_repeat : Int
-  final_quorum : Int
+  final_repeat : Int32
+  final_quorum : Int32
   score : String
   includes : Array[String]
   protects : Array[String]
@@ -164,8 +165,8 @@ fn drive(
 pub fn check(
   original : @manifest.Snapshot,
   evaluator : &CandidateEvaluator,
-  config? : ReduceConfig = default_config(),
-  sink? : &EventSink = NoEvents::{  },
+  config~ : ReduceConfig = default_config(),
+  sink~ : &EventSink = NoEvents::{ },
 ) -> Result[@stability.Statistics, String] {
   let s = match session(original, config) {
     Ok(s) => s
@@ -183,8 +184,8 @@ pub fn check(
 pub fn reduce(
   original : @manifest.Snapshot,
   evaluator : &CandidateEvaluator,
-  config? : ReduceConfig = default_config(),
-  sink? : &EventSink = NoEvents::{  },
+  config~ : ReduceConfig = default_config(),
+  sink~ : &EventSink = NoEvents::{ },
 ) -> Result[@project.ResultSummary, String] {
   let s = match session(original, config) {
     Ok(s) => s
@@ -195,3 +196,6 @@ pub fn reduce(
     Ok(_) => Ok(s.result())
   }
 }
+
+///|
+pub extend Event with @json.ToJson::{to_json}

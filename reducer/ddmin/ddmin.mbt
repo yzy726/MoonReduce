@@ -1,7 +1,7 @@
 ///|
 /// Balanced contiguous half-open partitions. No empty groups; multiplication
 /// is avoided so a large element count cannot overflow an intermediate product.
-pub fn partitions(count : Int, groups : Int) -> Array[(Int, Int)] {
+pub fn partitions(count : Int32, groups : Int32) -> Array[(Int32, Int32)] {
   if count <= 0 || groups <= 0 {
     return []
   }

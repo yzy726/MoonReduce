@@ -1,7 +1,8 @@
 ///|
 /// Additive versioned predicates; all specified conditions must match.
+#derive(Debug, ToJson, @json.FromJson)
 pub(all) struct Spec {
-  schema_version : Int
+  schema_version : Int32
   stdout_regex : Array[String]
   stderr_regex : Array[String]
   crash : String
@@ -10,9 +11,9 @@ pub(all) struct Spec {
   normalize : Bool
   differential : String
   wrapper : Bool
-  timeout_ms : Int
-  timeout_tolerance_ms : Int
-} derive(Debug, ToJson, @json.FromJson)
+  timeout_ms : Int32
+  timeout_tolerance_ms : Int32
+}
 
 ///|
 pub fn defaults() -> Spec {
@@ -366,3 +367,9 @@ pub fn matches(
   }
   Some(true)
 }
+
+///|
+pub extend Spec with @debug.Debug::{to_repr}
+
+///|
+pub extend Spec with @json.ToJson::{to_json}

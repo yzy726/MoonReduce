@@ -3,6 +3,7 @@ package "Ag108/MoonReduce/predicate/stability"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -11,28 +12,36 @@ pub fn summarize(Array[Bool?]) -> Statistics
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) enum Decision {
   Interesting
   Uninteresting
   Unresolved
-} derive(Eq, ToJson, @debug.Debug)
+}
+pub fn Decision::equal(Self, Self) -> Bool
+pub fn Decision::not_equal(Self, Self) -> Bool
+pub fn Decision::to_json(Self) -> @json.Json
+pub fn Decision::to_repr(Self) -> @debug.Repr
 
 pub struct Policy {
-  repeat : Int
-  quorum : Int
+  repeat : Int32
+  quorum : Int32
   consecutive : Bool
 }
 pub fn Policy::decide(Self, Array[Bool?]) -> Decision
-pub fn Policy::new(Int, Int, consecutive? : Bool) -> Result[Self, String]
+pub fn Policy::new(Int32, Int32, consecutive? : Bool) -> Result[Self, String]
 
+#derive(@debug.Debug, @json.ToJson)
 pub(all) struct Statistics {
-  attempts : Int
-  resolved : Int
-  passed : Int
+  attempts : Int32
+  resolved : Int32
+  passed : Int32
   rate : Double
   lower : Double
   upper : Double
-} derive(ToJson, @debug.Debug)
+}
+pub fn Statistics::to_json(Self) -> @json.Json
+pub fn Statistics::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

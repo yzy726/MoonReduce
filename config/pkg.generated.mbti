@@ -5,14 +5,16 @@ import {
   "Ag108/MoonReduce/model",
   "Ag108/MoonReduce/predicate/advanced",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
-pub fn parse(Array[String], Json?) -> Result[Config, String]
+pub fn parse(Array[String], @json.Json?) -> Result[Config, String]
 
 // Errors
 
 // Types and methods
+#derive(@debug.Debug, @json.ToJson)
 pub(all) struct Config {
   project : Bool
   includes : Array[String]
@@ -20,12 +22,12 @@ pub(all) struct Config {
   pass_include : Array[String]
   pass_exclude : Array[String]
   keep_workdir : Bool
-  jobs : Int
-  repeat : Int
-  quorum : Int
+  jobs : Int32
+  repeat : Int32
+  quorum : Int32
   consecutive : Bool
-  final_repeat : Int
-  final_quorum : Int
+  final_repeat : Int32
+  final_quorum : Int32
   action : String
   workspace : String
   target : String
@@ -39,7 +41,9 @@ pub(all) struct Config {
   json_events : Bool
   ignore : Array[String]
   protect : Array[String]
-} derive(ToJson, @debug.Debug)
+}
+pub fn Config::to_json(Self) -> @json.Json
+pub fn Config::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

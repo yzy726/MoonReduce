@@ -10,7 +10,7 @@ pub struct Regex {
   // private fields
 }
 pub fn Regex::compile(String) -> Result[Self, String]
-pub fn Regex::matches(Self, String, max_steps? : Int) -> Result[Bool, String]
+pub fn Regex::matches(Self, String, max_steps? : Int32) -> Result[Bool, String]
 
 // Type aliases
 

@@ -1,32 +1,34 @@
 ///|
+#derive(ToJson, @json.FromJson)
 priv struct SavedFile {
   path : String
-  bytes : Array[Int]
-} derive(ToJson, @json.FromJson)
+  bytes : Array[Int32]
+}
 
 ///|
+#derive(ToJson, @json.FromJson)
 priv struct Checkpoint {
   score_mode : String
   names : Array[String]
-  policies : Array[Int]
+  policies : Array[Int32]
   consecutive : Bool
   baseline_trials : Array[Bool?]
-  schema_version : Int
+  schema_version : Int32
   engine_version : String
   original_key : String
   context : String
   targets : Array[String]
   files : Array[SavedFile]
-  state : Int
-  pass_index : Int
-  sequence : Int
-  evaluations : Int
-  hits : Int
-  baseline : Int
-  finals : Int
+  state : Int32
+  pass_index : Int32
+  sequence : Int32
+  evaluations : Int32
+  hits : Int32
+  baseline : Int32
+  finals : Int32
   status : String
   cache : Array[(String, Bool)]
-} derive(ToJson, @json.FromJson)
+}
 
 ///|
 /// Serialize a settled batch boundary. The caller supplies a canonical context
@@ -59,7 +61,7 @@ pub fn Session::checkpoint(
     targets: self.targets.copy(),
     files: self.best
     .files()
-    .map(f => { path: f.0, bytes: f.1.iter().map(b => b.to_int()).to_array() }),
+    .map(f => { path: f.0, bytes: f.1.iter().map(b => b.to_int()).to_array(), }),
     state: self.state,
     pass_index: self.pass_index,
     sequence: self.sequence,
@@ -67,7 +69,7 @@ pub fn Session::checkpoint(
     hits: self.hits,
     baseline: self.baseline,
     finals: self.finals,
-    status: self.status.to_json().stringify(),
+    status: @json.ToJson::to_json(self.status).stringify(),
     cache: self.cache.iter().to_array(),
   }
   Ok(ToJson::to_json(saved))
@@ -84,17 +86,17 @@ pub fn Session::restore(
   protects : Array[String],
   ignores : Array[String],
   context : String,
-  max_tests? : Int = 2500,
-  repeat? : Int = 1,
-  quorum? : Int = 1,
-  consecutive? : Bool = false,
-  final_repeat? : Int = 3,
-  final_quorum? : Int = 3,
-  command_cost? : Int = 1,
-  score? : String = "bytes",
-  pass_include? : Array[String] = [],
-  pass_exclude? : Array[String] = [],
-  extra_passes? : Array[&@pass_api.ReductionPass] = [],
+  max_tests~ : Int32 = 2500,
+  repeat~ : Int32 = 1,
+  quorum~ : Int32 = 1,
+  consecutive~ : Bool = false,
+  final_repeat~ : Int32 = 3,
+  final_quorum~ : Int32 = 3,
+  command_cost~ : Int32 = 1,
+  score~ : String = "bytes",
+  pass_include~ : Array[String] = [],
+  pass_exclude~ : Array[String] = [],
+  extra_passes~ : Array[&@pass_api.ReductionPass] = [],
 ) -> Result[Session, String] {
   let saved : Checkpoint = @json.from_json(document) catch {
     _ => return Err("MR_CHECKPOINT_FORMAT: malformed checkpoint")
@@ -216,7 +218,8 @@ pub fn Session::restore(
   } else if saved.state == 2 {
     2
   } else if saved.state == 3 &&
-    saved.status == @model.RunStatus::Completed.to_json().stringify() {
+    saved.status ==
+    @json.ToJson::to_json(@model.RunStatus::Completed).stringify() {
     2
   } else {
     1

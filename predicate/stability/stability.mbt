@@ -1,29 +1,30 @@
 ///|
+#derive(Debug, Eq, ToJson)
 pub(all) enum Decision {
   Interesting
   Uninteresting
   Unresolved
-} derive(Debug, Eq, ToJson)
+}
 
 ///|
 /// Validated fixed-size evidence policy; None means an unresolved execution.
 pub struct Policy {
-  repeat : Int
-  quorum : Int
+  repeat : Int32
+  quorum : Int32
   consecutive : Bool
 }
 
 ///|
 /// Bound evaluation cost and reject impossible quorum settings.
 pub fn Policy::new(
-  repeat : Int,
-  quorum : Int,
-  consecutive? : Bool = false,
+  repeat : Int32,
+  quorum : Int32,
+  consecutive~ : Bool = false,
 ) -> Result[Policy, String] {
   if repeat < 1 || repeat > 100 || quorum < 1 || quorum > repeat {
     Err("MR_CFG_STABILITY: require 1 <= quorum <= repeat <= 100")
   } else {
-    Ok({ repeat, quorum, consecutive })
+    Ok({ repeat, quorum, consecutive, })
   }
 }
 
@@ -69,14 +70,15 @@ pub fn Policy::decide(self : Policy, observations : Array[Bool?]) -> Decision {
 }
 
 ///|
+#derive(Debug, ToJson)
 pub(all) struct Statistics {
-  attempts : Int
-  resolved : Int
-  passed : Int
+  attempts : Int32
+  resolved : Int32
+  passed : Int32
   rate : Double
   lower : Double
   upper : Double
-} derive(Debug, ToJson)
+}
 
 ///|
 /// Observed success rate and two-sided 95% Wilson interval among resolved runs.
@@ -119,3 +121,18 @@ pub fn summarize(observations : Array[Bool?]) -> Statistics {
     upper: (center + radius).min(1.0),
   }
 }
+
+///|
+pub extend Decision with @debug.Debug::{to_repr}
+
+///|
+pub extend Decision with @json.ToJson::{to_json}
+
+///|
+pub extend Decision with Eq::{not_equal, equal}
+
+///|
+pub extend Statistics with @debug.Debug::{to_repr}
+
+///|
+pub extend Statistics with @json.ToJson::{to_json}

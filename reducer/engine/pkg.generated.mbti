@@ -4,6 +4,7 @@ package "Ag108/MoonReduce/reducer/engine"
 import {
   "Ag108/MoonReduce/model",
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -11,43 +12,51 @@ import {
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct PassStats {
   name : String
-  attempts : Int
-  accepted : Int
-  removed_bytes : Int
-} derive(Eq, ToJson, @debug.Debug)
+  attempts : Int32
+  accepted : Int32
+  removed_bytes : Int32
+}
+pub fn PassStats::equal(Self, Self) -> Bool
+pub fn PassStats::not_equal(Self, Self) -> Bool
+pub fn PassStats::to_json(Self) -> @json.Json
+pub fn PassStats::to_repr(Self) -> @debug.Repr
 
+#derive(@debug.Debug, @json.ToJson)
 pub(all) struct ReductionResult {
   status : @model.RunStatus
   original : String
   best : String
-  evaluations : Int
-  cache_hits : Int
-  baseline_passed : Int
-  final_passed : Int
-  accepted_sizes : Array[Int]
+  evaluations : Int32
+  cache_hits : Int32
+  baseline_passed : Int32
+  final_passed : Int32
+  accepted_sizes : Array[Int32]
   passes : Array[PassStats]
-} derive(ToJson, @debug.Debug)
+}
+pub fn ReductionResult::to_json(Self) -> @json.Json
+pub fn ReductionResult::to_repr(Self) -> @debug.Repr
 
 pub struct Session {
   original : String
   mut best : String
-  mut phase : Int
+  mut phase : Int32
   mut pending : String?
-  mut evaluations : Int
-  mut baseline : Int
-  mut finals : Int
+  mut evaluations : Int32
+  mut baseline : Int32
+  mut finals : Int32
   mut status : @model.RunStatus
-  mut pass_index : Int
-  mut groups : Int
+  mut pass_index : Int32
+  mut groups : Int32
   mut queue : Iter[String]
   mut queue_ready : Bool
-  sizes : Array[Int]
+  sizes : Array[Int32]
   stats : Array[PassStats]
   budget : @model.Budget
   cache : Map[String, Bool]
-  mut hits : Int
+  mut hits : Int32
 }
 pub fn Session::cancel(Self) -> Unit
 pub fn Session::elapsed(Self, Int64) -> Unit
