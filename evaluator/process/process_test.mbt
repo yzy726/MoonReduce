@@ -1,6 +1,6 @@
 ///|
 async test "e2e/real direct argv captures bounded output" {
-  let p = { ..@model.default_predicate(["moon", "version"]), output_limit: 8 }
+  let p = { ..@model.default_predicate(["moon", "version"]), output_limit: 8, }
   let e = @process.run(p, ".")
   assert_eq(e.exit_code, 0)
   assert_true(e.stdout_truncated)

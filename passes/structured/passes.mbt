@@ -2,8 +2,8 @@
 fn declaration_edits(
   name : String,
   tree : @moon_syntax.ReductionTree,
-) -> Array[(Int, Int, String)] {
-  let edits : Array[(Int, Int, String)] = []
+) -> Array[(Int32, Int32, String)] {
+  let edits : Array[(Int32, Int32, String)] = []
   let declarations = @moon_syntax.declarations(tree)
   for d in declarations {
     if (name == "function" && d.kind == "fn") ||
@@ -76,7 +76,7 @@ fn declaration_edits(
 pub fn propose_iter(
   name : String,
   source : String,
-  allow_format? : Bool = false,
+  allow_format~ : Bool = false,
 ) -> Iter[String] {
   let tree = @moon_syntax.scan(source)
   if !tree.diagnostics.is_empty() {
@@ -110,7 +110,7 @@ pub fn propose_iter(
 pub fn propose(
   name : String,
   source : String,
-  allow_format? : Bool = false,
+  allow_format~ : Bool = false,
 ) -> Array[String] {
   propose_iter(name, source, allow_format~).to_array()
 }

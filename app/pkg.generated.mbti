@@ -5,16 +5,17 @@ import {
   "Ag108/MoonReduce/config",
   "Ag108/MoonReduce/reducer/engine",
   "Ag108/MoonReduce/reducer/project",
+  "moonbitlang/core/json",
 }
 
 // Values
 pub async fn execute(@config.Config) -> Run
 
-pub async fn execute_project(@config.Config, restore? : Json) -> ProjectRun
+pub async fn execute_project(@config.Config, restore? : @json.Json) -> ProjectRun
 
 pub fn help() -> String
 
-pub async fn run(Array[String]) -> Int
+pub async fn run(Array[String]) -> Int32
 
 pub async fn verify_bundle(String) -> Unit
 

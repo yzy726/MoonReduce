@@ -1,10 +1,11 @@
 ///|
 /// An original regular file, kept in memory so every evaluation starts pristine.
+#derive(Eq)
 priv struct Entry {
   path : String
   bytes : Bytes
   executable : Bool
-} derive(Eq)
+}
 
 ///|
 /// Isolated immutable input manifest and explicit output root.
@@ -15,15 +16,16 @@ pub struct Workspace {
   original : String
   priv entries : Array[Entry]
   ignored : Array[String]
-  mut sequence : Int
+  mut sequence : Int32
   priv owned : Map[String, Bool]
 }
 
 ///|
 /// Stable native workspace failures, surfaced by the CLI as MR_INPUT/MR_OUTPUT.
+#derive(Debug)
 pub suberror WorkspaceError {
   WorkspaceError(String)
-} derive(Debug)
+}
 
 ///|
 fn portable(s : String) -> String {
@@ -43,7 +45,7 @@ async fn collect(
   relative : String,
   ignored : Array[String],
   entries : Array[Entry],
-  total : Ref[Int],
+  total : Ref[Int32],
 ) -> Unit {
   let dir = if relative == "" { root } else { root + "/" + relative }
   for name in @fs.readdir(dir, include_hidden=true, sort=true) {
@@ -84,7 +86,7 @@ async fn collect(
         if total.val > 16777216 {
           raise WorkspaceError("MR_INPUT_LIMIT: project exceeds 16 MiB")
         }
-        entries.push({ path: rel, bytes, executable: @fs.can_execute(path) })
+        entries.push({ path: rel, bytes, executable: @fs.can_execute(path), })
       }
       SymLink => ()
       _ =>
@@ -282,3 +284,6 @@ pub async fn Workspace::working_directory(
   }
   path
 }
+
+///|
+pub extend WorkspaceError with @debug.Debug::{to_repr}

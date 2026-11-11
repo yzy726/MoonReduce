@@ -69,7 +69,7 @@ pub fn Snapshot::new(
     }
   }
   entries.sort_by((a, b) => compare_path(a.0, b.0))
-  Ok({ entries: entries.map(x => (x.0, copy_bytes(x.1))) })
+  Ok({ entries: entries.map(x => (x.0, copy_bytes(x.1))), })
 }
 
 ///|
@@ -150,7 +150,7 @@ pub fn Snapshot::key(self : Snapshot) -> String {
 }
 
 ///|
-fn compare_path(a : String, b : String) -> Int {
+fn compare_path(a : String, b : String) -> Int32 {
   for i in 0..<a.length().min(b.length()) {
     if a[i] < b[i] {
       return -1

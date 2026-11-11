@@ -1,6 +1,6 @@
 ///|
 fn observation(
-  code : Int,
+  code : Int32,
   timeout : Bool,
   out : String,
   err : String,
@@ -27,7 +27,7 @@ test "valid/exit and timeout are distinct failure classes" {
     assert_false(@matcher.matches(p, observation(code, true, "", ""), ""))
     assert_eq(
       @matcher.matches(
-        { ..p, failure: ExitCode(2) },
+        { ..p, failure: ExitCode(2), },
         observation(code, false, "", ""),
         "",
       ),
@@ -35,7 +35,7 @@ test "valid/exit and timeout are distinct failure classes" {
     )
     assert_true(
       @matcher.matches(
-        { ..p, failure: Timeout },
+        { ..p, failure: Timeout, },
         observation(code, true, "", ""),
         "",
       ),
@@ -47,8 +47,8 @@ test "valid/exit and timeout are distinct failure classes" {
 test "valid/output rules AND across streams" {
   let p = {
     ..@model.default_predicate(["tool"]),
-    stdout_rules: [{ text: "hello", negate: false, ignore_case: false }],
-    stderr_rules: [{ text: "wrong", negate: true, ignore_case: true }],
+    stdout_rules: [{ text: "hello", negate: false, ignore_case: false, }],
+    stderr_rules: [{ text: "wrong", negate: true, ignore_case: true, }],
   }
   assert_true(
     @matcher.matches(p, observation(1, false, "hello there", "error"), ""),
@@ -72,9 +72,9 @@ test "valid/normalization" {
 test "edge/negative rules reject truncated evidence" {
   let p = {
     ..@model.default_predicate(["tool"]),
-    stdout_rules: [{ text: "absent", negate: true, ignore_case: false }],
+    stdout_rules: [{ text: "absent", negate: true, ignore_case: false, }],
   }
-  let e = { ..observation(1, false, "x", ""), stdout_truncated: true }
+  let e = { ..observation(1, false, "x", ""), stdout_truncated: true, }
   assert_false(@matcher.matches(p, e, ""))
 }
 

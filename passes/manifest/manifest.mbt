@@ -14,7 +14,7 @@ pub fn propose(file : String, text : String) -> Array[String] {
   let tokens = tree.tokens.filter(t => {
     t.kind != "space" && !t.kind.contains("comment")
   })
-  let edits : Array[(Int, Int)] = []
+  let edits : Array[(Int32, Int32)] = []
   for i in 0..<tokens.length() {
     let t = tokens[i]
     if tree.groups.iter().any(g => t.start >= g.start && t.end <= g.end) {

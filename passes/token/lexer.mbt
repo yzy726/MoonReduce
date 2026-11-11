@@ -1,11 +1,12 @@
 ///|
 /// Lossless UTF-16 span in the original MoonBit String; never a byte offset.
+#derive(Debug, Eq, ToJson)
 pub(all) struct Token {
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
   kind : String
   text : String
-} derive(Debug, Eq, ToJson)
+}
 
 ///|
 fn digit(c : UInt16) -> Bool {
@@ -106,7 +107,16 @@ pub fn scan(s : String) -> Array[Token] {
     } else {
       i += 1
     }
-    tokens.push({ start, end: i, kind, text: s[start:i].to_owned() })
+    tokens.push({ start, end: i, kind, text: s[start:i].to_owned(), })
   }
   tokens
 }
+
+///|
+pub extend Token with @debug.Debug::{to_repr}
+
+///|
+pub extend Token with @json.ToJson::{to_json}
+
+///|
+pub extend Token with Eq::{not_equal, equal}

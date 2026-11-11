@@ -2,7 +2,7 @@
 package "Ag108/MoonReduce/passes/text"
 
 // Values
-pub fn lines(String) -> Array[(Int, Int)]
+pub fn lines(String) -> Array[(Int32, Int32)]
 
 pub fn names() -> Array[String]
 

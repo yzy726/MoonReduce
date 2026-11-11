@@ -1,5 +1,10 @@
 # MoonReduce
 
+## 0.3.0 update
+
+- Support MoonBit 0.10.20, update the async dependency and cancellation cleanup calls.
+- Migrate deprecated syntax, preserve existing trait methods and synchronize CLI/report versions.
+
 A MoonBit testcase reducer and native CLI. It removes irrelevant project files,
 declarations, statements and tokens in independent copies while preserving a
 user-defined failure predicate.
@@ -8,8 +13,8 @@ user-defined failure predicate.
 
 ## Quick start
 
-Use the pinned MoonBit toolchain and a native C compiler. The native runtime uses
-moonbitlang/async 0.20.4.
+Use MoonBit 0.10.20 or a compatible toolchain and a native C compiler. The native runtime uses
+moonbitlang/async 0.22.9.
 
 ```text
 moon update

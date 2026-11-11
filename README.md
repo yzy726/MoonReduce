@@ -1,5 +1,10 @@
 # MoonReduce
 
+## 0.3.0 更新
+
+- 适配 MoonBit 0.10.20，更新异步依赖和取消清理调用。
+- 迁移派生语法并显式保留已有 trait 方法，同步 CLI 与报告版本。
+
 用 MoonBit 编写的失败用例约减库与原生命令行工具。在独立项目副本中删除无关文件、声明、语句和 Token，并通过外部命令持续确认目标失败仍然存在。
 
 [English](README.mbt.md) · [项目模式](docs/PROJECT_MODE.md) · [判定规则](docs/PREDICATES.md) · [库 API](docs/API_STABILITY.md) · [终验记录](artifacts/acceptance/final/summary.md)
@@ -16,7 +21,7 @@
 
 ## 快速开始
 
-需要 MoonBit 工具链及其原生 C 编译环境。已固定的依赖是 `moonbitlang/async@0.20.4`。
+需要 MoonBit 工具链及其原生 C 编译环境。已固定的依赖是 `moonbitlang/async@0.22.9`。
 在仓库根目录执行：
 
 ```text

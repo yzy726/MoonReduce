@@ -5,43 +5,43 @@ priv suberror RegexError {
 
 ///|
 priv struct CharSet {
-  ranges : Array[(Int, Int)]
+  ranges : Array[(Int32, Int32)]
   negate : Bool
 }
 
 ///|
 priv enum State {
-  Character(CharSet, Int)
-  Fork(Int, Int)
-  Jump(Int)
-  Begin(Int)
-  End(Int)
+  Character(CharSet, Int32)
+  Fork(Int32, Int32)
+  Jump(Int32)
+  Begin(Int32)
+  End(Int32)
   Accept
 }
 
 ///|
 priv struct Fragment {
-  start : Int
-  exits : Array[(Int, Bool)]
+  start : Int32
+  exits : Array[(Int32, Bool)]
 }
 
 ///|
 priv struct Parser {
   chars : Array[Char]
-  mut position : Int
+  mut position : Int32
   states : Array[State]
-  mut depth : Int
+  mut depth : Int32
 }
 
 ///|
 /// Immutable Thompson automaton for a bounded portable regular-expression subset.
 pub struct Regex {
-  priv start : Int
+  priv start : Int32
   priv states : Array[State]
 }
 
 ///|
-fn Parser::emit(self : Parser, state : State) -> Int raise RegexError {
+fn Parser::emit(self : Parser, state : State) -> Int32 raise RegexError {
   if self.states.length() >= 4096 {
     raise RegexError("MR_REGEX_SIZE: too many states")
   }
@@ -67,7 +67,11 @@ fn Parser::take(self : Parser) -> Char raise RegexError {
 }
 
 ///|
-fn Parser::patch(self : Parser, exits : Array[(Int, Bool)], next : Int) -> Unit {
+fn Parser::patch(
+  self : Parser,
+  exits : Array[(Int32, Bool)],
+  next : Int32,
+) -> Unit {
   for exit in exits {
     let (index, second) = exit
     self.states[index] = match self.states[index] {
@@ -84,22 +88,22 @@ fn Parser::patch(self : Parser, exits : Array[(Int, Bool)], next : Int) -> Unit 
 ///|
 fn Parser::single(self : Parser, state : State) -> Fragment raise RegexError {
   let start = self.emit(state)
-  { start, exits: [(start, false)] }
+  { start, exits: [(start, false)], }
 }
 
 ///|
 fn literal(c : Char) -> CharSet {
-  { ranges: [(c.to_int(), c.to_int())], negate: false }
+  { ranges: [(c.to_int(), c.to_int())], negate: false, }
 }
 
 ///|
 fn Parser::escape(self : Parser) -> CharSet raise RegexError {
   let c = self.take()
   match c {
-    'd' | 'D' => { ranges: [(48, 57)], negate: c == 'D' }
+    'd' | 'D' => { ranges: [(48, 57)], negate: c == 'D', }
     'w' | 'W' =>
-      { ranges: [(48, 57), (65, 90), (95, 95), (97, 122)], negate: c == 'W' }
-    's' | 'S' => { ranges: [(9, 13), (32, 32)], negate: c == 'S' }
+      { ranges: [(48, 57), (65, 90), (95, 95), (97, 122)], negate: c == 'W', }
+    's' | 'S' => { ranges: [(9, 13), (32, 32)], negate: c == 'S', }
     'n' => literal('\n')
     'r' => literal('\r')
     't' => literal('\t')
@@ -138,7 +142,7 @@ fn Parser::character_class(self : Parser) -> CharSet raise RegexError {
   if negate {
     self.position += 1
   }
-  let ranges : Array[(Int, Int)] = []
+  let ranges : Array[(Int32, Int32)] = []
   while self.peek() != Some(']') {
     let first = self.class_atom()
     if first.negate {
@@ -165,7 +169,7 @@ fn Parser::character_class(self : Parser) -> CharSet raise RegexError {
   if ranges.is_empty() {
     raise RegexError("MR_REGEX_SYNTAX: empty character class")
   }
-  { ranges, negate }
+  { ranges, negate, }
 }
 
 ///|
@@ -185,7 +189,7 @@ fn Parser::atom(self : Parser) -> Fragment raise RegexError {
       fragment
     }
     '[' => self.single(Character(self.character_class(), -1))
-    '.' => self.single(Character({ ranges: [(10, 10)], negate: true }, -1))
+    '.' => self.single(Character({ ranges: [(10, 10)], negate: true, }, -1))
     '^' => self.single(Begin(-1))
     '$' => self.single(End(-1))
     '\\' => self.single(Character(self.escape(), -1))
@@ -210,7 +214,7 @@ fn Parser::atom(self : Parser) -> Fragment raise RegexError {
     Some('?') => {
       self.position += 1
       let fork = self.emit(Fork(fragment.start, -1))
-      { start: fork, exits: fragment.exits + [(fork, true)] }
+      { start: fork, exits: fragment.exits + [(fork, true)], }
     }
     _ => fragment
   }
@@ -222,7 +226,7 @@ fn Parser::sequence(self : Parser) -> Fragment raise RegexError {
   while self.peek() is Some(c) && c != ')' && c != '|' {
     let next = self.atom()
     self.patch(fragment.exits, next.start)
-    fragment = { start: fragment.start, exits: next.exits }
+    fragment = { start: fragment.start, exits: next.exits, }
   }
   fragment
 }
@@ -261,7 +265,7 @@ pub fn Regex::compile(pattern : String) -> Result[Regex, String] {
       raise RegexError("MR_REGEX_SYNTAX: unexpected closing group")
     }
     parser.patch(fragment.exits, parser.emit(Accept))
-    Ok({ start: fragment.start, states: parser.states })
+    Ok({ start: fragment.start, states: parser.states, })
   } catch {
     RegexError(message) => Err(message)
   }
@@ -274,13 +278,13 @@ pub fn Regex::compile(pattern : String) -> Result[Regex, String] {
 pub fn Regex::matches(
   self : Regex,
   text : String,
-  max_steps? : Int = 20000000,
+  max_steps~ : Int32 = 20000000,
 ) -> Result[Bool, String] {
   if text.length() > 2097152 || max_steps < 1 || max_steps > 20000000 {
     return Err("MR_REGEX_BUDGET: input or execution limit")
   }
   let chars = text.iter().to_array()
-  let mut active : Array[Int] = []
+  let mut active : Array[Int32] = []
   let mut steps = 0
   for position in 0..<(chars.length() + 1) {
     steps += self.states.length()
@@ -289,7 +293,7 @@ pub fn Regex::matches(
     }
     let seen = Array::make(self.states.length(), false)
     active.push(self.start)
-    let next : Array[Int] = []
+    let next : Array[Int32] = []
     while active.pop() is Some(index) {
       if seen[index] {
         continue

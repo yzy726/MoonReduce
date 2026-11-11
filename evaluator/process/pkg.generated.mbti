@@ -10,9 +10,11 @@ import {
 pub async fn run(@model.PredicateSpec, String) -> @model.Evaluation
 
 // Errors
+#derive(@debug.Debug)
 pub suberror ProcessError {
   ProcessError(String)
-} derive(@debug.Debug)
+}
+pub fn ProcessError::to_repr(Self) -> @debug.Repr
 
 // Types and methods
 

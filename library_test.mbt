@@ -1,6 +1,6 @@
 ///|
 struct Keep {
-  calls : Ref[Int]
+  calls : Ref[Int32]
 }
 
 ///|
@@ -71,14 +71,14 @@ impl @MoonReduce.CandidateEvaluator for Broken with fn evaluate(_, _) {
 ///|
 test "library evaluator failure is returned without a successful result" {
   let input = @manifest.Snapshot::new([("a.mbt", b"KEEP")]).unwrap()
-  assert_true(@MoonReduce.reduce(input, Broken::{  }) is Err("fixture failure"))
+  assert_true(@MoonReduce.reduce(input, Broken::{ }) is Err("fixture failure"))
 }
 
 ///|
 test "library invalid budgets rejected before evaluator invocation" {
   let calls = Ref(0)
   let input = @manifest.Snapshot::new([("a.mbt", b"KEEP")]).unwrap()
-  let config = { ..@MoonReduce.default_config(), max_tests: 1 }
+  let config = { ..@MoonReduce.default_config(), max_tests: 1, }
   assert_true(@MoonReduce.reduce(input, Keep::{ calls, }, config~) is Err(_))
   assert_eq(calls.val, 0)
 }
@@ -88,7 +88,7 @@ test "library repeats every reducing evaluation and emits all trials" {
   let input = @manifest.Snapshot::new([("a.mbt", b"noise KEEP")]).unwrap()
   let calls = Ref(0)
   let events : Array[@MoonReduce.Event] = []
-  let config = { ..@MoonReduce.default_config(), repeat: 3, quorum: 2 }
+  let config = { ..@MoonReduce.default_config(), repeat: 3, quorum: 2, }
   let result = @MoonReduce.reduce(input, Keep::{ calls, }, config~, sink=Log::{
     events,
   }).unwrap()

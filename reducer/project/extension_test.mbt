@@ -28,7 +28,7 @@ test "project custom pass uses normal validation and final checks" {
     [],
     [],
     [],
-    extra_passes=[CustomPass::{ malicious: false }],
+    extra_passes=[CustomPass::{ malicious: false, }],
     pass_include=["custom:fixture"],
   ).unwrap()
   while !s.next_batch().is_empty() {
@@ -52,7 +52,7 @@ test "project custom pass cannot remove protected support" {
     [],
     [],
     [],
-    extra_passes=[CustomPass::{ malicious: true }],
+    extra_passes=[CustomPass::{ malicious: true, }],
     pass_include=["custom:fixture"],
   ).unwrap()
   while !s.next_batch().is_empty() {

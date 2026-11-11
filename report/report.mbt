@@ -19,12 +19,12 @@ pub fn config_summary(c : @config.Config) -> Json {
     "command": c.predicate.command,
     "cwd": c.predicate.cwd,
     "target": c.target,
-    "failure": c.predicate.failure.to_json(),
-    "stdout_rules": c.predicate.stdout_rules.to_json(),
-    "stderr_rules": c.predicate.stderr_rules.to_json(),
+    "failure": @json.ToJson::to_json(c.predicate.failure),
+    "stdout_rules": @json.ToJson::to_json(c.predicate.stdout_rules),
+    "stderr_rules": @json.ToJson::to_json(c.predicate.stderr_rules),
     "timeout_ms": c.predicate.timeout_ms,
     "output_limit": c.predicate.output_limit,
-    "budget": c.budget.to_json(),
+    "budget": @json.ToJson::to_json(c.budget),
     "strip_locations": c.predicate.strip_locations,
     "redacted_environment": env_names,
     "cache": "v1/run-scoped-full-content",
@@ -40,14 +40,14 @@ pub fn render_json(
   r : @engine.ReductionResult,
   elapsed_ms : Int64,
   unchanged : Bool,
-  evidence? : Array[Json] = [],
-  attempted_commands? : Int? = None,
+  evidence~ : Array[Json] = [],
+  attempted_commands~ : Int32? = None,
 ) -> Json {
   {
     "schema_version": 1,
     "tool": "MoonReduce",
-    "version": "0.2.0",
-    "status": r.status.to_json(),
+    "version": "0.3.0",
+    "status": @json.ToJson::to_json(r.status),
     "exit_code": r.status.exit_code(),
     "completed": r.status == Completed && r.final_passed == 3 && unchanged,
     "original": metrics(r.original),
@@ -60,7 +60,7 @@ pub fn render_json(
     "duration_ms": elapsed_ms,
     "original_unchanged": unchanged,
     "accepted_sizes": r.accepted_sizes,
-    "passes": r.passes.to_json(),
+    "passes": @json.ToJson::to_json(r.passes),
     "config": config_summary(c),
     "evidence": evidence,
   }
@@ -75,11 +75,13 @@ pub fn markdown(
   unchanged : Bool,
 ) -> String {
   let out = StringBuilder()
-  out.write_string("# MoonReduce 0.2.0\n\n")
+  out.write_string("# MoonReduce 0.3.0\n\n")
   out.write_string(
     "Target: `" + c.target.replace_all(old="`", new="\\`") + "`\n\n",
   )
-  out.write_string("Status: " + r.status.to_json().stringify() + "\n\n")
+  out.write_string(
+    "Status: " + @json.ToJson::to_json(r.status).stringify() + "\n\n",
+  )
   out.write_string(
     "Baseline verification: \{r.baseline_passed}/2\n\nFinal verification: \{r.final_passed}/3\n\n",
   )
@@ -148,12 +150,12 @@ pub fn unified_diff(
 ///|
 /// Reproduction is recorded as argv JSON, avoiding platform-specific shell quoting.
 pub fn reproduce(c : @config.Config) -> String {
-  "MoonReduce 0.2.0 reproduction\n\n" +
+  "MoonReduce 0.3.0 reproduction\n\n" +
   "Working directory: reduced/" +
   c.predicate.cwd +
   "\n" +
   "argv JSON: " +
-  c.predicate.command.to_json().stringify() +
+  @json.ToJson::to_json(c.predicate.command).stringify() +
   "\n" +
   "Launch argv[0] directly with the remaining arguments; no shell is required.\n" +
   "Restore the environment overrides listed (values redacted) in report.json.\n" +

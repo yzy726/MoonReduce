@@ -1,5 +1,5 @@
 ///|
-fn rotate(value : UInt, count : Int) -> UInt {
+fn rotate(value : UInt32, count : Int32) -> UInt32 {
   (value >> count) | (value << (32 - count))
 }
 
@@ -7,7 +7,7 @@ fn rotate(value : UInt, count : Int) -> UInt {
 /// SHA-256 of arbitrary bytes, encoded as 64 lowercase hexadecimal digits.
 /// Pure implementation with fixed-size schedule; no platform cryptography or I/O.
 pub fn digest(input : Bytes) -> String {
-  let constants : Array[UInt] = [
+  let constants : Array[UInt32] = [
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4,
     0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe,
     0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f,
@@ -19,20 +19,20 @@ pub fn digest(input : Bytes) -> String {
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7,
     0xc67178f2,
   ]
-  let state : Array[UInt] = [
+  let state : Array[UInt32] = [
     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab,
     0x5be0cd19,
   ]
-  let schedule : Array[UInt] = Array::make(64, 0)
+  let schedule : Array[UInt32] = Array::make(64, 0)
   let length = input.length()
   let blocks = length / 64 + (if length % 64 < 56 { 1 } else { 2 })
   let bits = length.to_uint64() * 8UL
   for block = 0; block < blocks; block = block + 1 {
     for word = 0; word < 16; word = word + 1 {
-      let mut value : UInt = 0
+      let mut value : UInt32 = 0
       for byte = 0; byte < 4; byte = byte + 1 {
         let position = block * 64 + word * 4 + byte
-        let part : UInt = if position < length {
+        let part : UInt32 = if position < length {
           input[position].to_int().reinterpret_as_uint()
         } else if position == length {
           128U

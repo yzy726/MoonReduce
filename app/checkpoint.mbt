@@ -10,24 +10,24 @@ fn checkpoint_config(c : @config.Config) -> Json {
   {
     "project": true,
     "score": c.score,
-    "pass_include": c.pass_include.to_json(),
-    "pass_exclude": c.pass_exclude.to_json(),
+    "pass_include": @json.ToJson::to_json(c.pass_include),
+    "pass_exclude": @json.ToJson::to_json(c.pass_exclude),
     "keep_workdir": c.keep_workdir,
     "schema_version": 1,
-    "stdout_regex": c.advanced.stdout_regex.to_json(),
-    "stderr_regex": c.advanced.stderr_regex.to_json(),
-    "diagnostic_code": c.advanced.diagnostic_codes.to_json(),
-    "test_name": c.advanced.test_names.to_json(),
+    "stdout_regex": @json.ToJson::to_json(c.advanced.stdout_regex),
+    "stderr_regex": @json.ToJson::to_json(c.advanced.stderr_regex),
+    "diagnostic_code": @json.ToJson::to_json(c.advanced.diagnostic_codes),
+    "test_name": @json.ToJson::to_json(c.advanced.test_names),
     "normalize": c.advanced.normalize,
     "crash": c.advanced.crash,
     "wrapper": c.advanced.wrapper,
     "differential": c.advanced.differential,
     "timeout_tolerance": c.advanced.timeout_tolerance_ms,
-    "reference": c.reference.to_json(),
+    "reference": @json.ToJson::to_json(c.reference),
     "workspace": c.workspace,
-    "include": c.includes.to_json(),
-    "protect": c.protect.to_json(),
-    "ignore": c.ignore.to_json(),
+    "include": @json.ToJson::to_json(c.includes),
+    "protect": @json.ToJson::to_json(c.protect),
+    "ignore": @json.ToJson::to_json(c.ignore),
     "jobs": c.jobs,
     "repeat": c.repeat,
     "quorum": c.quorum,
@@ -36,32 +36,28 @@ fn checkpoint_config(c : @config.Config) -> Json {
     "final_quorum": c.final_quorum,
     "cwd": c.predicate.cwd,
     "expect": expect,
-    "command": c.predicate.command.to_json(),
+    "command": @json.ToJson::to_json(c.predicate.command),
     "timeout": c.predicate.timeout_ms,
     "output_limit": c.predicate.output_limit,
     "max_tests": c.budget.max_tests,
-    "max_time": c.budget.max_time_ms.to_json(),
-    "stdout_contains": c.predicate.stdout_rules
-    .filter(r => !r.negate)
-    .map(r => r.text)
-    .to_json(),
-    "stdout_not_contains": c.predicate.stdout_rules
-    .filter(r => r.negate)
-    .map(r => r.text)
-    .to_json(),
-    "stderr_contains": c.predicate.stderr_rules
-    .filter(r => !r.negate)
-    .map(r => r.text)
-    .to_json(),
-    "stderr_not_contains": c.predicate.stderr_rules
-    .filter(r => r.negate)
-    .map(r => r.text)
-    .to_json(),
+    "max_time": @json.ToJson::to_json(c.budget.max_time_ms),
+    "stdout_contains": @json.ToJson::to_json(
+      c.predicate.stdout_rules.filter(r => !r.negate).map(r => r.text),
+    ),
+    "stdout_not_contains": @json.ToJson::to_json(
+      c.predicate.stdout_rules.filter(r => r.negate).map(r => r.text),
+    ),
+    "stderr_contains": @json.ToJson::to_json(
+      c.predicate.stderr_rules.filter(r => !r.negate).map(r => r.text),
+    ),
+    "stderr_not_contains": @json.ToJson::to_json(
+      c.predicate.stderr_rules.filter(r => r.negate).map(r => r.text),
+    ),
     "ignore_case": (c.predicate.stdout_rules + c.predicate.stderr_rules)
     .iter()
     .any(r => r.ignore_case),
     "strip_locations": c.predicate.strip_locations,
-    "environment": c.predicate.environment.to_json(),
+    "environment": @json.ToJson::to_json(c.predicate.environment),
   }
 }
 
@@ -72,29 +68,29 @@ fn checkpoint_context(c : @config.Config, toolchain : String) -> String {
   // Arrays make order explicit; worker count and extended budgets are allowed
   // to change, while all evaluation-affecting settings must remain identical.
   let context : Json = [
-    c.score.to_json(),
-    c.pass_include.to_json(),
-    c.pass_exclude.to_json(),
-    c.advanced.to_json(),
-    c.reference.to_json(),
-    c.repeat.to_json(),
-    c.quorum.to_json(),
-    c.consecutive.to_json(),
-    c.final_repeat.to_json(),
-    c.final_quorum.to_json(),
-    toolchain.to_json(),
-    c.predicate.command.to_json(),
-    c.predicate.cwd.to_json(),
-    c.predicate.failure.to_json(),
-    c.predicate.stdout_rules.to_json(),
-    c.predicate.stderr_rules.to_json(),
-    c.predicate.timeout_ms.to_json(),
-    c.predicate.output_limit.to_json(),
-    c.predicate.strip_locations.to_json(),
-    env.to_json(),
-    c.includes.to_json(),
-    c.protect.to_json(),
-    c.ignore.to_json(),
+    @json.ToJson::to_json(c.score),
+    @json.ToJson::to_json(c.pass_include),
+    @json.ToJson::to_json(c.pass_exclude),
+    @json.ToJson::to_json(c.advanced),
+    @json.ToJson::to_json(c.reference),
+    @json.ToJson::to_json(c.repeat),
+    @json.ToJson::to_json(c.quorum),
+    @json.ToJson::to_json(c.consecutive),
+    @json.ToJson::to_json(c.final_repeat),
+    @json.ToJson::to_json(c.final_quorum),
+    @json.ToJson::to_json(toolchain),
+    @json.ToJson::to_json(c.predicate.command),
+    @json.ToJson::to_json(c.predicate.cwd),
+    @json.ToJson::to_json(c.predicate.failure),
+    @json.ToJson::to_json(c.predicate.stdout_rules),
+    @json.ToJson::to_json(c.predicate.stderr_rules),
+    @json.ToJson::to_json(c.predicate.timeout_ms),
+    @json.ToJson::to_json(c.predicate.output_limit),
+    @json.ToJson::to_json(c.predicate.strip_locations),
+    @json.ToJson::to_json(env),
+    @json.ToJson::to_json(c.includes),
+    @json.ToJson::to_json(c.protect),
+    @json.ToJson::to_json(c.ignore),
   ]
   context.stringify()
 }
@@ -135,7 +131,7 @@ async fn write_atomic(
     sync=Full,
   )
   let mut closed = false
-  errdefer @async.protect_from_cancel(resume_on_cancel=false, () => {
+  errdefer @async.protect_from_cancel(() => {
     if !closed {
       file.close()
     }
@@ -145,9 +141,7 @@ async fn write_atomic(
   file.sync()
   file.close()
   closed = true
-  @async.protect_from_cancel(resume_on_cancel=false, () => {
-    @fs.rename(temporary, path, replace=true)
-  })
+  @async.protect_from_cancel(() => @fs.rename(temporary, path, replace=true))
 }
 
 ///|
@@ -174,7 +168,7 @@ async fn persist_project(
 }
 
 ///|
-async fn resume_project(argv : Array[String]) -> Int {
+async fn resume_project(argv : Array[String]) -> Int32 {
   if argv.length() < 2 {
     raise ProjectError("MR_CFG_RESUME: checkpoint path required")
   }

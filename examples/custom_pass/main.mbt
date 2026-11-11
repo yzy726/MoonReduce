@@ -33,7 +33,7 @@ impl @pass_api.ReductionPass for Prefix with fn propose(_, snapshot, _) {
 
 ///|
 struct Events {
-  finals : Ref[Int]
+  finals : Ref[Int32]
 }
 
 ///|
@@ -48,12 +48,12 @@ fn main {
   let snapshot = @manifest.Snapshot::new([("repro.mbt", b"noise KEEP")]).unwrap()
   let config = {
     ..@reduce.default_config(),
-    extra_passes: [Prefix::{  }],
+    extra_passes: [Prefix::{ }],
     pass_include: ["custom:prefix-v1"],
   }
   let finals = Ref(0)
   match
-    @reduce.reduce(snapshot, Marker::{  }, config~, sink=Events::{ finals, }) {
+    @reduce.reduce(snapshot, Marker::{ }, config~, sink=Events::{ finals, }) {
     Err(error) => println(error)
     Ok(result) => {
       println(@source.decode(result.best.files()[0].1).unwrap())

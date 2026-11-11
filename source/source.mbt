@@ -64,8 +64,8 @@ pub fn encode(text : String) -> Bytes {
 /// Apply a single half-open byte edit, rejecting invalid bounds and broken UTF-8.
 pub fn apply_edit(
   bytes : Bytes,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
   replacement : Bytes,
 ) -> Result[Bytes, String] {
   if start < 0 || end < start || end > bytes.length() {

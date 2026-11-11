@@ -3,6 +3,7 @@ package "Ag108/MoonReduce/passes/token"
 
 import {
   "moonbitlang/core/debug",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -19,12 +20,17 @@ pub fn significant(String) -> Array[Token]
 // Errors
 
 // Types and methods
+#derive(Eq, @debug.Debug, @json.ToJson)
 pub(all) struct Token {
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
   kind : String
   text : String
-} derive(Eq, ToJson, @debug.Debug)
+}
+pub fn Token::equal(Self, Self) -> Bool
+pub fn Token::not_equal(Self, Self) -> Bool
+pub fn Token::to_json(Self) -> @json.Json
+pub fn Token::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

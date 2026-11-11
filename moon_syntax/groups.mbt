@@ -1,31 +1,34 @@
 ///|
 /// Half-open UTF8 byte range of a balanced delimiter group.
+#derive(Debug, Eq, ToJson)
 pub(all) struct Group {
   kind : String
-  start : Int
-  end : Int
-  inner_start : Int
-  inner_end : Int
-  depth : Int
-} derive(Debug, Eq, ToJson)
+  start : Int32
+  end : Int32
+  inner_start : Int32
+  inner_end : Int32
+  depth : Int32
+}
 
 ///|
 /// Lossless lexical token with UTF8 byte offsets, independent of String indices.
+#derive(Debug, Eq, ToJson)
 pub(all) struct Token {
   kind : String
   text : String
-  start : Int
-  end : Int
-} derive(Debug, Eq, ToJson)
+  start : Int32
+  end : Int32
+}
 
 ///|
 /// Partial reduction structure. Diagnostics require conservative token fallback;
 /// this is not a complete compiler syntax tree.
+#derive(Debug, Eq, ToJson)
 pub(all) struct ReductionTree {
   tokens : Array[Token]
   groups : Array[Group]
   diagnostics : Array[String]
-} derive(Debug, Eq, ToJson)
+}
 
 ///|
 fn terminated(t : @token.Token) -> Bool {
@@ -85,7 +88,7 @@ pub fn scan(source : String) -> ReductionTree {
     bytes += @source.encode(s).length()
     offsets[units] = bytes
   }
-  let stack : Array[(Token, Int)] = []
+  let stack : Array[(Token, Int32)] = []
   for t in @token.scan(source) {
     let token = Token::{
       kind: t.kind,
@@ -132,5 +135,32 @@ pub fn scan(source : String) -> ReductionTree {
     diagnostics.push("MR_SYNTAX_UNBALANCED: missing closer")
   }
   groups.sort_by((a, b) => a.start - b.start)
-  { tokens, groups, diagnostics }
+  { tokens, groups, diagnostics, }
 }
+
+///|
+pub extend Group with @debug.Debug::{to_repr}
+
+///|
+pub extend Group with @json.ToJson::{to_json}
+
+///|
+pub extend Group with Eq::{not_equal, equal}
+
+///|
+pub extend ReductionTree with @debug.Debug::{to_repr}
+
+///|
+pub extend ReductionTree with @json.ToJson::{to_json}
+
+///|
+pub extend ReductionTree with Eq::{not_equal, equal}
+
+///|
+pub extend Token with @debug.Debug::{to_repr}
+
+///|
+pub extend Token with @json.ToJson::{to_json}
+
+///|
+pub extend Token with Eq::{not_equal, equal}

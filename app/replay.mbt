@@ -9,7 +9,7 @@ async fn artifact_json(path : String) -> Json {
 }
 
 ///|
-async fn replay_project(argv : Array[String]) -> Int {
+async fn replay_project(argv : Array[String]) -> Int32 {
   if argv.length() != 2 && (argv.length() != 4 || argv[2] != "--output") {
     raise ProjectError(
       "MR_CFG_REPLAY: replay report.json [--output NEW_DIRECTORY]",
@@ -47,7 +47,7 @@ async fn replay_project(argv : Array[String]) -> Int {
   let w = @workspace.prepare_project(c.workspace, output, [])
   let snapshot = w.snapshot()
   let live : Array[String] = []
-  errdefer @async.protect_from_cancel(resume_on_cancel=false, () => {
+  errdefer @async.protect_from_cancel(() => {
     for dir in live {
       w.cleanup(dir)
     }
@@ -131,9 +131,9 @@ async fn replay_project(argv : Array[String]) -> Int {
   verify_bundle(root)
   let report : Json = {
     "schema_version": 1,
-    "decision": decision.to_json(),
-    "statistics": @stability.summarize(results).to_json(),
-    "runs": runs.to_json(),
+    "decision": @json.ToJson::to_json(decision),
+    "statistics": @json.ToJson::to_json(@stability.summarize(results)),
+    "runs": @json.ToJson::to_json(runs),
     "cache_used": false,
     "original_unchanged": unchanged,
     "toolchain": toolchain,

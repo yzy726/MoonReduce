@@ -1,7 +1,10 @@
 import {
+  "moonbitlang/core/debug",
+}
+
+import {
   "moonbitlang/async",
   "moonbitlang/async/fs",
-  "moonbitlang/async/io",
   "Ag108/MoonReduce/source",
   "Ag108/MoonReduce/workspace/glob",
   "Ag108/MoonReduce/workspace/manifest",

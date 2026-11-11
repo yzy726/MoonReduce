@@ -1,4 +1,9 @@
 import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+import {
   "Ag108/MoonReduce/reducer/project",
   "Ag108/MoonReduce/predicate/advanced",
   "Ag108/MoonReduce/workspace/glob",

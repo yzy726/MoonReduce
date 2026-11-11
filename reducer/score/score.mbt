@@ -1,14 +1,15 @@
 ///|
 /// Deterministic project metrics. Tokens, nonblank lines and lightweight nodes
 /// count MoonBit sources; bytes/files include all copied support content.
+#derive(Debug, Eq, ToJson)
 pub(all) struct Score {
-  bytes : Int
-  tokens : Int
-  lines : Int
-  files : Int
-  nodes : Int
+  bytes : Int32
+  tokens : Int32
+  lines : Int32
+  files : Int32
+  nodes : Int32
   paths : String
-} derive(Debug, Eq, ToJson)
+}
 
 ///|
 pub fn measure(snapshot : @manifest.Snapshot) -> Score {
@@ -43,7 +44,11 @@ pub fn measure(snapshot : @manifest.Snapshot) -> Score {
 ///|
 /// Compare lexicographically, returning -1/0/1. The selected primary metric is
 /// followed by the remaining default metrics and stable lexical path order.
-pub fn compare(strategy : String, a : Score, b : Score) -> Result[Int, String] {
+pub fn compare(
+  strategy : String,
+  a : Score,
+  b : Score,
+) -> Result[Int32, String] {
   let keys = match strategy {
     "bytes" => [(a.bytes, b.bytes), (a.tokens, b.tokens), (a.lines, b.lines)]
     "tokens" => [(a.tokens, b.tokens), (a.bytes, b.bytes), (a.lines, b.lines)]
@@ -77,3 +82,12 @@ pub fn compare(strategy : String, a : Score, b : Score) -> Result[Int, String] {
     },
   )
 }
+
+///|
+pub extend Score with @debug.Debug::{to_repr}
+
+///|
+pub extend Score with @json.ToJson::{to_json}
+
+///|
+pub extend Score with Eq::{not_equal, equal}

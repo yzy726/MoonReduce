@@ -1,5 +1,6 @@
 ///|
 /// Validated initial CLI configuration. Relative target/cwd are workspace-relative.
+#derive(Debug, ToJson)
 pub(all) struct Config {
   project : Bool
   includes : Array[String]
@@ -7,12 +8,12 @@ pub(all) struct Config {
   pass_include : Array[String]
   pass_exclude : Array[String]
   keep_workdir : Bool
-  jobs : Int
-  repeat : Int
-  quorum : Int
+  jobs : Int32
+  repeat : Int32
+  quorum : Int32
   consecutive : Bool
-  final_repeat : Int
-  final_quorum : Int
+  final_repeat : Int32
+  final_quorum : Int32
   action : String
   workspace : String
   target : String
@@ -26,7 +27,7 @@ pub(all) struct Config {
   json_events : Bool
   ignore : Array[String]
   protect : Array[String]
-} derive(Debug, ToJson)
+}
 
 ///|
 priv suberror ConfigError {
@@ -75,7 +76,11 @@ fn strings(m : Map[String, Json], key : String) -> Array[String] raise {
 }
 
 ///|
-fn integer(m : Map[String, Json], key : String, fallback : Int) -> Int raise {
+fn integer(
+  m : Map[String, Json],
+  key : String,
+  fallback : Int32,
+) -> Int32 raise {
   let n = match m.get(key) {
     None => fallback
     Some(String(s)) => @string.parse_int(s)
@@ -94,7 +99,11 @@ fn integer(m : Map[String, Json], key : String, fallback : Int) -> Int raise {
 }
 
 ///|
-fn duration(m : Map[String, Json], key : String, fallback : Int) -> Int raise {
+fn duration(
+  m : Map[String, Json],
+  key : String,
+  fallback : Int32,
+) -> Int32 raise {
   match m.get(key) {
     Some(String(s)) => {
       let (value, factor) = if s.has_suffix("ms") {
@@ -152,7 +161,7 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
   while i < argv.length() {
     let arg = argv[i]
     if arg == "--" {
-      m["command"] = argv[i + 1:].to_owned().to_json()
+      m["command"] = @json.ToJson::to_json(argv[i + 1:].to_owned())
       break
     }
     if action == "explain" && !arg.has_prefix("--") && positional == "" {
@@ -208,9 +217,9 @@ fn parse_inner(argv : Array[String], json : Json?) -> Config raise {
     if array_option {
       let values = if first { [] } else { strings(m, key) }
       values.push(value)
-      m[key] = values.to_json()
+      m[key] = @json.ToJson::to_json(values)
     } else {
-      m[key] = value.to_json()
+      m[key] = @json.ToJson::to_json(value)
     }
     i += 2
   }
@@ -477,3 +486,9 @@ pub fn parse(argv : Array[String], json : Json?) -> Result[Config, String] {
     e => Err("MR_CFG_VALUE: " + e.to_string())
   }
 }
+
+///|
+pub extend Config with @debug.Debug::{to_repr}
+
+///|
+pub extend Config with @json.ToJson::{to_json}
