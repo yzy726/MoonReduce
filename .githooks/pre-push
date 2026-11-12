@@ -1,3 +1,7 @@
 #!/bin/sh
-printf '%s\n' 'Push disabled: subsequent development is local-only per user instruction.' >&2
-exit 1
+set -eu
+
+moon fmt --check
+moon check --target native --warn-list +73 --deny-warn
+moon build --target native tools/process_probe
+moon test --target native --deny-warn
