@@ -5,6 +5,10 @@
 - 适配 MoonBit 0.10.20，更新异步依赖和取消清理调用。
 - 迁移派生语法并显式保留已有 trait 方法，同步 CLI 与报告版本。
 
+本次实际验证的工具链：Moon `0.1.20261104`、moonc `0.10.20+65efd5b93`、
+moonrun `0.1.20261104`（`moon version --all`）。纯库验证 native、JavaScript 和
+wasm-gc；进程、工作区和 CLI 入口要求 native，CI 同时验证 Windows 与 Linux。
+
 用 MoonBit 编写的失败用例约减库与原生命令行工具。在独立项目副本中删除无关文件、声明、语句和 Token，并通过外部命令持续确认目标失败仍然存在。
 
 [English](README.mbt.md) · [项目模式](docs/PROJECT_MODE.md) · [判定规则](docs/PREDICATES.md) · [库 API](docs/API_STABILITY.md) · [终验记录](artifacts/acceptance/final/summary.md)

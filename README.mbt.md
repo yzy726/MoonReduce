@@ -5,6 +5,11 @@
 - Support MoonBit 0.10.20, update the async dependency and cancellation cleanup calls.
 - Migrate deprecated syntax, preserve existing trait methods and synchronize CLI/report versions.
 
+Validated with Moon `0.1.20261104`, moonc `0.10.20+65efd5b93` and moonrun
+`0.1.20261104`, recorded using `moon version --all`. Pure packages support native,
+JavaScript and wasm-gc; process, workspace and CLI entry points require native.
+CI verifies Windows and Linux.
+
 A MoonBit testcase reducer and native CLI. It removes irrelevant project files,
 declarations, statements and tokens in independent copies while preserving a
 user-defined failure predicate.
